@@ -19,6 +19,9 @@ using Windows.System;
 using Windows.UI.Notifications;
 using Windows.Security.Credentials;
 using GoogleMusicApi.UWP.Common;
+using Windows.Foundation.Metadata;
+using Windows.UI.ViewManagement;
+using Windows.UI;
 
 namespace Bermuda
 {
@@ -46,7 +49,6 @@ namespace Bermuda
             this.LeavingBackground += App_LeavingBackground;
             Windows.System.MemoryManager.AppMemoryUsageLimitChanging += MemoryManager_AppMemoryUsageLimitChanging;
             Windows.System.MemoryManager.AppMemoryUsageIncreased += MemoryManager_AppMemoryUsageIncreased;
-
 
         }
 
@@ -157,6 +159,19 @@ namespace Bermuda
             {
                 if (rootFrame.Content == null)
                 {
+                    if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
+                    {
+                        var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+                        if (titleBar != null)
+                        {
+                            titleBar.ButtonBackgroundColor = Colors.Black;
+                            titleBar.ButtonForegroundColor = Colors.White;
+                            titleBar.BackgroundColor = Colors.Black;
+                            titleBar.ForegroundColor = Colors.White;
+                        }
+                    }
+
+
                     bool areCredentialsStored = checkStoredCredentials();
 
                     if (areCredentialsStored)

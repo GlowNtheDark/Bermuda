@@ -16,6 +16,8 @@ using Windows.Media.Core;
 using System.Collections.Generic;
 using Windows.Storage.Streams;
 using GoogleMusicApi.UWP.Requests.Data;
+using Windows.Foundation.Metadata;
+using Windows.UI.ViewManagement;
 
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -32,6 +34,19 @@ namespace Bermuda
             InitializeComponent();
             
             listenNowProgressRing.IsActive = true;
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
+            {
+                var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+                if (titleBar != null)
+                {
+                    titleBar.ButtonBackgroundColor = Colors.Black;
+                    titleBar.ButtonForegroundColor = Colors.White;
+                    titleBar.BackgroundColor = Colors.Black;
+                    titleBar.ForegroundColor = Colors.White;
+                }
+            }
+
         }
 
         private MobileClient mc;

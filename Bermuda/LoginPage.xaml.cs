@@ -15,6 +15,9 @@ using Windows.UI.Xaml.Navigation;
 using GoogleMusicApi.UWP.Common;
 using System.Threading.Tasks;
 using Windows.Security.Credentials;
+using Windows.Foundation.Metadata;
+using Windows.UI.ViewManagement;
+using Windows.UI;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -28,6 +31,19 @@ namespace Bermuda
         public LoginPage()
         {
             this.InitializeComponent();
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
+            {
+                var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+                if (titleBar != null)
+                {
+                    titleBar.ButtonBackgroundColor = Colors.Black;
+                    titleBar.ButtonForegroundColor = Colors.White;
+                    titleBar.BackgroundColor = Colors.Black;
+                    titleBar.ForegroundColor = Colors.White;
+                }
+            }
+
         }
 
         bool storeMyCredentials = false;
