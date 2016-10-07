@@ -431,9 +431,6 @@ namespace Bermuda
             {
                 string query = args.QueryText; //Get search text
                 SearchResponse response;
-                trackPageNumber = 1;
-                albumPageNumber = 1;
-                artistPageNumber = 1;
 
                 //clear tracklist for new search
                 if (tracklist.Any())
@@ -480,6 +477,7 @@ namespace Bermuda
         private async void parseTracks(SearchResponse response)
         {
             int trackListCount = 0;
+            trackListProgressRing.IsActive = true;
 
             //Parse search results into lists
             for (int i = 0; i < response.Entries.Count(); i++)
@@ -509,12 +507,14 @@ namespace Bermuda
             {
                 tracklistNextBtn.Visibility = Visibility.Visible;
                 tracklistPrevBtn.Visibility = Visibility.Visible;
+                trackListProgressRing.IsActive = false;
             }
         }
 
         private async void parseAlbums(SearchResponse response)
         {
             int albumListCount = 0;
+            albumListProgressRing.IsActive = true;
 
             //Parse search results into lists
             for (int i = 0; i < response.Entries.Count(); i++)
@@ -546,6 +546,7 @@ namespace Bermuda
             {
                 albumlistNextBtn.Visibility = Visibility.Visible;
                 albumlistPrevBtn.Visibility = Visibility.Visible;
+                albumListProgressRing.IsActive = false;
             }
 
         }
@@ -553,6 +554,7 @@ namespace Bermuda
         private void parseArtists(SearchResponse response)
         {
             int artistListCount = 0;
+            artistListProgressRing.IsActive = true;
 
             //Parse search results into lists
             for (int i = 0; i < response.Entries.Count(); i++)
@@ -581,6 +583,7 @@ namespace Bermuda
             {
                 artistlistNextBtn.Visibility = Visibility.Visible;
                 artistlistPrevBtn.Visibility = Visibility.Visible;
+                artistListProgressRing.IsActive = false;
             }
         }
 
@@ -637,7 +640,8 @@ namespace Bermuda
                         clCanvas.Visibility = Visibility.Visible;
                     if (shuffleButton.Visibility == Visibility.Collapsed)
                         shuffleButton.Visibility = Visibility.Visible;
-
+                    if (volumeSlider.Visibility == Visibility.Collapsed)
+                        volumeSlider.Visibility = Visibility.Visible;
                 });
             }
 
@@ -660,6 +664,7 @@ namespace Bermuda
             systemMediaTransportControls.IsNextEnabled = true;
             systemMediaTransportControls.IsPreviousEnabled = true;
             songTimer.Interval = new TimeSpan(0, 0, 0, 0, 17);
+            player.Volume = .5;
 
             songTimer.Tick += SongTimer_Tick;
             systemMediaTransportControls.ButtonPressed += SystemMediaTransportControls_ButtonPressed;
@@ -1310,7 +1315,9 @@ namespace Bermuda
 
         private void tracklistNextBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (trackPageNumber < (tracklist.Count / 10) - 1)
+            double countCheck = ((double)tracklist.Count / 10) - 1;
+
+            if (trackPageNumber < countCheck)
             {
                 trackPageNumber++;
                 int i = 0;
@@ -1327,13 +1334,15 @@ namespace Bermuda
                         index++;
                         i++;
                     }
+                    else
+                        break;
                 }
             }
         }
 
         private void tracklistPrevBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (trackPageNumber > 1)
+            if (trackPageNumber > 0)
             {
                 trackPageNumber--;
                 int i = 0;
@@ -1356,7 +1365,7 @@ namespace Bermuda
 
         private void albumlistPrevBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (albumPageNumber > 1)
+            if (albumPageNumber > 0)
             {
                 albumPageNumber--;
                 int i = 0;
@@ -1379,7 +1388,9 @@ namespace Bermuda
 
         private void albumlistNextBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (albumPageNumber < (albumlist.Count / 10) - 1)
+            double countCheck = ((double)albumlist.Count / 10) - 1;
+
+            if (albumPageNumber < countCheck)
             {
                 albumPageNumber++;
                 int i = 0;
@@ -1404,7 +1415,9 @@ namespace Bermuda
 
         private void artistlistNextBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (artistPageNumber < (artistList.Count / 10) - 1)
+            double countCheck = ((double)artistList.Count / 10) - 1;
+
+            if (artistPageNumber < countCheck)
             {
                 artistPageNumber++;
                 int i = 0;
@@ -1417,17 +1430,19 @@ namespace Bermuda
                 {
                     if (index < artistList.Count)
                     {
-                        searchAlbumList.Items.Add(createsearchElement(artistList[index], index));
+                        searchArtistList.Items.Add(createsearchElement(artistList[index], index));
                         index++;
                         i++;
                     }
+                    else
+                        break;
                 }
             }
         }
 
         private void artistlistPrevBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (artistPageNumber > 1)
+            if (artistPageNumber > 0)
             {
                 artistPageNumber--;
                 int i = 0;
@@ -1541,6 +1556,11 @@ namespace Bermuda
             currentPlaylist.Clear();
             listenNowList.Clear();
     }
+
+        private void volumeSlider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            player.Volume = volumeSlider.Value/100;
+        }
     }
 
 }
