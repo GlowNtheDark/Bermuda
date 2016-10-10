@@ -91,5 +91,10 @@ namespace Bermuda
         {
             storeMyCredentials = false;
         }
+
+        private void helpButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

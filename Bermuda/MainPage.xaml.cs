@@ -18,6 +18,7 @@ using Windows.Storage.Streams;
 using GoogleMusicApi.UWP.Requests.Data;
 using Windows.Foundation.Metadata;
 using Windows.UI.ViewManagement;
+using Windows.UI.Xaml.Controls.Primitives;
 
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -32,8 +33,6 @@ namespace Bermuda
         public MainPage()
         {
             InitializeComponent();
-            
-            listenNowProgressRing.IsActive = true;
 
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
             {
@@ -238,6 +237,8 @@ namespace Bermuda
 
         private async void getListenNow()
         {
+            listenNowProgressRing.IsActive = true;
+
             await Task.Delay(3000);
 
             try
@@ -287,12 +288,21 @@ namespace Bermuda
 
                 Album album = await getAlbum(mc, listenNowList[index].Album.Id.MetajamCompactKey.ToString());
 
-                foreach (Track song in album.Tracks)
-                    currentPlaylist.Add(song);
+                if (album.Tracks != null)
+                {
 
-                mainPivotMenu.SelectedIndex = 2;
+                    foreach (Track song in album.Tracks)
+                        currentPlaylist.Add(song);
 
-                playCurrentPlaylist(nowPlayingIndex);
+                    mainPivotMenu.SelectedIndex = 2;
+
+                    playCurrentPlaylist(nowPlayingIndex);
+                }
+
+                else
+                {
+                    FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
+                }
 
             }
 
@@ -305,23 +315,40 @@ namespace Bermuda
                 {
                     RadioFeed feed = await getArtistRadioStation(mc, listenNowList[index].RadioStation.Id.Seeds[0].ArtistId);
 
-                    foreach (Track track in feed.Data.Stations[0].Tracks)
-                        currentPlaylist.Add(track);
+                    if (feed.Data.Stations[0].Tracks != null)
+                    {
+                        foreach (Track track in feed.Data.Stations[0].Tracks)
+                            currentPlaylist.Add(track);
 
-                    mainPivotMenu.SelectedIndex = 2;
+                        mainPivotMenu.SelectedIndex = 2;
 
-                    playCurrentPlaylist(nowPlayingIndex);
+                        playCurrentPlaylist(nowPlayingIndex);
+                    }
+
+                    else
+                    {
+                        FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
+                    }
                 }
                 else if (listenNowList[index].RadioStation.Id.Seeds[0].SeedType.ToString() == "5")
                 {
                     RadioFeed feed = await getGenreRadioStation(mc, listenNowList[index].RadioStation.Id.Seeds[0].GenreId);
 
-                    foreach (Track track in feed.Data.Stations[0].Tracks)
-                        currentPlaylist.Add(track);
 
-                    mainPivotMenu.SelectedIndex = 2;
+                    if (feed.Data.Stations[0].Tracks != null)
+                    {
+                        foreach (Track track in feed.Data.Stations[0].Tracks)
+                            currentPlaylist.Add(track);
 
-                    playCurrentPlaylist(nowPlayingIndex);
+                        mainPivotMenu.SelectedIndex = 2;
+
+                        playCurrentPlaylist(nowPlayingIndex);
+                    }
+
+                    else
+                    {
+                        FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
+                    }
                 }
              }
             
@@ -466,11 +493,19 @@ namespace Bermuda
 
                 response = await Search(query);
 
-                parseTracks(response);
-                parseAlbums(response);
-                parseArtists(response);
+                if (response != null)
+                {
+                    parseTracks(response);
+                    parseAlbums(response);
+                    parseArtists(response);
+                }
 
                 //response = null; //set to null since no longer needed
+            }
+
+            else
+            {
+                FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
             }
         }
 
@@ -483,7 +518,7 @@ namespace Bermuda
             for (int i = 0; i < response.Entries.Count(); i++)
             {
 
-                if (response.Entries.ElementAt(i).Type == "1")//Tracks
+                if (response.Entries.ElementAt(i).Type == "1") //Tracks
                 {
                     try
                     {
@@ -507,8 +542,10 @@ namespace Bermuda
             {
                 tracklistNextBtn.Visibility = Visibility.Visible;
                 tracklistPrevBtn.Visibility = Visibility.Visible;
-                trackListProgressRing.IsActive = false;
+                
             }
+
+            trackListProgressRing.IsActive = false;
         }
 
         private async void parseAlbums(SearchResponse response)
@@ -546,8 +583,10 @@ namespace Bermuda
             {
                 albumlistNextBtn.Visibility = Visibility.Visible;
                 albumlistPrevBtn.Visibility = Visibility.Visible;
-                albumListProgressRing.IsActive = false;
+
             }
+
+            albumListProgressRing.IsActive = false;
 
         }
 
@@ -583,8 +622,10 @@ namespace Bermuda
             {
                 artistlistNextBtn.Visibility = Visibility.Visible;
                 artistlistPrevBtn.Visibility = Visibility.Visible;
-                artistListProgressRing.IsActive = false;
+
             }
+
+            artistListProgressRing.IsActive = false;
         }
 
         public async void playSong(Track track)
@@ -1485,7 +1526,7 @@ namespace Bermuda
             playSong(currentPlaylist[nowPlayingIndex]);
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             PassSession data = e.Parameter as PassSession;
             mc = data.session;
@@ -1494,7 +1535,37 @@ namespace Bermuda
             signedInAsTextBlock.Visibility = Visibility.Visible;
 
             if (mc != null)
-                getListenNow();
+            {
+                if (await testAuthorizationLevel())
+                {
+                    getListenNow();
+                }
+                else
+                {
+                    for(int i=0; i < 3; i++)
+                    {
+                        PivotItem piv = (PivotItem)mainPivotMenu.Items[i];
+                        piv.Visibility = Visibility.Collapsed;
+                        ((TextBlock)piv.Header).Visibility = Visibility.Collapsed;
+                    }
+
+                    mainPivotMenu.SelectedIndex = 3;
+
+                    FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
+                }
+            }
+        }
+
+        private async Task<bool> testAuthorizationLevel()
+        {
+            Track data = await getTrack(mc, "Tolw673c2mkdbbthmo4e6vzgsdu");
+
+            Uri data2 = await GetStreamUrl(mc, data);
+
+            if (data2 != null)
+                return true;
+            else
+                return false; ;
         }
 
         private void logoutButton_Click(object sender, RoutedEventArgs e)
