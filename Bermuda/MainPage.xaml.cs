@@ -374,8 +374,11 @@ namespace Bermuda
             grid.ColumnDefinitions.Add(columnDefinition1);
             grid.RowDefinitions.Add(rowDefinition1);
             grid.RowDefinitions.Add(rowDefinition2);
+            if(imagePath != null)
+                img.Source = new BitmapImage(new Uri(imagePath, UriKind.Absolute));
+            else
+                img.Source = new BitmapImage(new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute));
 
-            img.Source = new BitmapImage(new Uri(imagePath, UriKind.Absolute));
             img.Stretch = Stretch.Fill;
             img.Width = Double.NaN;
             img.Height = Double.NaN;
@@ -424,13 +427,16 @@ namespace Bermuda
             grid.RowDefinitions.Add(rowDefinition1);
             grid.RowDefinitions.Add(rowDefinition2);
 
-            img.Source = new BitmapImage(new Uri(imagePath, UriKind.Absolute));
+            if (imagePath != null)
+                img.Source = new BitmapImage(new Uri(imagePath, UriKind.Absolute));
+            else
+                img.Source = new BitmapImage(new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute));
+
             img.Stretch = Stretch.Fill;
             img.Width = Double.NaN;
             img.Height = Double.NaN;
             img.Margin = new Thickness(0, 0, 0, 0);
             img.Tag = index.ToString();
-            //img.PointerPressed += new PointerEventHandler(image_onClick);
 
             textBlock.Text = Title + " Radio";
             textBlock.FontSize = 14;
