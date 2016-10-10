@@ -896,6 +896,7 @@ namespace Bermuda
             trackRadioButton.Tag = index;
             trackRadioButton.Foreground = new SolidColorBrush(Colors.White);
             trackRadioButton.Click += TrackRadioButton_Click;
+            trackRadioButton.Style = (Style)this.Resources["customButton"];
 
             //Set trackPlayButton properties
             trackPlayButton.Width = 75; //100 pc
@@ -908,6 +909,7 @@ namespace Bermuda
             trackPlayButton.Foreground = new SolidColorBrush(Colors.White);
             trackPlayButton.Tag = index;
             trackPlayButton.Click += PlayAllButton_Click;
+            trackPlayButton.Style = (Style)this.Resources["customButton"];
 
             grid1.Margin = new Thickness(0, 3, 0, 0);
 
@@ -1042,6 +1044,7 @@ namespace Bermuda
             albumRadioButton.Tag = index;
             albumRadioButton.Foreground = new SolidColorBrush(Colors.White);
             albumRadioButton.Click += AlbumRadioButton_Click;
+            albumRadioButton.Style = (Style)this.Resources["customButton"];
 
             //Set playAlbumButton properties
             playAlbumButton.Width = 100;
@@ -1054,6 +1057,7 @@ namespace Bermuda
             playAlbumButton.Foreground = new SolidColorBrush(Colors.White);
             playAlbumButton.Tag = index;
             playAlbumButton.Click += PlayAlbumButton_Click;
+            playAlbumButton.Style = (Style)this.Resources["customButton"];
 
             grid1.Margin = new Thickness(0, 3, 0, 0);
 
@@ -1192,6 +1196,7 @@ namespace Bermuda
             artistRadioButton.Tag = index;
             artistRadioButton.Foreground = new SolidColorBrush(Colors.White);
             artistRadioButton.Click += ArtistRadioButton_Click;
+            artistRadioButton.Style = (Style)this.Resources["customButton"];
 
             //Set playAllButton properties
             artistplayButton.Width = 100;
@@ -1204,6 +1209,7 @@ namespace Bermuda
             artistplayButton.Foreground = new SolidColorBrush(Colors.White);
             artistplayButton.Tag = index;
             artistplayButton.Click += artistplayButton_Click;
+            artistplayButton.Style = (Style)this.Resources["customButton"];
 
             grid1.Margin = new Thickness(0, 3, 0, 0);
 
