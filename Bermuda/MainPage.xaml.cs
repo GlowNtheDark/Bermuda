@@ -19,6 +19,7 @@ using GoogleMusicApi.UWP.Requests.Data;
 using Windows.Foundation.Metadata;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls.Primitives;
+using System.Threading;
 
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -64,6 +65,8 @@ namespace Bermuda
         private int artistPageNumber = 0;
         private bool isFirstPlaySinceOpen = true;
         private bool songEnded = false;
+        private CancellationTokenSource cts;
+        private CancellationTokenSource cts2;
 
 
         private async Task<RadioFeed> getArtistRadioStation(MobileClient mc, String artistId)
@@ -238,6 +241,7 @@ namespace Bermuda
         private async void getListenNow()
         {
             listenNowProgressRing.IsActive = true;
+            cts2 = new CancellationTokenSource();
 
             await Task.Delay(3000);
 
@@ -464,6 +468,7 @@ namespace Bermuda
             {
                 string query = args.QueryText; //Get search text
                 SearchResponse response;
+                cts = new CancellationTokenSource();
 
                 //clear tracklist for new search
                 if (tracklist.Any())
@@ -501,9 +506,20 @@ namespace Bermuda
 
                 if (response != null)
                 {
-                    parseTracks(response);
-                    parseAlbums(response);
-                    parseArtists(response);
+                    try
+                    {
+                        parseTracks(response, cts.Token);
+                        parseAlbums(response, cts.Token);
+                        parseArtists(response, cts.Token);
+                    }
+                    catch(OperationCanceledException)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Sorting Cancelled.");
+                    }
+                    catch(Exception e)
+                    {
+                        System.Diagnostics.Debug.WriteLine(e);
+                    }
                 }
 
                 //response = null; //set to null since no longer needed
@@ -515,7 +531,7 @@ namespace Bermuda
             }
         }
 
-        private async void parseTracks(SearchResponse response)
+        async void parseTracks(SearchResponse response, CancellationToken ct)
         {
             int trackListCount = 0;
             trackListProgressRing.IsActive = true;
@@ -528,12 +544,18 @@ namespace Bermuda
                 {
                     try
                     {
-                        tracklist.Add(await getTrack(mc, response.Entries.ElementAt(i).Track.Nid.ToString()));
+                        tracklist.Add(await getTrack(mc, response.Entries.ElementAt(i).Track.Nid.ToString(), ct));
                     }
 
+                    catch (OperationCanceledException)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Operation cancelled! -- Tracks");
+                        break;
+                    }
                     catch (Exception e)
                     {
                         System.Diagnostics.Debug.WriteLine(e);
+                        break;
                     }
 
                     if (trackListCount < 10)
@@ -554,7 +576,7 @@ namespace Bermuda
             trackListProgressRing.IsActive = false;
         }
 
-        private async void parseAlbums(SearchResponse response)
+        async void parseAlbums(SearchResponse response, CancellationToken ct)
         {
             int albumListCount = 0;
             albumListProgressRing.IsActive = true;
@@ -568,12 +590,20 @@ namespace Bermuda
 
                     try
                     {
-                        albumlist.Add(await getAlbum(mc, response.Entries.ElementAt(i).Album.AlbumId.ToString()));
+                        albumlist.Add(await getAlbum(mc, response.Entries.ElementAt(i).Album.AlbumId.ToString(), ct));
+                    }
+
+
+                    catch (OperationCanceledException)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Operation cancelled! -- Albums");
+                        break;
                     }
 
                     catch (Exception e)
                     {
                         System.Diagnostics.Debug.WriteLine(e);
+                        break;
                     }
 
                     if (albumListCount < 10 && albumListCount != albumlist.Count)
@@ -596,7 +626,7 @@ namespace Bermuda
 
         }
 
-        private void parseArtists(SearchResponse response)
+        private void parseArtists(SearchResponse response, CancellationToken ct)
         {
             int artistListCount = 0;
             artistListProgressRing.IsActive = true;
@@ -614,6 +644,7 @@ namespace Bermuda
                     catch (Exception e)
                     {
                         System.Diagnostics.Debug.WriteLine(e);
+                        break;
                     }
 
                     if ((artistListCount < 10) && (artistListCount != artistList.Count))
@@ -781,10 +812,24 @@ namespace Bermuda
             return data;
         }
 
+        public async Task<Track> getTrack(MobileClient mc, string trackId, CancellationToken ct)
+        {
+            Track data;
+            data = await mc.GetTrackAsync(trackId);
+            return data;
+        }
+
         public async Task<Track> getTrack(MobileClient mc, string trackId)
         {
             Track data;
             data = await mc.GetTrackAsync(trackId);
+            return data;
+        }
+
+        public async Task<Album> getAlbum(MobileClient mc, string albumId, CancellationToken ct)
+        {
+            Album data;
+            data = await mc.GetAlbumAsync(albumId);
             return data;
         }
 
@@ -1585,10 +1630,10 @@ namespace Bermuda
             if(player.PlaybackSession.PlaybackState == MediaPlaybackState.Playing || player.PlaybackSession.PlaybackState == MediaPlaybackState.Paused)
             {
                 player.Pause();
-                player = null;
             }
 
-            clearLists();
+            if (cts != null)
+                cts.Cancel();
 
             var vault = new Windows.Security.Credentials.PasswordVault();
 
@@ -1599,7 +1644,10 @@ namespace Bermuda
 
             mc = null;
 
+            clearLists();
+
             Frame.Navigate(typeof(LoginPage));
+
         }
 
         private Windows.Security.Credentials.PasswordCredential GetCredentialFromLocker()
@@ -1632,12 +1680,18 @@ namespace Bermuda
 
         private void clearLists()
         {
-            tracklist.Clear();
-            albumlist.Clear();
-            artistList.Clear();
-            artistAlbumList.Clear();
-            currentPlaylist.Clear();
-            listenNowList.Clear();
+            if(tracklist != null)
+                tracklist.Clear();
+            if(albumlist != null)
+                albumlist.Clear();
+            if (artistList != null)
+                artistList.Clear();
+            if(artistAlbumList != null)
+                artistAlbumList.Clear();
+            if(currentPlaylist != null)
+                currentPlaylist.Clear();
+            if(listenNowList != null)
+                listenNowList.Clear();
     }
 
         private void volumeSlider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
