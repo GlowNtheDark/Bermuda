@@ -247,7 +247,7 @@ namespace Bermuda
 
             try
             {
-                ListListenNowTracksResponse listenNowResult = await mc.ListListenNowTracksAsync();
+                ListListenNowTracksResponse listenNowResult = await mc.ListListenNowTracksAsync(cts2.Token);
 
                 foreach (ListenNowItem item in listenNowResult.Items)
                 {
@@ -467,7 +467,9 @@ namespace Bermuda
             if (mc != null)
             {
                 string query = args.QueryText; //Get search text
-                SearchResponse response;
+                SearchResponse trackResponse;
+                SearchResponse albumResponse;
+                SearchResponse artistResponse;
                 cts = new CancellationTokenSource();
 
                 //clear tracklist for new search
@@ -502,21 +504,54 @@ namespace Bermuda
                     artistlistPrevBtn.Visibility = Visibility.Collapsed;
                 }
 
-                response = await Search(query);
+                trackResponse = await Search(query, 1);
+                albumResponse = await Search(query, 3);
+                artistResponse = await Search(query, 2);
 
-                if (response != null)
+                if (trackResponse != null)
                 {
                     try
                     {
-                        parseTracks(response, cts.Token);
-                        parseAlbums(response, cts.Token);
-                        parseArtists(response, cts.Token);
+                        parseTracks(trackResponse, cts.Token);
                     }
                     catch(OperationCanceledException)
                     {
                         System.Diagnostics.Debug.WriteLine("Sorting Cancelled.");
                     }
                     catch(Exception e)
+                    {
+                        System.Diagnostics.Debug.WriteLine(e);
+                    }
+                }
+
+                if (albumResponse != null)
+                {
+                    try
+                    {
+                        parseAlbums(albumResponse, cts.Token);
+                        parseArtists(albumResponse, cts.Token);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Sorting Cancelled.");
+                    }
+                    catch (Exception e)
+                    {
+                        System.Diagnostics.Debug.WriteLine(e);
+                    }
+                }
+
+                if (artistResponse != null)
+                {
+                    try
+                    {
+                        parseArtists(artistResponse, cts.Token);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Sorting Cancelled.");
+                    }
+                    catch (Exception e)
                     {
                         System.Diagnostics.Debug.WriteLine(e);
                     }
@@ -726,7 +761,7 @@ namespace Bermuda
             else
             {
                 nowPlayingIndex++;
-                    playSong(currentPlaylist[nowPlayingIndex]);
+                playSong(currentPlaylist[nowPlayingIndex]);
             }
 
         }
@@ -1304,12 +1339,14 @@ namespace Bermuda
             SearchResponse response;
 
             currentPlaylist.Clear();
+            artistAlbumList.Clear();
+
             nowPlayingIndex = 0;
 
             Button button = sender as Button;
             int index = (int)button.Tag;
 
-            response = await Search(artistList[index].Name.ToString());
+            response = await Search(artistList[index].Name.ToString(), 3);
 
             foreach (SearchResult entry in response.Entries)
             {
@@ -1318,8 +1355,34 @@ namespace Bermuda
             }
 
             foreach (Album album in artistAlbumList)
-                foreach (Track song in album.Tracks)
-                    currentPlaylist.Add(song);
+            {
+                if (album != null)
+                {
+                    try
+                    {
+                        foreach (Track song in album.Tracks)
+                        {
+                            if (song != null)
+                            {
+                                try
+                                {
+                                    currentPlaylist.Add(song);
+                                }
+
+                                catch (Exception ex)
+                                {
+                                    System.Diagnostics.Debug.WriteLine(ex);
+                                }
+                            }
+                        }
+                    }
+
+                    catch(Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(ex);
+                    }
+                }
+            }
 
             mainPivotMenu.SelectedIndex = 2;
 
@@ -1384,9 +1447,9 @@ namespace Bermuda
             }
         }
 
-        public async Task<SearchResponse> Search(string query)
+        public async Task<SearchResponse> Search(string query, int type)
         {
-            SearchResponse data = await mc.SearchAsync(query);
+            SearchResponse data = await mc.SearchAsync(query, type);
 
             return data;
         }
@@ -1634,6 +1697,8 @@ namespace Bermuda
 
             if (cts != null)
                 cts.Cancel();
+            if (cts2 != null)
+                cts2.Cancel();
 
             var vault = new Windows.Security.Credentials.PasswordVault();
 
