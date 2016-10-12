@@ -18,6 +18,7 @@ using Windows.Security.Credentials;
 using Windows.Foundation.Metadata;
 using Windows.UI.ViewManagement;
 using Windows.UI;
+using Windows.Networking.Connectivity;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -53,14 +54,24 @@ namespace Bermuda
             if (errorTextBlock.Visibility == Visibility.Visible)
                 errorTextBlock.Visibility = Visibility.Collapsed;
 
-            string username = unameTextBox.Text;
-            string password = passwordBox.Password;
+            if (testNetworkConnection())
+            {
+                string username = unameTextBox.Text;
+                string password = passwordBox.Password;
 
-            Login(username, password);
+                Login(username, password);
+            }
+
+            else
+            {
+                errorTextBlock.Text = "Network Unavailable";
+                errorTextBlock.Visibility = Visibility.Visible;
+            }
         }
 
         private async void Login(string username, string password)
         {
+
             MobileClient mc = new MobileClient();
 
             if (await mc.LoginAsync(username, password))
@@ -70,10 +81,13 @@ namespace Bermuda
 
                 Frame.Navigate(typeof(MainPage), new PassSession { session = mc });
             }
+
             else
             {
-                errorTextBlock.Visibility = Visibility.Visible;
+                errorTextBlock.Text = "Check your credentials and try again.\nRemember: 2 - factor auth isn't supported!";
+                  errorTextBlock.Visibility = Visibility.Visible;
             }
+
         }
 
         private void storeCredentials(string username, string password)
@@ -95,6 +109,23 @@ namespace Bermuda
         private void helpButton_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private bool testNetworkConnection()
+        {
+            ConnectionProfile cf = NetworkInformation.GetInternetConnectionProfile();
+
+            if (cf == null)
+            {
+                return false;
+            }
+
+            var level = cf.GetNetworkConnectivityLevel();
+
+            if (level == NetworkConnectivityLevel.InternetAccess)
+                return true;
+            else
+                return false;
         }
     }
 }

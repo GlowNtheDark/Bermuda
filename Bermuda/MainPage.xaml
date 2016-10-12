@@ -809,7 +809,7 @@
                     <FlyoutBase.AttachedFlyout>
                         <Flyout Placement="Right" FlyoutPresenterStyle="{StaticResource customFlyout}">
                             <Grid HorizontalAlignment="Right" Height="110" Width="300" Background="#FF413D3D">
-                                <TextBlock Margin="5,5,0,0" Text="Something went wrong with your request. Please make sure you have a valid Music Subscription associated with the Gmail account you logged in with. This app will not work without one." TextWrapping="WrapWholeWords" Foreground="White"/>
+                                <TextBlock Name="generalFlyout" Margin="5,5,0,0" Text="Something went wrong with your request. Please make sure you have a valid Music Subscription associated with the Gmail account you logged in with. This app will not work without one." TextWrapping="WrapWholeWords" Foreground="White"/>
                             </Grid>
                         </Flyout>
                     </FlyoutBase.AttachedFlyout>
@@ -885,7 +885,15 @@
             </PivotItem>
             <PivotItem>
                 <PivotItem.Header>
-                    <TextBlock Text="Settings" Foreground="White"/>
+                    <TextBlock Name="settingsHeaderTextBlock" Text="Settings" Foreground="White">
+                        <FlyoutBase.AttachedFlyout>
+                            <Flyout Placement="Right" FlyoutPresenterStyle="{StaticResource customFlyout}">
+                                <Grid HorizontalAlignment="Right" Height="45" Width="150" Background="#FF413D3D">
+                                   <TextBlock Name="networkFlyout" Margin="5,5,0,0" Text="*Network Status*" TextWrapping="WrapWholeWords" Foreground="White"/>
+                                </Grid>
+                            </Flyout>
+                        </FlyoutBase.AttachedFlyout>
+                    </TextBlock>
                 </PivotItem.Header>
                 <Grid>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Height="50" Margin="0,20,186,0">

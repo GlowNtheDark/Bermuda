@@ -260,7 +260,7 @@
             <TextBox Name="unameTextBox" Width="255" HorizontalAlignment="Center" Canvas.Top="63" Canvas.Left="54" VerticalAlignment="Center" TabIndex="1"/>
             <PasswordBox Name="passwordBox" Width="255" HorizontalAlignment="Center" Canvas.Top="132" Canvas.Left="54" VerticalAlignment="Center" TabIndex="2"/>
             <Button Name="loginButton" Style="{StaticResource customButton}" Content="Login"  Foreground="White" Height="40" Width="75" Canvas.Top="175" Canvas.Left="234" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" Click="loginButton_Click" TabIndex="4"/>
-            <TextBlock x:Name="errorTextBlock" Height="50" Width="350" Margin="0,225,0,0" TextAlignment="Center" Text="Check your email/password and try again. Remember 2-factor auth won't work!" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Bottom" Visibility="Collapsed" Foreground="Red"/>
+            <TextBlock x:Name="errorTextBlock" Height="50" Width="350" Margin="0,225,0,0" TextAlignment="Center" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Bottom" Visibility="Collapsed" Foreground="Red"/>
             <CheckBox Name="storeCredentialsCheckBox" Content="Checkbox" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{StaticResource CustomCheckbox}" Checked="storeCredentialsCheckBox_Checked" Unchecked="storeCredentialsCheckBox_Unchecked" Canvas.Left="52" Margin="0" Canvas.Top="172" TabIndex="3"/>
         </Canvas>
         <Button x:Name="helpButton" Style="{StaticResource customButton2}" Content="Help?"  Foreground="White" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" TabIndex="5" Click="helpButton_Click">

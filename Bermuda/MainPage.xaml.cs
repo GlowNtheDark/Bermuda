@@ -20,6 +20,9 @@ using Windows.Foundation.Metadata;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls.Primitives;
 using System.Threading;
+using Windows.ApplicationModel.Background;
+using Windows.Storage;
+using Windows.UI.Core;
 
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -47,6 +50,18 @@ namespace Bermuda
                 }
             }
 
+
+
+            if (!checkForBGTask(networkBackgroundTask))
+                createNetworkAwarenessTask(networkBackgroundTask);
+            else
+                reregisterNetworkAwarenessTask(networkBackgroundTask);
+
+            if (!checkForBGTask(servicingBackgroundTask))
+                createServicingTask(servicingBackgroundTask);
+            else
+                reregisterServicingTask(servicingBackgroundTask);
+
         }
 
         private MobileClient mc;
@@ -67,6 +82,9 @@ namespace Bermuda
         private bool songEnded = false;
         private CancellationTokenSource cts;
         private CancellationTokenSource cts2;
+        private string lastNetworkState;
+        private string networkBackgroundTask = "Network-Awareness-Task";
+        private string servicingBackgroundTask = "Servicing-Complete-Task";
 
 
         private async Task<RadioFeed> getArtistRadioStation(MobileClient mc, String artistId)
@@ -1762,6 +1780,169 @@ namespace Bermuda
         private void volumeSlider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
             player.Volume = volumeSlider.Value/100;
+        }
+
+        private async void createNetworkAwarenessTask(string taskName)
+        {
+            try
+            {
+                var builder = new BackgroundTaskBuilder();
+
+                builder.Name = taskName;
+                builder.TaskEntryPoint = "Tasks.NetworkAwareness";
+                builder.SetTrigger(new SystemTrigger(SystemTriggerType.NetworkStateChange, false));
+                BackgroundAccessStatus status = await BackgroundExecutionManager.RequestAccessAsync();
+
+                BackgroundTaskRegistration task = builder.Register();
+                task.Completed += new BackgroundTaskCompletedEventHandler(networkAwarenessOnCompleted);
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e);
+            }
+
+
+        }
+
+        private async void createServicingTask(string taskName)
+        {
+            try
+            {
+                var builder = new BackgroundTaskBuilder();
+
+                builder.Name = taskName;
+                builder.TaskEntryPoint = "Tasks.ServicingComplete";
+                builder.SetTrigger(new SystemTrigger(SystemTriggerType.ServicingComplete, false));
+                BackgroundAccessStatus status = await BackgroundExecutionManager.RequestAccessAsync();
+
+                BackgroundTaskRegistration task = builder.Register();
+                task.Completed += new BackgroundTaskCompletedEventHandler(servicingOnCompleted);
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e);
+            }
+
+
+        }
+
+        private bool checkForBGTask(string taskName)
+        {
+            foreach (var task in BackgroundTaskRegistration.AllTasks)
+            {
+                if (task.Value.Name == taskName)
+                {
+                    //return true;  
+                    task.Value.Unregister(true);
+                }
+            }
+
+            return false;
+        }
+
+        private async void networkAwarenessOnCompleted(IBackgroundTaskRegistration task, BackgroundTaskCompletedEventArgs args)
+        {
+            var settings = ApplicationData.Current.LocalSettings;
+            var key = task.Name.ToString();
+            string status = settings.Values[key].ToString();
+
+            //if status == InternetAccess - enable app functionality and display flyout noting change
+
+            //else - disable app functionality and display flyout noting change
+
+            if (status != lastNetworkState)//Don't update for the same state twice.
+            {
+                if (status == "Internet Access")
+                {
+                    lastNetworkState = "Internet Access";
+                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                    () =>
+                    {
+                        for (int i = 0; i < 3; i++)
+                        {
+                            PivotItem piv = (PivotItem)mainPivotMenu.Items[i];
+                            piv.Visibility = Visibility.Visible;
+                            ((TextBlock)piv.Header).Visibility = Visibility.Visible;
+                        }
+
+                        networkFlyout.Text = "Network Connected";
+
+                        mainPivotMenu.SelectedIndex = 0;
+
+                        FlyoutBase.ShowAttachedFlyout(settingsHeaderTextBlock);
+
+                        getListenNow();
+
+                    });
+                }
+
+                else
+                {
+                    lastNetworkState = "No Internet Access";
+                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                    () =>
+                    {
+                        for (int i = 0; i < 3; i++)
+                        {
+                            PivotItem piv = (PivotItem)mainPivotMenu.Items[i];
+                            piv.Visibility = Visibility.Collapsed;
+                            ((TextBlock)piv.Header).Visibility = Visibility.Collapsed;
+                        }
+
+                        clCanvas.Visibility = Visibility.Collapsed;
+                        networkFlyout.Text = "Network Unavailable";
+                        mainPivotMenu.SelectedIndex = 3;
+
+                        FlyoutBase.ShowAttachedFlyout(settingsHeaderTextBlock);
+
+                    });
+                }
+            }
+        }
+
+        private void servicingOnCompleted(IBackgroundTaskRegistration task, BackgroundTaskCompletedEventArgs args)
+        {
+            if (checkForBGTask(networkBackgroundTask))
+                unregisterTask(networkBackgroundTask);
+            if (checkForBGTask(servicingBackgroundTask))
+                unregisterTask(servicingBackgroundTask);
+
+            BackgroundExecutionManager.RemoveAccess();
+        }
+
+        private void reregisterNetworkAwarenessTask(string taskName)
+        {
+            foreach (var task in BackgroundTaskRegistration.AllTasks)
+            {
+                if (task.Value.Name == taskName)
+                {
+                    task.Value.Unregister(true);
+                    createNetworkAwarenessTask(task.Value.Name);
+                }
+            }
+        }
+
+        private void reregisterServicingTask(string taskName)
+        {
+            foreach (var task in BackgroundTaskRegistration.AllTasks)
+            {
+                if (task.Value.Name == taskName)
+                {
+                    unregisterTask(task.Value.Name);
+                    createServicingTask(task.Value.Name);
+                }
+            }
+        }
+
+        private void unregisterTask(string taskName)
+        {
+            foreach (var task in BackgroundTaskRegistration.AllTasks)
+            {
+                if (task.Value.Name == taskName)
+                {
+                    task.Value.Unregister(true);
+                }
+            }
         }
     }
 

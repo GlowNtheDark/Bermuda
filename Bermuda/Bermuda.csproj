@@ -207,6 +207,12 @@
       <HintPath>..\GoogleMusicApi.UWP\bin\x86\Debug\GoogleMusicApi.UWP.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Task\Tasks.csproj">
+      <Project>{1413d532-11d7-43be-b45e-a942baefccba}</Project>
+      <Name>Tasks</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
