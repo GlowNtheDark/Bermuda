@@ -1830,24 +1830,28 @@ namespace Bermuda
             {
                 if (status == "Internet Access")
                 {
+                    bool authTest = await testAuthorizationLevel();
                     lastNetworkState = "Internet Access";
+
                     await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () =>
                     {
-                        for (int i = 0; i < 3; i++)
-                        {
-                            PivotItem piv = (PivotItem)mainPivotMenu.Items[i];
-                            piv.Visibility = Visibility.Visible;
-                            ((TextBlock)piv.Header).Visibility = Visibility.Visible;
-                        }
-
                         networkFlyout.Text = "Network Connected";
-
-                        mainPivotMenu.SelectedIndex = 0;
-
                         FlyoutBase.ShowAttachedFlyout(settingsHeaderTextBlock);
 
-                        getListenNow();
+                        if (authTest)
+                        {
+                            for (int i = 0; i < 3; i++)
+                            {
+                                PivotItem piv = (PivotItem)mainPivotMenu.Items[i];
+                                piv.Visibility = Visibility.Visible;
+                                ((TextBlock)piv.Header).Visibility = Visibility.Visible;
+                            } 
+
+                            mainPivotMenu.SelectedIndex = 0;
+
+                            getListenNow();
+                        }
 
                     });
                 }
