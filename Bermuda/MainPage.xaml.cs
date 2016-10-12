@@ -263,8 +263,6 @@ namespace Bermuda
 
             await Task.Delay(3000);
 
-            try
-            {
                 ListListenNowTracksResponse listenNowResult = await mc.ListListenNowTracksAsync();
 
                 foreach (ListenNowItem item in listenNowResult.Items)
@@ -290,12 +288,6 @@ namespace Bermuda
                 recentsGridView.IsItemClickEnabled = true;
                 recentsGridView.ItemClick += new ItemClickEventHandler(GridView_ItemClick);
                 listenNowProgressRing.IsActive = false;
-            }
-
-            catch(Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
-            }
         }
 
         private async void GridView_ItemClick(object sender, ItemClickEventArgs e)
