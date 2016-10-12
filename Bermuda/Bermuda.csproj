@@ -202,12 +202,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="GoogleMusicApi.UWP, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\GoogleMusicApi.UWP\bin\x86\Debug\GoogleMusicApi.UWP.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Task\Tasks.csproj">
       <Project>{1413d532-11d7-43be-b45e-a942baefccba}</Project>
       <Name>Tasks</Name>

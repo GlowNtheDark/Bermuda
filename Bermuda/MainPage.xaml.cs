@@ -265,7 +265,7 @@ namespace Bermuda
 
             try
             {
-                ListListenNowTracksResponse listenNowResult = await mc.ListListenNowTracksAsync(cts2.Token);
+                ListListenNowTracksResponse listenNowResult = await mc.ListListenNowTracksAsync();
 
                 foreach (ListenNowItem item in listenNowResult.Items)
                 {
@@ -302,77 +302,87 @@ namespace Bermuda
         {
             int index = this.recentsGridView.Items.IndexOf(e.ClickedItem);
 
-
-            if (listenNowList[index].Type == "1") //Album Listing
-             {
-                currentPlaylist.Clear();
-                nowPlayingIndex = 0;
-
-                Album album = await getAlbum(mc, listenNowList[index].Album.Id.MetajamCompactKey.ToString());
-
-                if (album.Tracks != null)
+            try
+            {
+                if (listenNowList[index].Type == "1") //Album Listing
                 {
+                    currentPlaylist.Clear();
+                    nowPlayingIndex = 0;
 
-                    foreach (Track song in album.Tracks)
-                        currentPlaylist.Add(song);
+                    Album album = await getAlbum(mc, listenNowList[index].Album.Id.MetajamCompactKey.ToString());
 
-                    mainPivotMenu.SelectedIndex = 2;
+                    if (album.Tracks != null)
+                    {
 
-                    playCurrentPlaylist(nowPlayingIndex);
+                        foreach (Track song in album.Tracks)
+                            currentPlaylist.Add(song);
+
+                        mainPivotMenu.SelectedIndex = 2;
+
+                        playCurrentPlaylist(nowPlayingIndex);
+                    }
+
+                    else
+                    {
+                        FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
+                    }
+
                 }
 
-                else
+                else if (listenNowList[index].Type == "3") //Radio Listing
                 {
-                    FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
+                    currentPlaylist.Clear();
+                    nowPlayingIndex = 0;
+
+                    if (listenNowList[index].RadioStation.Id.Seeds[0].SeedType.ToString() == "3")
+                    {
+                        RadioFeed feed = await getArtistRadioStation(mc, listenNowList[index].RadioStation.Id.Seeds[0].ArtistId);
+
+                        if (feed.Data.Stations[0].Tracks != null)
+                        {
+                            foreach (Track track in feed.Data.Stations[0].Tracks)
+                            {
+                                if (track != null)
+                                    currentPlaylist.Add(track);
+                            }
+
+                            mainPivotMenu.SelectedIndex = 2;
+
+                            playCurrentPlaylist(nowPlayingIndex);
+                        }
+
+                        else
+                        {
+                            FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
+                        }
+                    }
+                    else if (listenNowList[index].RadioStation.Id.Seeds[0].SeedType.ToString() == "5")
+                    {
+                        RadioFeed feed = await getGenreRadioStation(mc, listenNowList[index].RadioStation.Id.Seeds[0].GenreId);
+
+
+                        if (feed.Data.Stations[0].Tracks != null)
+                        {
+                            foreach (Track track in feed.Data.Stations[0].Tracks)
+                                if (track != null)
+                                    currentPlaylist.Add(track);
+
+                            mainPivotMenu.SelectedIndex = 2;
+
+                            playCurrentPlaylist(nowPlayingIndex);
+                        }
+
+                        else
+                        {
+                            FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
+                        }
+                    }
                 }
+            }
+            catch(Exception ex)
+            {
 
             }
-
-             else if (listenNowList[index].Type == "3") //Radio Listing
-             {
-                currentPlaylist.Clear();
-                nowPlayingIndex = 0;
-
-                if (listenNowList[index].RadioStation.Id.Seeds[0].SeedType.ToString() == "3")
-                {
-                    RadioFeed feed = await getArtistRadioStation(mc, listenNowList[index].RadioStation.Id.Seeds[0].ArtistId);
-
-                    if (feed.Data.Stations[0].Tracks != null)
-                    {
-                        foreach (Track track in feed.Data.Stations[0].Tracks)
-                            currentPlaylist.Add(track);
-
-                        mainPivotMenu.SelectedIndex = 2;
-
-                        playCurrentPlaylist(nowPlayingIndex);
-                    }
-
-                    else
-                    {
-                        FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
-                    }
-                }
-                else if (listenNowList[index].RadioStation.Id.Seeds[0].SeedType.ToString() == "5")
-                {
-                    RadioFeed feed = await getGenreRadioStation(mc, listenNowList[index].RadioStation.Id.Seeds[0].GenreId);
-
-
-                    if (feed.Data.Stations[0].Tracks != null)
-                    {
-                        foreach (Track track in feed.Data.Stations[0].Tracks)
-                            currentPlaylist.Add(track);
-
-                        mainPivotMenu.SelectedIndex = 2;
-
-                        playCurrentPlaylist(nowPlayingIndex);
-                    }
-
-                    else
-                    {
-                        FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
-                    }
-                }
-             }
             
         }
 
@@ -485,9 +495,7 @@ namespace Bermuda
             if (mc != null)
             {
                 string query = args.QueryText; //Get search text
-                SearchResponse trackResponse;
-                SearchResponse albumResponse;
-                SearchResponse artistResponse;
+                SearchResponse response;
                 cts = new CancellationTokenSource();
 
                 //clear tracklist for new search
@@ -522,48 +530,16 @@ namespace Bermuda
                     artistlistPrevBtn.Visibility = Visibility.Collapsed;
                 }
 
-                trackResponse = await Search(query, 1);
-                albumResponse = await Search(query, 3);
-                artistResponse = await Search(query, 2);
+                response = await Search(query);
 
-                if (trackResponse != null)
+
+                if (response != null)
                 {
                     try
                     {
-                        parseTracks(trackResponse, cts.Token);
-                    }
-                    catch(OperationCanceledException)
-                    {
-                        System.Diagnostics.Debug.WriteLine("Sorting Cancelled.");
-                    }
-                    catch(Exception e)
-                    {
-                        System.Diagnostics.Debug.WriteLine(e);
-                    }
-                }
-
-                if (albumResponse != null)
-                {
-                    try
-                    {
-                        parseAlbums(albumResponse, cts.Token);
-                        parseArtists(albumResponse, cts.Token);
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        System.Diagnostics.Debug.WriteLine("Sorting Cancelled.");
-                    }
-                    catch (Exception e)
-                    {
-                        System.Diagnostics.Debug.WriteLine(e);
-                    }
-                }
-
-                if (artistResponse != null)
-                {
-                    try
-                    {
-                        parseArtists(artistResponse, cts.Token);
+                        parseTracks(response, cts.Token);
+                        parseAlbums(response, cts.Token);
+                        parseArtists(response, cts.Token);
                     }
                     catch (OperationCanceledException)
                     {
@@ -1364,7 +1340,7 @@ namespace Bermuda
             Button button = sender as Button;
             int index = (int)button.Tag;
 
-            response = await Search(artistList[index].Name.ToString(), 3);
+            response = await Search(artistList[index].Name.ToString());
 
             foreach (SearchResult entry in response.Entries)
             {
@@ -1465,9 +1441,9 @@ namespace Bermuda
             }
         }
 
-        public async Task<SearchResponse> Search(string query, int type)
+        public async Task<SearchResponse> Search(string query)
         {
-            SearchResponse data = await mc.SearchAsync(query, type);
+            SearchResponse data = await mc.SearchAsync(query);
 
             return data;
         }
