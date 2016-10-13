@@ -465,6 +465,8 @@ namespace Bermuda
                     cts = null;
                     cts = new CancellationTokenSource();
                 }
+                else
+                    cts = new CancellationTokenSource();
 
                 //clear tracklist for new search
                 if (tracklist.Any())
@@ -806,6 +808,12 @@ namespace Bermuda
 
         public void playCurrentPlaylist(int startingTrack)
         {
+            if(currentPlaylistGridView.Items.Any())
+                currentPlaylistGridView.Items.Clear();
+
+            foreach(Track song in currentPlaylist)
+                createNowPlayingListItem(song);
+
             playSong(currentPlaylist[startingTrack]);
         }
 
@@ -959,7 +967,7 @@ namespace Bermuda
             trackPlayButton.FontSize = 10; //15 pc
             trackPlayButton.Foreground = new SolidColorBrush(Colors.White);
             trackPlayButton.Tag = index;
-            trackPlayButton.Click += PlayAllButton_Click;
+            trackPlayButton.Click += trackPlayButton_Click;
             trackPlayButton.Style = (Style)this.Resources["customButton"];
 
             grid1.Margin = new Thickness(0, 3, 0, 0);
@@ -1167,7 +1175,7 @@ namespace Bermuda
 
             mainPivotMenu.SelectedIndex = 2;
 
-            playCurrentPlaylist(0);
+            playCurrentPlaylist(nowPlayingIndex);
         }
 
         private Grid createsearchElement(Artist artist, int index)
@@ -1360,7 +1368,7 @@ namespace Bermuda
             playCurrentPlaylist(nowPlayingIndex);
         }
 
-        private void PlayAllButton_Click(object sender, RoutedEventArgs e)
+        private void trackPlayButton_Click(object sender, RoutedEventArgs e)
         {
             currentPlaylist.Clear();
             nowPlayingIndex = 0;
@@ -1372,7 +1380,7 @@ namespace Bermuda
 
             mainPivotMenu.SelectedIndex = 2;
 
-            playCurrentPlaylist(0);
+            playCurrentPlaylist(nowPlayingIndex);
         }
 
         public async Task<RadioFeed> GetStationfeed(MobileClient mc)
@@ -1917,6 +1925,206 @@ namespace Bermuda
                     task.Value.Unregister(true);
                 }
             }
+        }
+
+        private void testGridButton_Click(object sender, RoutedEventArgs e)
+        {
+            Grid grid1 = new Grid();
+
+            RowDefinition rowDefinition1 = new RowDefinition();
+            rowDefinition1.Height = new GridLength(50, GridUnitType.Pixel);
+
+            // Create column definitions for first grid
+            ColumnDefinition columnDefinition1 = new ColumnDefinition();
+            ColumnDefinition columnDefinition2 = new ColumnDefinition();
+            columnDefinition1.Width = new GridLength(50, GridUnitType.Pixel); //xbox
+            columnDefinition2.Width = new GridLength(140, GridUnitType.Pixel);
+
+
+            // Attached definitions to grids
+            grid1.ColumnDefinitions.Add(columnDefinition1);
+            grid1.ColumnDefinitions.Add(columnDefinition2);
+
+            //Create elements
+            Windows.UI.Xaml.Controls.Image image = new Windows.UI.Xaml.Controls.Image();
+            TextBlock trackName = new TextBlock();
+            TextBlock albumName = new TextBlock();
+            TextBlock artistName = new TextBlock();
+
+            //Set image properties
+            image.Width = double.NaN; //150 for pc
+            image.Height = double.NaN; //150 for pc
+            image.Stretch = Stretch.Fill;
+            image.Margin = new Thickness(0, 0, 0, 0);
+            image.HorizontalAlignment = HorizontalAlignment.Stretch;
+            image.VerticalAlignment = VerticalAlignment.Stretch;
+            //if (track.AlbumArtReference[0].Url != null)
+                //image.Source = new BitmapImage(new Uri(track.AlbumArtReference[0].Url));
+            //else
+                image.Source = new BitmapImage(new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute));
+
+            //Set trackName properties
+            trackName.Width = double.NaN;
+            trackName.Height = 15;
+            trackName.Margin = new Thickness(5, 0, 0, 0);
+            trackName.HorizontalAlignment = HorizontalAlignment.Right;
+            trackName.VerticalAlignment = VerticalAlignment.Top;
+            trackName.FontSize = 12; //15 pc
+            trackName.Text = "Track Name";//track.Title.ToString();
+            trackName.Foreground = new SolidColorBrush(Colors.White);
+            
+            //Set albumName properties
+            albumName.Width = double.NaN;
+            albumName.Height = 15;
+            albumName.Margin = new Thickness(5, 0, 0, 0);
+            albumName.HorizontalAlignment = HorizontalAlignment.Right;
+            albumName.VerticalAlignment = VerticalAlignment.Center;
+            albumName.FontSize = 10; // 15 pc
+            albumName.Text = "Album Name";//track.Album.ToString();
+            albumName.Foreground = new SolidColorBrush(Colors.White);
+
+            //Set artistName properties
+            artistName.Width = double.NaN;
+            artistName.Height = 15;
+            artistName.Margin = new Thickness(5, 0, 0, 0);
+            artistName.HorizontalAlignment = HorizontalAlignment.Right;
+            artistName.VerticalAlignment = VerticalAlignment.Bottom;
+            artistName.FontSize = 10; //15 pc
+            artistName.Text = "Artist Name";//track.Artist.ToString();
+            artistName.Foreground = new SolidColorBrush(Colors.White);
+
+            grid1.Margin = new Thickness(0, 1, 0, 0);
+
+
+            //Assign elements to grid and row/columns
+            grid1.Children.Add(image);
+            grid1.Children.Add(trackName);
+            grid1.Children.Add(albumName);
+            grid1.Children.Add(artistName);
+
+            Grid.SetColumn(image, 0);
+            Grid.SetColumn(trackName, 1);
+            Grid.SetColumn(albumName, 1);
+            Grid.SetColumn(artistName, 1);
+
+            Grid.SetRow(image, 0);
+            Grid.SetRow(trackName, 0);
+            Grid.SetRow(albumName, 0);
+            Grid.SetRow(artistName, 0);
+
+            grid1.BorderBrush = new SolidColorBrush(Color.FromArgb(255, 0, 255, 12));
+            grid1.BorderThickness = new Thickness(0.2);
+
+            currentPlaylistGridView.Items.Add(grid1);
+        }
+
+        private void createNowPlayingListItem(Track track)
+        {
+            Grid grid1 = new Grid();
+
+            RowDefinition rowDefinition1 = new RowDefinition();
+            rowDefinition1.Height = new GridLength(50, GridUnitType.Pixel);
+
+            // Create column definitions for first grid
+            ColumnDefinition columnDefinition1 = new ColumnDefinition();
+            ColumnDefinition columnDefinition2 = new ColumnDefinition();
+            columnDefinition1.Width = new GridLength(50, GridUnitType.Pixel); //xbox
+            columnDefinition2.Width = new GridLength(135, GridUnitType.Pixel);
+
+
+            // Attached definitions to grids
+            grid1.ColumnDefinitions.Add(columnDefinition1);
+            grid1.ColumnDefinitions.Add(columnDefinition2);
+
+            //Create elements
+            Windows.UI.Xaml.Controls.Image image = new Windows.UI.Xaml.Controls.Image();
+            TextBlock trackName = new TextBlock();
+            TextBlock albumName = new TextBlock();
+            TextBlock artistName = new TextBlock();
+
+            //Set image properties
+            image.Width = double.NaN; //150 for pc
+            image.Height = double.NaN; //150 for pc
+            image.Stretch = Stretch.Fill;
+            image.Margin = new Thickness(0, 0, 0, 0);
+            image.HorizontalAlignment = HorizontalAlignment.Stretch;
+            image.VerticalAlignment = VerticalAlignment.Stretch;
+            if (track.AlbumArtReference[0].Url != null)
+            image.Source = new BitmapImage(new Uri(track.AlbumArtReference[0].Url));
+            else
+            image.Source = new BitmapImage(new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute));
+
+            //Set trackName properties
+            trackName.Width = double.NaN;
+            trackName.Height = 15;
+            trackName.Margin = new Thickness(0, 0, 15, 0);
+            trackName.HorizontalAlignment = HorizontalAlignment.Right;
+            trackName.VerticalAlignment = VerticalAlignment.Top;
+            trackName.FontSize = 12; //15 pc
+            if (track.Title.ToString().Length > 20)
+            {
+                trackName.Text = track.Title.ToString().Substring(0, 19) + "...";
+            }
+            else
+                trackName.Text = track.Title.ToString();
+
+            trackName.Foreground = new SolidColorBrush(Colors.White);
+
+            //Set albumName properties
+            albumName.Width = double.NaN;
+            albumName.Height = 15;
+            albumName.Margin = new Thickness(0, 0, 15, 0);
+            albumName.HorizontalAlignment = HorizontalAlignment.Right;
+            albumName.VerticalAlignment = VerticalAlignment.Center;
+            albumName.FontSize = 10; // 15 pc
+            if (track.Album.ToString().Length > 20)
+            {
+                albumName.Text = track.Album.ToString().Substring(0, 19) + "...";
+            }
+            else
+                albumName.Text = track.Album.ToString();
+
+
+            albumName.Foreground = new SolidColorBrush(Colors.White);
+
+            //Set artistName properties
+            artistName.Width = double.NaN;
+            artistName.Height = 15;
+            artistName.Margin = new Thickness(0, 0, 15, 0);
+            artistName.HorizontalAlignment = HorizontalAlignment.Right;
+            artistName.VerticalAlignment = VerticalAlignment.Bottom;
+            artistName.FontSize = 10; //15 pc
+            if (track.Artist.ToString().Length > 20)
+            {
+                artistName.Text = track.Artist.ToString().Substring(0, 19) + "...";
+            }
+            else
+                artistName.Text = track.Artist.ToString();
+
+            artistName.Foreground = new SolidColorBrush(Colors.White);
+
+
+            //Assign elements to grid and row/columns
+            grid1.Children.Add(image);
+            grid1.Children.Add(trackName);
+            grid1.Children.Add(albumName);
+            grid1.Children.Add(artistName);
+
+            Grid.SetColumn(image, 0);
+            Grid.SetColumn(trackName, 1);
+            Grid.SetColumn(albumName, 1);
+            Grid.SetColumn(artistName, 1);
+
+            Grid.SetRow(image, 0);
+            Grid.SetRow(trackName, 0);
+            Grid.SetRow(albumName, 0);
+            Grid.SetRow(artistName, 0);
+
+            grid1.BorderBrush = new SolidColorBrush(Colors.Black);
+            grid1.BorderThickness = new Thickness(0.2);
+            grid1.Margin = new Thickness(0, 1, 0, 0);
+
+            currentPlaylistGridView.Items.Add(grid1);
         }
     }
 

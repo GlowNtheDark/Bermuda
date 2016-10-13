@@ -872,7 +872,14 @@
                         <RowDefinition Height="50"/>
                     </Grid.RowDefinitions>
                     <ProgressBar x:Name="trackPlayProgressBar" Width="Auto" Height="Auto" Value="0" Background="{x:Null}" Foreground="#FF00FF0C"/>
-                    <Image x:Name="albumArtImage" Height="Auto" Width="Auto" Margin="0,10,0,0" Grid.Row="1" Stretch="Fill"/>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="200"/>
+                        </Grid.ColumnDefinitions>
+                        <Image x:Name="albumArtImage" Height="Auto" Width="Auto" Margin="0,10,0,0" Grid.Column="0" Stretch="Fill"/>
+                        <GridView IsItemClickEnabled="False" Margin="3,10,0,0" Name="currentPlaylistGridView" IsTabStop="False" Width="Auto" Height="Auto" Grid.Column="1"/>
+                    </Grid>
                     <StackPanel x:Name="stackPanel1" Orientation="Horizontal" HorizontalAlignment="Center" Height="50" Margin="0,0,0,0" VerticalAlignment="Bottom" Width="Auto" Grid.Row="2" Visibility="Collapsed">
                         <Button x:Name="previousButton" Style="{StaticResource customPrevButton}" Width="50" Margin="0,0,5,0" HorizontalAlignment="Left" Height="50" Foreground="White" Click="previousButton_Click" Visibility="Visible"/>
                         <Button x:Name="playButton" Style="{StaticResource customPlayButton}" Width="50" HorizontalAlignment="Center" Height="50" Foreground="White" Click="playPause_Click" Visibility="Collapsed"/>
@@ -880,6 +887,8 @@
                         <Button x:Name="nextButton" Style="{StaticResource customNextButton}" Width="50" Margin="5,0,0,0" HorizontalAlignment="Right" Height="50" Foreground="White" Click="nextButton_Click" Visibility="Visible"/>
                     </StackPanel>
                     <Button x:Name="shuffleButton" Style="{StaticResource customShuffleButton}" Width="50" Margin="0,0,5,0" HorizontalAlignment="Left" Height="50" Foreground="White" Click="shuffleButton_Click" Grid.Row="2" Visibility="Collapsed"/>
+                    <Button x:Name="testGridButton" Click="testGridButton_Click" Content="Test" Width="50" Margin="100,0,5,0" HorizontalAlignment="Left" Height="50" Foreground="White" Grid.Row="2" Visibility="Visible"/>
+                    
                     <Slider Visibility="Collapsed" Style="{StaticResource customSlider}" Foreground="#FF00FF0C" Value="50" Name="volumeSlider" Width="150" Height="50" Grid.Row="2" Margin="0,5,10,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" ValueChanged="volumeSlider_ValueChanged" SmallChange="5" Maximum="100"/>
                 </Grid>
             </PivotItem>
@@ -905,7 +914,7 @@
                 </Grid>
             </PivotItem>
         </Pivot>
-        <Canvas Name="clCanvas" HorizontalAlignment="Right" Height="88" Margin="0,0,0,0" VerticalAlignment="Top" Width="200" Visibility="Collapsed">
+        <Canvas Name="clCanvas" HorizontalAlignment="Right" Height="88" Margin="0,5,0,0" VerticalAlignment="Top" Width="200" Visibility="Collapsed">
             <TextBlock x:Name="cltextBlock" TextWrapping="Wrap" FontSize="15" Foreground="White" Text="Currently Listening To:" TextAlignment="Center" Width="200"/>
             <TextBlock x:Name="clsongnametextBlock" TextWrapping="Wrap" Text="SongName" Canvas.Top="25" Width="200" FontSize="15" Foreground="White" TextAlignment="Center"/>
             <TextBlock x:Name="clbytextBlock" TextWrapping="Wrap" Text="by" Canvas.Top="45" Width="200" FontSize="15" Foreground="White" HorizontalAlignment="Center" TextAlignment="Center"/>
