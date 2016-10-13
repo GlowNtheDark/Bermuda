@@ -22,12 +22,12 @@
         <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#413D3D" />
       </uap:VisualElements>
       <Extensions>
-        <Extension Category="windows.backgroundTasks" EntryPoint="Tasks.NetworkAwareness">
+        <Extension Category="windows.backgroundTasks" EntryPoint="Tasks.ServicingComplete">
           <BackgroundTasks>
             <Task Type="systemEvent" />
           </BackgroundTasks>
         </Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="Tasks.ServicingComplete">
+        <Extension Category="windows.backgroundTasks" EntryPoint="Tasks.NetworkAwareness">
           <BackgroundTasks>
             <Task Type="systemEvent" />
           </BackgroundTasks>
