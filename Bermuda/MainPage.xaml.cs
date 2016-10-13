@@ -80,8 +80,8 @@ namespace Bermuda
         private int artistPageNumber = 0;
         private bool isFirstPlaySinceOpen = true;
         private bool songEnded = false;
-        private CancellationTokenSource cts;
-        private CancellationTokenSource cts2;
+        private CancellationTokenSource cts = null;
+        private CancellationTokenSource cts2 = null;
         private string lastNetworkState;
         private string networkBackgroundTask = "Network-Awareness-Task";
         private string servicingBackgroundTask = "Servicing-Complete-Task";
@@ -229,33 +229,6 @@ namespace Bermuda
             }
         }
 
-        private async void image_onClick(object sender, RoutedEventArgs e)
-        {
-            Windows.UI.Xaml.Controls.Image img = sender as Windows.UI.Xaml.Controls.Image;
-
-            string listenNowTag = img.Tag.ToString();
-
-            string[] listenNowTagArray = listenNowTag.Split(' ');
-
-            if(listenNowTagArray.First() == "Album") //Album Listing
-            {
-                string id = listenNowTagArray[1];
-
-            }
-
-            else if (listenNowTagArray.First() == "Radio") //Radio Listing
-            {
-                string id = listenNowTagArray[1];
-
-                if (id == "3")
-                    await getArtistRadioStation(mc, listenNowTagArray[2]);
-                if (id == "5")
-                    await getGenreRadioStation(mc, listenNowTagArray[2]);
-            }
-
-
-        }
-
         private async void getListenNow()
         {
             listenNowProgressRing.IsActive = true;
@@ -264,6 +237,9 @@ namespace Bermuda
             await Task.Delay(3000);
 
                 ListListenNowTracksResponse listenNowResult = await mc.ListListenNowTracksAsync();
+
+            if (listenNowResult != null)
+            {
 
                 foreach (ListenNowItem item in listenNowResult.Items)
                 {
@@ -288,6 +264,13 @@ namespace Bermuda
                 recentsGridView.IsItemClickEnabled = true;
                 recentsGridView.ItemClick += new ItemClickEventHandler(GridView_ItemClick);
                 listenNowProgressRing.IsActive = false;
+            }
+
+            else
+            {
+                appTitleTextBox.Text = "Something went wrong with your request.";
+                FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
+            }
         }
 
         private async void GridView_ItemClick(object sender, ItemClickEventArgs e)
@@ -314,11 +297,6 @@ namespace Bermuda
                         playCurrentPlaylist(nowPlayingIndex);
                     }
 
-                    else
-                    {
-                        FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
-                    }
-
                 }
 
                 else if (listenNowList[index].Type == "3") //Radio Listing
@@ -343,10 +321,6 @@ namespace Bermuda
                             playCurrentPlaylist(nowPlayingIndex);
                         }
 
-                        else
-                        {
-                            FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
-                        }
                     }
                     else if (listenNowList[index].RadioStation.Id.Seeds[0].SeedType.ToString() == "5")
                     {
@@ -363,17 +337,13 @@ namespace Bermuda
 
                             playCurrentPlaylist(nowPlayingIndex);
                         }
-
-                        else
-                        {
-                            FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
-                        }
                     }
                 }
             }
             catch(Exception ex)
             {
-
+                appTitleTextBox.Text = "Something went wrong with your request.";
+                FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
             }
             
         }
@@ -488,7 +458,13 @@ namespace Bermuda
             {
                 string query = args.QueryText; //Get search text
                 SearchResponse response;
-                cts = new CancellationTokenSource();
+                if (cts != null)
+                {
+                    cts.Cancel();
+                    cts.Dispose();
+                    cts = null;
+                    cts = new CancellationTokenSource();
+                }
 
                 //clear tracklist for new search
                 if (tracklist.Any())
@@ -524,13 +500,12 @@ namespace Bermuda
 
                 response = await Search(query);
 
-
                 if (response != null)
                 {
                     try
                     {
-                        parseTracks(response, cts.Token);
                         parseAlbums(response, cts.Token);
+                        parseTracks(response, cts.Token);
                         parseArtists(response, cts.Token);
                     }
                     catch (OperationCanceledException)
@@ -542,8 +517,6 @@ namespace Bermuda
                         System.Diagnostics.Debug.WriteLine(e);
                     }
                 }
-
-                //response = null; //set to null since no longer needed
             }
 
             else
@@ -748,6 +721,8 @@ namespace Bermuda
             {
                 nowPlayingIndex++;
                 playSong(currentPlaylist[nowPlayingIndex]);
+                appTitleTextBox.Text = "Moving on. Something screwy happened with that last one.";
+                FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
             }
 
         }
@@ -785,7 +760,11 @@ namespace Bermuda
 
             // Set the album art thumbnail.
             // RandomAccessStreamReference is defined in Windows.Storage.Streams
-            updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(currentPlaylist[nowPlayingIndex].AlbumArtReference[0].Url));
+            if(currentPlaylist[nowPlayingIndex].AlbumArtReference[0].Url != null)
+                updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(currentPlaylist[nowPlayingIndex].AlbumArtReference[0].Url));
+            else
+                updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri("Assets/logo2480x1200.png", UriKind.Relative));
+
             updater.Update();
 
         }
@@ -815,6 +794,12 @@ namespace Bermuda
                     pauseButton.Visibility = Visibility.Collapsed;
                     playButton.Visibility = Visibility.Visible;
                     clCanvas.Visibility = Visibility.Collapsed;
+
+                    if(nowPlayingIndex == currentPlaylist.Count() - 1)
+                    {
+                        appTitleTextBox.Text = "Whatever you were listening to is stale or reached its end. Pick something new!";
+                        FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
+                    }
                 });
             }
         }
@@ -1626,10 +1611,18 @@ namespace Bermuda
 
         private void shuffleButton_Click(object sender, RoutedEventArgs e)
         {
-            //isShuffleOn = true;
-            Shuffle.AllTheThings(currentPlaylist);
-            nowPlayingIndex = 0;
-            playSong(currentPlaylist[nowPlayingIndex]);
+            if (currentPlaylist.Count > 1)
+            {
+                Shuffle.AllTheThings(currentPlaylist);
+                nowPlayingIndex = 0;
+                playSong(currentPlaylist[nowPlayingIndex]);
+            }
+
+            else
+            {
+                generalFlyout.Text = "Dafuq? Trying to shuffle one song is for crazy people!";
+                FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
+            }
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -1637,11 +1630,11 @@ namespace Bermuda
             PassSession data = e.Parameter as PassSession;
             mc = data.session;
 
-            signedInAsTextBlock.Text = mc.Session.UserDetails.Email.ToString();
-            signedInAsTextBlock.Visibility = Visibility.Visible;
-
             if (mc != null)
             {
+                signedInAsTextBlock.Text = mc.Session.UserDetails.Email.ToString();
+                signedInAsTextBlock.Visibility = Visibility.Visible;
+
                 if (await testAuthorizationLevel())
                 {
                     getListenNow();
@@ -1655,23 +1648,32 @@ namespace Bermuda
                         ((TextBlock)piv.Header).Visibility = Visibility.Collapsed;
                     }
 
-                    mainPivotMenu.SelectedIndex = 3;
-
-                    FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
+                   mainPivotMenu.SelectedIndex = 3;
+                   appTitleTextBox.Text = "Something went wrong with your request. Please make sure you have a valid Music Subscription associated with the Gmail account you logged in with.This app will not work without one.";
+                   FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
                 }
             }
         }
 
         private async Task<bool> testAuthorizationLevel()
         {
-            Track data = await getTrack(mc, "Tolw673c2mkdbbthmo4e6vzgsdu");
+            try
+            {
+                Track data = await getTrack(mc, "Tolw673c2mkdbbthmo4e6vzgsdu");
 
-            Uri data2 = await GetStreamUrl(mc, data);
+                Uri data2 = await GetStreamUrl(mc, data);
 
-            if (data2 != null)
-                return true;
-            else
-                return false; ;
+                if (data2 != null)
+                    return true;
+                else
+                    return false;
+            }
+
+            catch(Exception ex)
+            {
+                System.Diagnostics.Debug.Write(ex);
+                return false;
+            }
         }
 
         private void logoutButton_Click(object sender, RoutedEventArgs e)

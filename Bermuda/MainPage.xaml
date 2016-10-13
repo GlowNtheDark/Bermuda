@@ -809,7 +809,7 @@
                     <FlyoutBase.AttachedFlyout>
                         <Flyout Placement="Right" FlyoutPresenterStyle="{StaticResource customFlyout}">
                             <Grid HorizontalAlignment="Right" Height="110" Width="300" Background="#FF413D3D">
-                                <TextBlock Name="generalFlyout" Margin="5,5,0,0" Text="Something went wrong with your request. Please make sure you have a valid Music Subscription associated with the Gmail account you logged in with. This app will not work without one." TextWrapping="WrapWholeWords" Foreground="White"/>
+                                <TextBlock Name="generalFlyout" Margin="5,5,0,0" Text="" TextWrapping="WrapWholeWords" Foreground="White"/>
                             </Grid>
                         </Flyout>
                     </FlyoutBase.AttachedFlyout>
