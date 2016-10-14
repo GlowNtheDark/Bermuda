@@ -80,6 +80,7 @@ namespace Bermuda
         private int artistPageNumber = 0;
         private bool isFirstPlaySinceOpen = true;
         private bool songEnded = false;
+        private bool loadingSong = false;
         private CancellationTokenSource cts = null;
         private CancellationTokenSource cts2 = null;
         private string lastNetworkState;
@@ -668,6 +669,8 @@ namespace Bermuda
 
         public async void playSong(Track track)
         {
+            loadingSong = true;
+
             if (track != null)
             {
                 Uri uri;
@@ -679,48 +682,56 @@ namespace Bermuda
 
                 await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                 {
-                    if (track.AlbumArtReference != null)
-                        albumArtImage.Source = new BitmapImage(new Uri(track.AlbumArtReference[0].Url));
-                    else
-                        albumArtImage.Source = new BitmapImage(new Uri("Assets/logo2480x1200.png", UriKind.Relative));
-
-                    player.Source = MediaSource.CreateFromUri(uri);
-                    trackPlayProgressBar.Maximum = (double)track.DurationMillis / 1000;
-                    trackPlayProgressBar.Value = 0;
-
-
-
-                    if (track.Artist.ToString().Length > 20)
+                    try
                     {
-                        clartistnametextBlock.Text = track.Artist.ToString().Substring(0, 19) + "...";
-                    }
-                    else
-                        clartistnametextBlock.Text = track.Artist.ToString();
+                        setNowPlayingAnimation(nowPlayingIndex);
 
-                    if (track.Title.ToString().Length > 20)
+                        if (track.AlbumArtReference != null)
+                            albumArtImage.Source = new BitmapImage(new Uri(track.AlbumArtReference[0].Url));
+                        else
+                            albumArtImage.Source = new BitmapImage(new Uri("Assets/logo2480x1200.png", UriKind.Relative));
+
+                        player.Source = MediaSource.CreateFromUri(uri);
+                        trackPlayProgressBar.Maximum = (double)track.DurationMillis / 1000;
+                        trackPlayProgressBar.Value = 0;
+
+                        if (track.Artist.ToString().Length > 20)
+                        {
+                            clartistnametextBlock.Text = track.Artist.ToString().Substring(0, 19) + "...";
+                        }
+                        else
+                            clartistnametextBlock.Text = track.Artist.ToString();
+
+                        if (track.Title.ToString().Length > 20)
+                        {
+                            clsongnametextBlock.Text = track.Title.ToString().Substring(0, 19) + "...";
+                        }
+                        else
+                            clsongnametextBlock.Text = track.Title.ToString();
+
+
+                        songEnded = false;
+                        songTimer.Start();
+                        player.Play();
+
+                        if (stackPanel1.Visibility == Visibility.Collapsed)
+                            stackPanel1.Visibility = Visibility.Visible;
+                        if (playButton.Visibility == Visibility.Visible)
+                            playButton.Visibility = Visibility.Collapsed;
+                        if (pauseButton.Visibility == Visibility.Collapsed)
+                            pauseButton.Visibility = Visibility.Visible;
+                        if (clCanvas.Visibility == Visibility.Collapsed)
+                            clCanvas.Visibility = Visibility.Visible;
+                        if (shuffleButton.Visibility == Visibility.Collapsed)
+                            shuffleButton.Visibility = Visibility.Visible;
+                        if (volumeSlider.Visibility == Visibility.Collapsed)
+                            volumeSlider.Visibility = Visibility.Visible;
+                    }
+
+                    catch(Exception ex)
                     {
-                        clsongnametextBlock.Text = track.Title.ToString().Substring(0, 19) + "...";
+                        System.Diagnostics.Debug.Write(ex);
                     }
-                    else
-                        clsongnametextBlock.Text = track.Title.ToString();
-
-
-                    songEnded = false;
-                    songTimer.Start();
-                    player.Play();
-
-                    if (stackPanel1.Visibility == Visibility.Collapsed)
-                        stackPanel1.Visibility = Visibility.Visible;
-                    if (playButton.Visibility == Visibility.Visible)
-                        playButton.Visibility = Visibility.Collapsed;
-                    if (pauseButton.Visibility == Visibility.Collapsed)
-                        pauseButton.Visibility = Visibility.Visible;
-                    if (clCanvas.Visibility == Visibility.Collapsed)
-                        clCanvas.Visibility = Visibility.Visible;
-                    if (shuffleButton.Visibility == Visibility.Collapsed)
-                        shuffleButton.Visibility = Visibility.Visible;
-                    if (volumeSlider.Visibility == Visibility.Collapsed)
-                        volumeSlider.Visibility = Visibility.Visible;
 
                 });
             }
@@ -732,9 +743,7 @@ namespace Bermuda
                 generalFlyout.Text = "Moving on. Something screwy happened with that last one.";
                 FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
             }
-
-            setNowPlayingAnimation(nowPlayingIndex);
-
+            loadingSong = false;
         }
 
         private void setupPlayer()
@@ -816,11 +825,16 @@ namespace Bermuda
 
         public void playCurrentPlaylist(int startingTrack)
         {
+            int index = 0;
+
             if(currentPlaylistGridView.Items.Any())
                 currentPlaylistGridView.Items.Clear();
 
-            foreach(Track song in currentPlaylist)
-                createNowPlayingListItem(song);
+            foreach (Track song in currentPlaylist)
+            {
+                createNowPlayingListItem(song, index);
+                index++;
+            }
 
             playSong(currentPlaylist[startingTrack]);
         }
@@ -1443,10 +1457,13 @@ namespace Bermuda
 
         private void nextButton_Click(object sender, RoutedEventArgs e)
         {
-            if (nowPlayingIndex < currentPlaylist.Count() - 1)
+            if (!loadingSong)
             {
-                nowPlayingIndex++;
-                playSong(currentPlaylist[nowPlayingIndex]);
+                if (nowPlayingIndex < currentPlaylist.Count() - 1)
+                {
+                    nowPlayingIndex++;
+                    playSong(currentPlaylist[nowPlayingIndex]);
+                }
             }
         }
 
@@ -2028,7 +2045,7 @@ namespace Bermuda
             setNowPlayingAnimation(0);
         }
 
-        private void createNowPlayingListItem(Track track)
+        private void createNowPlayingListItem(Track track, int index)
         {
             Grid grid1 = new Grid();
 
@@ -2133,16 +2150,24 @@ namespace Bermuda
             grid1.BorderBrush = new SolidColorBrush(Colors.Black);
             grid1.BorderThickness = new Thickness(0.2);
             grid1.Margin = new Thickness(0, 1, 0, 0);
-            grid1.Name = "grid1";
+            grid1.Name = "grid" + index;
 
             currentPlaylistGridView.Items.Add(grid1);
         }
 
-        private async void setNowPlayingAnimation(int index)
+        private void setNowPlayingAnimation(int index)
         {
-            await Task.Delay(1000);
+            //await Task.Delay(1000);
+
+            if(index > 0)
+            {
+                var lastItem = currentPlaylistGridView.ContainerFromIndex(index) as GridViewItem;
+                var lastGrid = lastItem.FindName("grid" + (index - 1)) as Grid;
+                lastGrid.Background = null;
+            }
+
             var item = currentPlaylistGridView.ContainerFromIndex(index) as GridViewItem;
-            var grid = item.FindName("grid1") as Grid;
+            var grid = item.FindName("grid" + index) as Grid;
 
             ImageBrush myBrush = new ImageBrush();
             Windows.UI.Xaml.Controls.Image someImage = new Windows.UI.Xaml.Controls.Image();
@@ -2151,6 +2176,8 @@ namespace Bermuda
             myBrush.ImageSource = someImage.Source;
 
             grid.Background = myBrush;
+
+
         }
     }
 
