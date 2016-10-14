@@ -134,6 +134,7 @@
     <Content Include="Assets\NewStoreLogo.scale-200.png" />
     <Content Include="Assets\NewStoreLogo.scale-400.png" />
     <Content Include="Assets\NextButton.png" />
+    <Content Include="Assets\nowPlaying.gif" />
     <Content Include="Assets\no_image.png" />
     <Content Include="Assets\PauseButton.png" />
     <Content Include="Assets\PlayButton.png" />

@@ -249,13 +249,18 @@ namespace Bermuda
 
                     if (item.Type == "1")
                     {
-                        create_ListenNow(index, item.Album.Id.Title, item.Album.Id.Artist, item.Images[0].Url);
+                        if(item.Images != null)
+                            create_ListenNow(index, item.Album.Id.Title, item.Album.Id.Artist, item.Images[0].Url);
+                        else
+                            create_ListenNow(index, item.Album.Id.Title, item.Album.Id.Artist, "ms-appx:///Assets/no_image.png");
                     }
 
                     else if (item.Type == "3")
                     {
-
-                        create_ListenNow(index, item.RadioStation.Title, item.Images[0].Url);
+                        if(item.Images != null)
+                            create_ListenNow(index, item.RadioStation.Title, item.Images[0].Url);
+                        else
+                            create_ListenNow(index, item.RadioStation.Title, "ms-appx:///Assets/no_image.png");
                     }
 
                     index++;
@@ -268,7 +273,7 @@ namespace Bermuda
 
             else
             {
-                appTitleTextBox.Text = "Something went wrong with your request.";
+                generalFlyout.Text = "Something went wrong with your request.";
                 FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
             }
         }
@@ -716,6 +721,7 @@ namespace Bermuda
                         shuffleButton.Visibility = Visibility.Visible;
                     if (volumeSlider.Visibility == Visibility.Collapsed)
                         volumeSlider.Visibility = Visibility.Visible;
+
                 });
             }
 
@@ -723,9 +729,11 @@ namespace Bermuda
             {
                 nowPlayingIndex++;
                 playSong(currentPlaylist[nowPlayingIndex]);
-                appTitleTextBox.Text = "Moving on. Something screwy happened with that last one.";
+                generalFlyout.Text = "Moving on. Something screwy happened with that last one.";
                 FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
             }
+
+            setNowPlayingAnimation(nowPlayingIndex);
 
         }
 
@@ -799,7 +807,7 @@ namespace Bermuda
 
                     if(nowPlayingIndex == currentPlaylist.Count() - 1)
                     {
-                        appTitleTextBox.Text = "Whatever you were listening to is stale or reached its end. Pick something new!";
+                        generalFlyout.Text = "Whatever you were listening to is stale or reached its end. Pick something new!";
                         FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
                     }
                 });
@@ -1927,7 +1935,7 @@ namespace Bermuda
             }
         }
 
-        private void testGridButton_Click(object sender, RoutedEventArgs e)
+        private async void testGridButton_Click(object sender, RoutedEventArgs e)
         {
             Grid grid1 = new Grid();
 
@@ -1993,8 +2001,6 @@ namespace Bermuda
             artistName.Text = "Artist Name";//track.Artist.ToString();
             artistName.Foreground = new SolidColorBrush(Colors.White);
 
-            grid1.Margin = new Thickness(0, 1, 0, 0);
-
 
             //Assign elements to grid and row/columns
             grid1.Children.Add(image);
@@ -2014,8 +2020,12 @@ namespace Bermuda
 
             grid1.BorderBrush = new SolidColorBrush(Color.FromArgb(255, 0, 255, 12));
             grid1.BorderThickness = new Thickness(0.2);
+            grid1.Margin = new Thickness(0, 1, 0, 0);
+            grid1.Name = "grid1";
 
             currentPlaylistGridView.Items.Add(grid1);
+            await Task.Delay(3000);
+            setNowPlayingAnimation(0);
         }
 
         private void createNowPlayingListItem(Track track)
@@ -2123,8 +2133,24 @@ namespace Bermuda
             grid1.BorderBrush = new SolidColorBrush(Colors.Black);
             grid1.BorderThickness = new Thickness(0.2);
             grid1.Margin = new Thickness(0, 1, 0, 0);
+            grid1.Name = "grid1";
 
             currentPlaylistGridView.Items.Add(grid1);
+        }
+
+        private async void setNowPlayingAnimation(int index)
+        {
+            await Task.Delay(1000);
+            var item = currentPlaylistGridView.ContainerFromIndex(index) as GridViewItem;
+            var grid = item.FindName("grid1") as Grid;
+
+            ImageBrush myBrush = new ImageBrush();
+            Windows.UI.Xaml.Controls.Image someImage = new Windows.UI.Xaml.Controls.Image();
+
+            someImage.Source = new BitmapImage(new Uri("ms-appx:///Assets/nowPlaying.gif", UriKind.Absolute));
+            myBrush.ImageSource = someImage.Source;
+
+            grid.Background = myBrush;
         }
     }
 
