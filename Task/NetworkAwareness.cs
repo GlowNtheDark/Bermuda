@@ -35,19 +35,35 @@ namespace Tasks
         {
             if (condition)
             {
-                var key = _taskInstance.Task.Name;
-                String taskStatus = "Internet Access";
-                var settings = ApplicationData.Current.LocalSettings;
-                settings.Values[key] = taskStatus;
+                try
+                {
+                    var key = _taskInstance.Task.Name;
+                    String taskStatus = "Internet Access";
+                    var settings = ApplicationData.Current.LocalSettings;
+                    settings.Values[key] = taskStatus;
+                }
+
+                catch(Exception ex)
+                {
+                    System.Diagnostics.Debug.Write(ex);
+                }
 
             }
             else
             {
-                var key = _taskInstance.Task.Name;
-                String taskStatus = "No Internet Access";
-                var settings = ApplicationData.Current.LocalSettings;
-                settings.Values[key] = taskStatus;
-            }
+                try
+                { 
+                    var key = _taskInstance.Task.Name;
+                    String taskStatus = "No Internet Access";
+                    var settings = ApplicationData.Current.LocalSettings;
+                    settings.Values[key] = taskStatus;
+                }
+
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.Write(ex);
+                }
+        }
         }
 
         public IAsyncOperation<bool> Network()
@@ -83,21 +99,29 @@ namespace Tasks
         }
 
         public bool getNetworkStatus()
-        {   
+        {
+            try
+            { 
+                ConnectionProfile cf = NetworkInformation.GetInternetConnectionProfile();
             
-            ConnectionProfile cf = NetworkInformation.GetInternetConnectionProfile();
-            
-            if (cf == null)
-            {
-                return false;
+                if (cf == null)
+                {
+                    return false;
+                }
+
+                var level = cf.GetNetworkConnectivityLevel();
+
+                if (level == NetworkConnectivityLevel.InternetAccess)
+                    return true;
+                else
+                    return false;
             }
 
-            var level = cf.GetNetworkConnectivityLevel();
-
-            if (level == NetworkConnectivityLevel.InternetAccess)
-                return true;
-            else
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.Write(ex);
                 return false;
+            }
         }
     
 

@@ -86,6 +86,7 @@ namespace Bermuda
         private string lastNetworkState;
         private string networkBackgroundTask = "Network-Awareness-Task";
         private string servicingBackgroundTask = "Servicing-Complete-Task";
+        private int lastSongIndex = 0;
 
 
         private async Task<RadioFeed> getArtistRadioStation(MobileClient mc, String artistId)
@@ -136,7 +137,7 @@ namespace Bermuda
                             RecentlyPlayed = new Track[0],
                             Seed = new StationSeed
                             {
-                                SeedType = 6,
+                                SeedType = 1,
                                 TrackId = trackId
                             }
                         }
@@ -237,43 +238,53 @@ namespace Bermuda
 
             await Task.Delay(3000);
 
+            try
+            { 
                 ListListenNowTracksResponse listenNowResult = await mc.ListListenNowTracksAsync();
 
-            if (listenNowResult != null)
-            {
-
-                foreach (ListenNowItem item in listenNowResult.Items)
+                if (listenNowResult != null)
                 {
-                    int index = 0;
 
-                    listenNowList.Add(item);
-
-                    if (item.Type == "1")
+                    foreach (ListenNowItem item in listenNowResult.Items)
                     {
-                        if(item.Images != null)
-                            create_ListenNow(index, item.Album.Id.Title, item.Album.Id.Artist, item.Images[0].Url);
-                        else
-                            create_ListenNow(index, item.Album.Id.Title, item.Album.Id.Artist, "ms-appx:///Assets/no_image.png");
+                        int index = 0;
+
+                        listenNowList.Add(item);
+
+                        if (item.Type == "1")
+                        {
+                            if(item.Images != null)
+                                create_ListenNow(index, item.Album.Id.Title, item.Album.Id.Artist, item.Images[0].Url);
+                            else
+                                create_ListenNow(index, item.Album.Id.Title, item.Album.Id.Artist, "ms-appx:///Assets/no_image.png");
+                        }
+
+                        else if (item.Type == "3")
+                        {
+                            if(item.Images != null)
+                                create_ListenNow(index, item.RadioStation.Title, item.Images[0].Url);
+                            else
+                                create_ListenNow(index, item.RadioStation.Title, "ms-appx:///Assets/no_image.png");
+                        }
+
+                        index++;
                     }
 
-                    else if (item.Type == "3")
-                    {
-                        if(item.Images != null)
-                            create_ListenNow(index, item.RadioStation.Title, item.Images[0].Url);
-                        else
-                            create_ListenNow(index, item.RadioStation.Title, "ms-appx:///Assets/no_image.png");
-                    }
-
-                    index++;
+                    recentsGridView.IsItemClickEnabled = true;
+                    recentsGridView.ItemClick += new ItemClickEventHandler(GridView_ItemClick);
+                    listenNowProgressRing.IsActive = false;
                 }
 
-                recentsGridView.IsItemClickEnabled = true;
-                recentsGridView.ItemClick += new ItemClickEventHandler(GridView_ItemClick);
-                listenNowProgressRing.IsActive = false;
+                else
+                {
+                    generalFlyout.Text = "Something went wrong with your request.";
+                    FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
+                }
             }
 
-            else
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.Write(ex);
                 generalFlyout.Text = "Something went wrong with your request.";
                 FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
             }
@@ -346,9 +357,11 @@ namespace Bermuda
                     }
                 }
             }
+
             catch(Exception ex)
             {
-                appTitleTextBox.Text = "Something went wrong with your request.";
+                System.Diagnostics.Debug.Write(ex);
+                generalFlyout.Text = "Something went wrong with your request.";
                 FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
             }
             
@@ -670,70 +683,90 @@ namespace Bermuda
         public async void playSong(Track track)
         {
             loadingSong = true;
+            Uri uri;
 
             if (track != null)
             {
-                Uri uri;
 
                 if (isFirstPlaySinceOpen)
                     setupPlayer();
 
-                uri = await GetStreamUrl(mc, track);
-
-                await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                try
                 {
-                    try
+                    uri = await GetStreamUrl(mc, track);
+                }
+
+                catch(Exception e)
+                {
+                    System.Diagnostics.Debug.Write(e);
+                    uri = null;
+                }
+
+                if (uri != null)
+                {
+                    await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     {
-                        setNowPlayingAnimation(nowPlayingIndex);
-
-                        if (track.AlbumArtReference != null)
-                            albumArtImage.Source = new BitmapImage(new Uri(track.AlbumArtReference[0].Url));
-                        else
-                            albumArtImage.Source = new BitmapImage(new Uri("Assets/logo2480x1200.png", UriKind.Relative));
-
-                        player.Source = MediaSource.CreateFromUri(uri);
-                        trackPlayProgressBar.Maximum = (double)track.DurationMillis / 1000;
-                        trackPlayProgressBar.Value = 0;
-
-                        if (track.Artist.ToString().Length > 20)
+                        try
                         {
-                            clartistnametextBlock.Text = track.Artist.ToString().Substring(0, 19) + "...";
-                        }
-                        else
-                            clartistnametextBlock.Text = track.Artist.ToString();
+                            setNowPlayingAnimation(nowPlayingIndex);
 
-                        if (track.Title.ToString().Length > 20)
+                            if (track.AlbumArtReference != null)
+                                albumArtImage.Source = new BitmapImage(new Uri(track.AlbumArtReference[0].Url));
+                            else
+                                albumArtImage.Source = new BitmapImage(new Uri("Assets/logo2480x1200.png", UriKind.Relative));
+
+                            player.Source = MediaSource.CreateFromUri(uri);
+                            trackPlayProgressBar.Maximum = (double)track.DurationMillis / 1000;
+                            trackPlayProgressBar.Value = 0;
+
+                            if (track.Artist.ToString().Length > 20)
+                            {
+                                clartistnametextBlock.Text = track.Artist.ToString().Substring(0, 19) + "...";
+                            }
+                            else
+                                clartistnametextBlock.Text = track.Artist.ToString();
+
+                            if (track.Title.ToString().Length > 20)
+                            {
+                                clsongnametextBlock.Text = track.Title.ToString().Substring(0, 19) + "...";
+                            }
+                            else
+                                clsongnametextBlock.Text = track.Title.ToString();
+
+
+                            songEnded = false;
+                            songTimer.Start();
+                            player.Play();
+
+                            if (stackPanel1.Visibility == Visibility.Collapsed)
+                                stackPanel1.Visibility = Visibility.Visible;
+                            if (playButton.Visibility == Visibility.Visible)
+                                playButton.Visibility = Visibility.Collapsed;
+                            if (pauseButton.Visibility == Visibility.Collapsed)
+                                pauseButton.Visibility = Visibility.Visible;
+                            if (clCanvas.Visibility == Visibility.Collapsed)
+                                clCanvas.Visibility = Visibility.Visible;
+                            if (shuffleButton.Visibility == Visibility.Collapsed)
+                                shuffleButton.Visibility = Visibility.Visible;
+                            if (volumeSlider.Visibility == Visibility.Collapsed)
+                                volumeSlider.Visibility = Visibility.Visible;
+                        }
+
+                        catch (Exception ex)
                         {
-                            clsongnametextBlock.Text = track.Title.ToString().Substring(0, 19) + "...";
+                            System.Diagnostics.Debug.Write(ex);
                         }
-                        else
-                            clsongnametextBlock.Text = track.Title.ToString();
 
+                    });
+                }
 
-                        songEnded = false;
-                        songTimer.Start();
-                        player.Play();
-
-                        if (stackPanel1.Visibility == Visibility.Collapsed)
-                            stackPanel1.Visibility = Visibility.Visible;
-                        if (playButton.Visibility == Visibility.Visible)
-                            playButton.Visibility = Visibility.Collapsed;
-                        if (pauseButton.Visibility == Visibility.Collapsed)
-                            pauseButton.Visibility = Visibility.Visible;
-                        if (clCanvas.Visibility == Visibility.Collapsed)
-                            clCanvas.Visibility = Visibility.Visible;
-                        if (shuffleButton.Visibility == Visibility.Collapsed)
-                            shuffleButton.Visibility = Visibility.Visible;
-                        if (volumeSlider.Visibility == Visibility.Collapsed)
-                            volumeSlider.Visibility = Visibility.Visible;
-                    }
-
-                    catch(Exception ex)
-                    {
-                        System.Diagnostics.Debug.Write(ex);
-                    }
-
-                });
+                else
+                {
+                    nowPlayingIndex++;
+                    playSong(currentPlaylist[nowPlayingIndex]);
+                    generalFlyout.Text = "Moving on. Something screwy happened with that last one.";
+                    FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
+                }
             }
 
             else
@@ -743,6 +776,7 @@ namespace Bermuda
                 generalFlyout.Text = "Moving on. Something screwy happened with that last one.";
                 FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
             }
+
             loadingSong = false;
         }
 
@@ -1461,6 +1495,7 @@ namespace Bermuda
             {
                 if (nowPlayingIndex < currentPlaylist.Count() - 1)
                 {
+                    lastSongIndex = nowPlayingIndex;
                     nowPlayingIndex++;
                     playSong(currentPlaylist[nowPlayingIndex]);
                 }
@@ -1469,13 +1504,17 @@ namespace Bermuda
 
         private void previousButton_Click(object sender, RoutedEventArgs e)
         {
-            if (nowPlayingIndex > 0)
+            if (!loadingSong)
             {
-                nowPlayingIndex--;
-                playSong(currentPlaylist[nowPlayingIndex]);
+                if (nowPlayingIndex > 0)
+                {
+                    lastSongIndex = nowPlayingIndex;
+                    nowPlayingIndex--;
+                    playSong(currentPlaylist[nowPlayingIndex]);
+                }
+                else
+                    player.PlaybackSession.Position = TimeSpan.Zero;
             }
-            else
-                player.PlaybackSession.Position = TimeSpan.Zero;
         }
 
         private void tracklistNextBtn_Click(object sender, RoutedEventArgs e)
@@ -1648,7 +1687,7 @@ namespace Bermuda
             {
                 Shuffle.AllTheThings(currentPlaylist);
                 nowPlayingIndex = 0;
-                playSong(currentPlaylist[nowPlayingIndex]);
+                playCurrentPlaylist(nowPlayingIndex);
             }
 
             else
@@ -1660,31 +1699,41 @@ namespace Bermuda
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            PassSession data = e.Parameter as PassSession;
-            mc = data.session;
-
-            if (mc != null)
+            try
             {
-                signedInAsTextBlock.Text = mc.Session.UserDetails.Email.ToString();
-                signedInAsTextBlock.Visibility = Visibility.Visible;
+                PassSession data = e.Parameter as PassSession;
+                mc = data.session;
 
-                if (await testAuthorizationLevel())
+                if (mc != null)
                 {
-                    getListenNow();
-                }
-                else
-                {
-                    for(int i=0; i < 3; i++)
+                    signedInAsTextBlock.Text = mc.Session.UserDetails.Email.ToString();
+                    signedInAsTextBlock.Visibility = Visibility.Visible;
+
+                    if (await testAuthorizationLevel())
                     {
-                        PivotItem piv = (PivotItem)mainPivotMenu.Items[i];
-                        piv.Visibility = Visibility.Collapsed;
-                        ((TextBlock)piv.Header).Visibility = Visibility.Collapsed;
+                        getListenNow();
                     }
+                    else
+                    {
+                        for (int i = 0; i < 3; i++)
+                        {
+                            PivotItem piv = (PivotItem)mainPivotMenu.Items[i];
+                            piv.Visibility = Visibility.Collapsed;
+                            ((TextBlock)piv.Header).Visibility = Visibility.Collapsed;
+                        }
 
-                   mainPivotMenu.SelectedIndex = 3;
-                   appTitleTextBox.Text = "Something went wrong with your request. Please make sure you have a valid Music Subscription associated with the Gmail account you logged in with.This app will not work without one.";
-                   FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
+                        mainPivotMenu.SelectedIndex = 3;
+                        generalFlyout.Text = "Something went wrong with your request. Please make sure you have a valid Music Subscription associated with the Gmail account you logged in with.This app will not work without one.";
+                        FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
+                    }
                 }
+            }
+
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.Write(ex);
+                generalFlyout.Text = "Something went wrong with your request.";
+                FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
             }
         }
 
@@ -1799,6 +1848,7 @@ namespace Bermuda
                 BackgroundTaskRegistration task = builder.Register();
                 task.Completed += new BackgroundTaskCompletedEventHandler(networkAwarenessOnCompleted);
             }
+
             catch (Exception e)
             {
                 System.Diagnostics.Debug.WriteLine(e);
@@ -1835,8 +1885,7 @@ namespace Bermuda
             {
                 if (task.Value.Name == taskName)
                 {
-                    //return true;  
-                    task.Value.Unregister(true);
+                    return true;
                 }
             }
 
@@ -2088,9 +2137,9 @@ namespace Bermuda
             trackName.HorizontalAlignment = HorizontalAlignment.Right;
             trackName.VerticalAlignment = VerticalAlignment.Top;
             trackName.FontSize = 12; //15 pc
-            if (track.Title.ToString().Length > 20)
+            if (track.Title.ToString().Length > 18)
             {
-                trackName.Text = track.Title.ToString().Substring(0, 19) + "...";
+                trackName.Text = track.Title.ToString().Substring(0, 17) + "...";
             }
             else
                 trackName.Text = track.Title.ToString();
@@ -2104,9 +2153,9 @@ namespace Bermuda
             albumName.HorizontalAlignment = HorizontalAlignment.Right;
             albumName.VerticalAlignment = VerticalAlignment.Center;
             albumName.FontSize = 10; // 15 pc
-            if (track.Album.ToString().Length > 20)
+            if (track.Album.ToString().Length > 19)
             {
-                albumName.Text = track.Album.ToString().Substring(0, 19) + "...";
+                albumName.Text = track.Album.ToString().Substring(0, 18) + "...";
             }
             else
                 albumName.Text = track.Album.ToString();
@@ -2121,9 +2170,9 @@ namespace Bermuda
             artistName.HorizontalAlignment = HorizontalAlignment.Right;
             artistName.VerticalAlignment = VerticalAlignment.Bottom;
             artistName.FontSize = 10; //15 pc
-            if (track.Artist.ToString().Length > 20)
+            if (track.Artist.ToString().Length > 19)
             {
-                artistName.Text = track.Artist.ToString().Substring(0, 19) + "...";
+                artistName.Text = track.Artist.ToString().Substring(0, 18) + "...";
             }
             else
                 artistName.Text = track.Artist.ToString();
@@ -2155,19 +2204,17 @@ namespace Bermuda
             currentPlaylistGridView.Items.Add(grid1);
         }
 
-        private void setNowPlayingAnimation(int index)
+        private void setNowPlayingAnimation(int currentIndex)
         {
             //await Task.Delay(1000);
 
-            if(index > 0)
-            {
-                var lastItem = currentPlaylistGridView.ContainerFromIndex(index) as GridViewItem;
-                var lastGrid = lastItem.FindName("grid" + (index - 1)) as Grid;
-                lastGrid.Background = null;
-            }
+            var lastItem = currentPlaylistGridView.ContainerFromIndex(lastSongIndex) as GridViewItem;
+            var lastGrid = lastItem.FindName("grid" + lastSongIndex) as Grid;
+            lastGrid.Background = null;
+            
 
-            var item = currentPlaylistGridView.ContainerFromIndex(index) as GridViewItem;
-            var grid = item.FindName("grid" + index) as Grid;
+            var item = currentPlaylistGridView.ContainerFromIndex(currentIndex) as GridViewItem;
+            var grid = item.FindName("grid" + currentIndex) as Grid;
 
             ImageBrush myBrush = new ImageBrush();
             Windows.UI.Xaml.Controls.Image someImage = new Windows.UI.Xaml.Controls.Image();
@@ -2177,6 +2224,17 @@ namespace Bermuda
 
             grid.Background = myBrush;
 
+
+        }
+
+        private void currentPlaylistGridView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            int index = this.currentPlaylistGridView.Items.IndexOf(e.ClickedItem);
+
+            lastSongIndex = nowPlayingIndex;
+            nowPlayingIndex = index;
+
+            playSong(currentPlaylist[nowPlayingIndex]);
 
         }
     }
