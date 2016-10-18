@@ -72,23 +72,18 @@ namespace Bermuda
         private List<Album> albumlist = new List<Album>();
         private List<Artist> artistList = new List<Artist>();
         private List<Album> artistAlbumList = new List<Album>();
-        private List<Track> currentPlaylist = new List<Track>();
         private List<ListenNowItem> listenNowList = new List<ListenNowItem>();
-        private int nowPlayingIndex = 0;
         private int trackPageNumber = 0;
         private int albumPageNumber = 0;
         private int artistPageNumber = 0;
         private bool isFirstPlaySinceOpen = true;
-        private bool songEnded = false;
-        private bool loadingSong = false;
         private CancellationTokenSource cts = null;
         private CancellationTokenSource cts2 = null;
         private string lastNetworkState;
         private string networkBackgroundTask = "Network-Awareness-Task";
         private string servicingBackgroundTask = "Servicing-Complete-Task";
-        private int lastSongIndex = 0;
-
-
+        public NowPlaying np = new NowPlaying();
+       
         private async Task<RadioFeed> getArtistRadioStation(MobileClient mc, String artistId)
         {
             var data = await mc.GetStationFeed(ExplicitType.Explicit,
@@ -190,8 +185,8 @@ namespace Bermuda
                     {
                         playButton.Visibility = Visibility.Collapsed;
                         pauseButton.Visibility = Visibility.Visible;
-                        if (songEnded)
-                            playSong(currentPlaylist[nowPlayingIndex]);
+                        if (np.isSongEnded)
+                            playSong(np.Songs[np.currentSongIndex]);
                         else
                             player.Play();
                     });
@@ -207,20 +202,18 @@ namespace Bermuda
                 case SystemMediaTransportControlsButton.Next:
                     await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     {
-                        if (nowPlayingIndex < currentPlaylist.Count() - 1)
+                        if (np.currentSongIndex < np.Songs.Count() - 1)
                         {
-                            nowPlayingIndex++;
-                            playSong(currentPlaylist[nowPlayingIndex]);
+                            playSong(np.GetNextSong());
                         }
                     });
                     break;
                 case SystemMediaTransportControlsButton.Previous:
                     await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     {
-                        if (nowPlayingIndex > 0)
+                        if (np.currentSongIndex > 0)
                         {
-                            nowPlayingIndex--;
-                            playSong(currentPlaylist[nowPlayingIndex]);
+                            playSong(np.GetPreviousSong());
                         }
                         else
                             player.PlaybackSession.Position = TimeSpan.Zero;
@@ -298,28 +291,29 @@ namespace Bermuda
             {
                 if (listenNowList[index].Type == "1") //Album Listing
                 {
-                    currentPlaylist.Clear();
-                    nowPlayingIndex = 0;
+                    if(np.Songs.Any())
+                        np.Songs.Clear();
+                    np.currentSongIndex = 0;
 
                     Album album = await getAlbum(mc, listenNowList[index].Album.Id.MetajamCompactKey.ToString());
 
                     if (album.Tracks != null)
                     {
 
-                        foreach (Track song in album.Tracks)
-                            currentPlaylist.Add(song);
+                        np.PopulateSongs(album.Tracks);
 
                         mainPivotMenu.SelectedIndex = 2;
 
-                        playCurrentPlaylist(nowPlayingIndex);
+                        playCurrentPlaylist(np.currentSongIndex);
                     }
 
                 }
 
                 else if (listenNowList[index].Type == "3") //Radio Listing
                 {
-                    currentPlaylist.Clear();
-                    nowPlayingIndex = 0;
+                    if (np.Songs != null)
+                        np.Songs.Clear();
+                    np.currentSongIndex = 0;
 
                     if (listenNowList[index].RadioStation.Id.Seeds[0].SeedType.ToString() == "3")
                     {
@@ -327,15 +321,11 @@ namespace Bermuda
 
                         if (feed.Data.Stations[0].Tracks != null)
                         {
-                            foreach (Track track in feed.Data.Stations[0].Tracks)
-                            {
-                                if (track != null)
-                                    currentPlaylist.Add(track);
-                            }
+                            np.PopulateSongs(feed.Data.Stations[0].Tracks);
 
                             mainPivotMenu.SelectedIndex = 2;
 
-                            playCurrentPlaylist(nowPlayingIndex);
+                            playCurrentPlaylist(np.currentSongIndex);
                         }
 
                     }
@@ -346,13 +336,11 @@ namespace Bermuda
 
                         if (feed.Data.Stations[0].Tracks != null)
                         {
-                            foreach (Track track in feed.Data.Stations[0].Tracks)
-                                if (track != null)
-                                    currentPlaylist.Add(track);
+                            np.PopulateSongs(feed.Data.Stations[0].Tracks);
 
                             mainPivotMenu.SelectedIndex = 2;
 
-                            playCurrentPlaylist(nowPlayingIndex);
+                            playCurrentPlaylist(np.currentSongIndex);
                         }
                     }
                 }
@@ -682,7 +670,7 @@ namespace Bermuda
 
         public async void playSong(Track track)
         {
-            loadingSong = true;
+            np.isLoadingSong = true;
             Uri uri;
 
             if (track != null)
@@ -708,7 +696,7 @@ namespace Bermuda
                     {
                         try
                         {
-                            setNowPlayingAnimation(nowPlayingIndex);
+                            setNowPlayingAnimation(np.currentSongIndex);
 
                             if (track.AlbumArtReference != null)
                                 albumArtImage.Source = new BitmapImage(new Uri(track.AlbumArtReference[0].Url));
@@ -734,7 +722,7 @@ namespace Bermuda
                                 clsongnametextBlock.Text = track.Title.ToString();
 
 
-                            songEnded = false;
+                            np.isSongEnded = false;
                             songTimer.Start();
                             player.Play();
 
@@ -762,8 +750,7 @@ namespace Bermuda
 
                 else
                 {
-                    nowPlayingIndex++;
-                    playSong(currentPlaylist[nowPlayingIndex]);
+                    playSong(np.GetNextSong());
                     generalFlyout.Text = "Moving on. Something screwy happened with that last one.";
                     FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
                 }
@@ -771,13 +758,12 @@ namespace Bermuda
 
             else
             {
-                nowPlayingIndex++;
-                playSong(currentPlaylist[nowPlayingIndex]);
+                playSong(np.GetNextSong());
                 generalFlyout.Text = "Moving on. Something screwy happened with that last one.";
                 FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
             }
 
-            loadingSong = false;
+            np.isLoadingSong = false;
         }
 
         private void setupPlayer()
@@ -807,14 +793,14 @@ namespace Bermuda
             // Get the updater.
             SystemMediaTransportControlsDisplayUpdater updater = systemMediaTransportControls.DisplayUpdater;
             updater.Type = MediaPlaybackType.Music;
-            updater.MusicProperties.AlbumArtist = currentPlaylist[nowPlayingIndex].Artist.ToString();
-            updater.MusicProperties.AlbumTitle = currentPlaylist[nowPlayingIndex].Album.ToString();
-            updater.MusicProperties.Title = currentPlaylist[nowPlayingIndex].Title.ToString();
+            updater.MusicProperties.AlbumArtist = np.GetCurrentSong().Artist.ToString();
+            updater.MusicProperties.AlbumTitle = np.GetCurrentSong().Album.ToString();
+            updater.MusicProperties.Title = np.GetCurrentSong().Title.ToString();
 
             // Set the album art thumbnail.
             // RandomAccessStreamReference is defined in Windows.Storage.Streams
-            if(currentPlaylist[nowPlayingIndex].AlbumArtReference[0].Url != null)
-                updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(currentPlaylist[nowPlayingIndex].AlbumArtReference[0].Url));
+            if(np.GetCurrentSong().AlbumArtReference[0].Url != null)
+                updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(np.GetCurrentSong().AlbumArtReference[0].Url));
             else
                 updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri("Assets/logo2480x1200.png", UriKind.Relative));
 
@@ -831,13 +817,12 @@ namespace Bermuda
         {
             await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => { songTimer.Stop(); });
 
-            songEnded = true;
+            np.isSongEnded = true;
 
-            if (nowPlayingIndex < currentPlaylist.Count() - 1)
+            if (np.currentSongIndex < np.Songs.Count() - 1)
             {
-                nowPlayingIndex++;
-                songEnded = false;
-                playSong(currentPlaylist[nowPlayingIndex]);
+                np.isSongEnded = false;
+                playSong(np.GetNextSong());
             }
 
             else
@@ -848,7 +833,7 @@ namespace Bermuda
                     playButton.Visibility = Visibility.Visible;
                     clCanvas.Visibility = Visibility.Collapsed;
 
-                    if(nowPlayingIndex == currentPlaylist.Count() - 1)
+                    if(np.currentSongIndex == np.Songs.Count() - 1)
                     {
                         generalFlyout.Text = "Whatever you were listening to is stale or reached its end. Pick something new!";
                         FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
@@ -864,13 +849,13 @@ namespace Bermuda
             if(currentPlaylistGridView.Items.Any())
                 currentPlaylistGridView.Items.Clear();
 
-            foreach (Track song in currentPlaylist)
+            foreach (Track song in np.Songs)
             {
                 createNowPlayingListItem(song, index);
                 index++;
             }
 
-            playSong(currentPlaylist[startingTrack]);
+            playSong(np.GetCurrentSong());
         }
 
         public async Task<Uri> GetStreamUrl(MobileClient mc, Track track)
@@ -1056,20 +1041,20 @@ namespace Bermuda
 
         private async void TrackRadioButton_Click(object sender, RoutedEventArgs e)
         {
-            currentPlaylist.Clear();
-            nowPlayingIndex = 0;
+            if (np.Songs.Any())
+                np.Songs.Clear();
+            np.currentSongIndex = 0;
 
             Button button = sender as Button;
             int index = (int)button.Tag;
 
             RadioFeed feed = await getTrackRadioStation(mc, tracklist[index].Nid.ToString());
 
-            foreach (Track track in feed.Data.Stations[0].Tracks)
-                currentPlaylist.Add(track);
+            np.PopulateSongs(feed.Data.Stations[0].Tracks);
 
             mainPivotMenu.SelectedIndex = 2;
 
-            playCurrentPlaylist(nowPlayingIndex);
+            playCurrentPlaylist(np.currentSongIndex);
         }
 
         private Grid createsearchElement(Album album, int index)
@@ -1202,36 +1187,36 @@ namespace Bermuda
 
         private async void AlbumRadioButton_Click(object sender, RoutedEventArgs e)
         {
-            currentPlaylist.Clear();
-            nowPlayingIndex = 0;
+            if (np.Songs.Any())
+                np.Songs.Clear();
+            np.currentSongIndex = 0;
 
             Button button = sender as Button;
             int index = (int)button.Tag;
 
             RadioFeed feed = await getAlbumRadioStation(mc, albumlist[index].AlbumId.ToString());
 
-            foreach (Track track in feed.Data.Stations[0].Tracks)
-                currentPlaylist.Add(track);
+            np.PopulateSongs(feed.Data.Stations[0].Tracks);
 
             mainPivotMenu.SelectedIndex = 2;
 
-            playCurrentPlaylist(nowPlayingIndex);
+            playCurrentPlaylist(np.currentSongIndex);
         }
 
         private void PlayAlbumButton_Click(object sender, RoutedEventArgs e)
         {
-            currentPlaylist.Clear();
-            nowPlayingIndex = 0;
+            if (np.Songs.Any())
+                np.Songs.Clear();
+            np.currentSongIndex = 0;
 
             Button button = sender as Button;
             int index = (int)button.Tag;
 
-            foreach (Track song in albumlist[index].Tracks)
-                currentPlaylist.Add(song);
+            np.PopulateSongs(albumlist[index].Tracks);
 
             mainPivotMenu.SelectedIndex = 2;
 
-            playCurrentPlaylist(nowPlayingIndex);
+            playCurrentPlaylist(np.currentSongIndex);
         }
 
         private Grid createsearchElement(Artist artist, int index)
@@ -1352,20 +1337,20 @@ namespace Bermuda
 
         private async void ArtistRadioButton_Click(object sender, RoutedEventArgs e)
         {
-            currentPlaylist.Clear();
-            nowPlayingIndex = 0;
+            if (np.Songs.Any())
+                np.Songs.Clear();
+            np.currentSongIndex = 0;
 
             Button button = sender as Button;
             int index = (int)button.Tag;
 
             RadioFeed feed = await getArtistRadioStation(mc, artistList[index].ArtistId.ToString());
 
-            foreach (Track track in feed.Data.Stations[0].Tracks)
-                currentPlaylist.Add(track);
+            np.PopulateSongs(feed.Data.Stations[0].Tracks);
 
             mainPivotMenu.SelectedIndex = 2;
 
-            playCurrentPlaylist(nowPlayingIndex);
+            playCurrentPlaylist(np.currentSongIndex);
 
         }
 
@@ -1373,10 +1358,11 @@ namespace Bermuda
         {
             SearchResponse response;
 
-            currentPlaylist.Clear();
+            if (np.Songs.Any())
+                np.Songs.Clear();
             artistAlbumList.Clear();
 
-            nowPlayingIndex = 0;
+            np.currentSongIndex = 0;
 
             Button button = sender as Button;
             int index = (int)button.Tag;
@@ -1393,70 +1379,29 @@ namespace Bermuda
             {
                 if (album != null)
                 {
-                    try
-                    {
-                        foreach (Track song in album.Tracks)
-                        {
-                            if (song != null)
-                            {
-                                try
-                                {
-                                    currentPlaylist.Add(song);
-                                }
-
-                                catch (Exception ex)
-                                {
-                                    System.Diagnostics.Debug.WriteLine(ex);
-                                }
-                            }
-                        }
-                    }
-
-                    catch(Exception ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine(ex);
-                    }
+                    np.PopulateSongs(album.Tracks);
                 }
             }
 
             mainPivotMenu.SelectedIndex = 2;
 
-            playCurrentPlaylist(nowPlayingIndex);
+            playCurrentPlaylist(np.currentSongIndex);
         }
 
         private void trackPlayButton_Click(object sender, RoutedEventArgs e)
         {
-            currentPlaylist.Clear();
-            nowPlayingIndex = 0;
+            if (np.Songs.Any())
+                np.Songs.Clear();
+            np.currentSongIndex = 0;
 
             Button button = sender as Button;
             int index = (int)button.Tag;
 
-            currentPlaylist.Add(tracklist[index]);
+            np.Songs.Add(tracklist[index]);
 
             mainPivotMenu.SelectedIndex = 2;
 
-            playCurrentPlaylist(nowPlayingIndex);
-        }
-
-        public async Task<RadioFeed> GetStationfeed(MobileClient mc)
-        {
-            RadioFeed tracks;
-            tracks = await
-                    mc.GetStationFeed(ExplicitType.Explicit,
-                        new StationFeedStation
-                        {
-                            LibraryContentOnly = false,
-                            NumberOfEntries = 10,
-                            RecentlyPlayed = new Track[0],
-                            Seed = new StationSeed
-                            {
-                                SeedType = 6
-                            }
-                        }
-                    );
-
-            return tracks;
+            playCurrentPlaylist(np.currentSongIndex);
         }
 
         private void playPause_Click(object sender, RoutedEventArgs e)
@@ -1475,8 +1420,8 @@ namespace Bermuda
                 pauseButton.Visibility = Visibility.Visible;
                 pauseButton.Focus(FocusState.Programmatic);
 
-                if (songEnded)
-                    playSong(currentPlaylist[nowPlayingIndex]);
+                if (np.isSongEnded)
+                    playSong(np.GetNextSong());
                 else
                     player.Play();
             }
@@ -1491,26 +1436,22 @@ namespace Bermuda
 
         private void nextButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!loadingSong)
+            if (!np.isLoadingSong)
             {
-                if (nowPlayingIndex < currentPlaylist.Count() - 1)
+                if (np.currentSongIndex < np.Songs.Count() - 1)
                 {
-                    lastSongIndex = nowPlayingIndex;
-                    nowPlayingIndex++;
-                    playSong(currentPlaylist[nowPlayingIndex]);
+                    playSong(np.GetNextSong());
                 }
             }
         }
 
         private void previousButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!loadingSong)
+            if (!np.isLoadingSong)
             {
-                if (nowPlayingIndex > 0)
+                if (np.currentSongIndex > 0)
                 {
-                    lastSongIndex = nowPlayingIndex;
-                    nowPlayingIndex--;
-                    playSong(currentPlaylist[nowPlayingIndex]);
+                    playSong(np.GetPreviousSong());
                 }
                 else
                     player.PlaybackSession.Position = TimeSpan.Zero;
@@ -1683,11 +1624,11 @@ namespace Bermuda
 
         private void shuffleButton_Click(object sender, RoutedEventArgs e)
         {
-            if (currentPlaylist.Count > 1)
+            if (np.Songs.Count > 1)
             {
-                Shuffle.AllTheThings(currentPlaylist);
-                nowPlayingIndex = 0;
-                playCurrentPlaylist(nowPlayingIndex);
+
+                np.ShuffleSongs();
+                playCurrentPlaylist(np.currentSongIndex);
             }
 
             else
@@ -1823,8 +1764,8 @@ namespace Bermuda
                 artistList.Clear();
             if(artistAlbumList != null)
                 artistAlbumList.Clear();
-            if(currentPlaylist != null)
-                currentPlaylist.Clear();
+            if(np.Songs != null)
+                np.Songs.Clear();
             if(listenNowList != null)
                 listenNowList.Clear();
     }
@@ -2001,99 +1942,6 @@ namespace Bermuda
             }
         }
 
-        private async void testGridButton_Click(object sender, RoutedEventArgs e)
-        {
-            Grid grid1 = new Grid();
-
-            RowDefinition rowDefinition1 = new RowDefinition();
-            rowDefinition1.Height = new GridLength(50, GridUnitType.Pixel);
-
-            // Create column definitions for first grid
-            ColumnDefinition columnDefinition1 = new ColumnDefinition();
-            ColumnDefinition columnDefinition2 = new ColumnDefinition();
-            columnDefinition1.Width = new GridLength(50, GridUnitType.Pixel); //xbox
-            columnDefinition2.Width = new GridLength(140, GridUnitType.Pixel);
-
-
-            // Attached definitions to grids
-            grid1.ColumnDefinitions.Add(columnDefinition1);
-            grid1.ColumnDefinitions.Add(columnDefinition2);
-
-            //Create elements
-            Windows.UI.Xaml.Controls.Image image = new Windows.UI.Xaml.Controls.Image();
-            TextBlock trackName = new TextBlock();
-            TextBlock albumName = new TextBlock();
-            TextBlock artistName = new TextBlock();
-
-            //Set image properties
-            image.Width = double.NaN; //150 for pc
-            image.Height = double.NaN; //150 for pc
-            image.Stretch = Stretch.Fill;
-            image.Margin = new Thickness(0, 0, 0, 0);
-            image.HorizontalAlignment = HorizontalAlignment.Stretch;
-            image.VerticalAlignment = VerticalAlignment.Stretch;
-            //if (track.AlbumArtReference[0].Url != null)
-                //image.Source = new BitmapImage(new Uri(track.AlbumArtReference[0].Url));
-            //else
-                image.Source = new BitmapImage(new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute));
-
-            //Set trackName properties
-            trackName.Width = double.NaN;
-            trackName.Height = 15;
-            trackName.Margin = new Thickness(5, 0, 0, 0);
-            trackName.HorizontalAlignment = HorizontalAlignment.Right;
-            trackName.VerticalAlignment = VerticalAlignment.Top;
-            trackName.FontSize = 12; //15 pc
-            trackName.Text = "Track Name";//track.Title.ToString();
-            trackName.Foreground = new SolidColorBrush(Colors.White);
-            
-            //Set albumName properties
-            albumName.Width = double.NaN;
-            albumName.Height = 15;
-            albumName.Margin = new Thickness(5, 0, 0, 0);
-            albumName.HorizontalAlignment = HorizontalAlignment.Right;
-            albumName.VerticalAlignment = VerticalAlignment.Center;
-            albumName.FontSize = 10; // 15 pc
-            albumName.Text = "Album Name";//track.Album.ToString();
-            albumName.Foreground = new SolidColorBrush(Colors.White);
-
-            //Set artistName properties
-            artistName.Width = double.NaN;
-            artistName.Height = 15;
-            artistName.Margin = new Thickness(5, 0, 0, 0);
-            artistName.HorizontalAlignment = HorizontalAlignment.Right;
-            artistName.VerticalAlignment = VerticalAlignment.Bottom;
-            artistName.FontSize = 10; //15 pc
-            artistName.Text = "Artist Name";//track.Artist.ToString();
-            artistName.Foreground = new SolidColorBrush(Colors.White);
-
-
-            //Assign elements to grid and row/columns
-            grid1.Children.Add(image);
-            grid1.Children.Add(trackName);
-            grid1.Children.Add(albumName);
-            grid1.Children.Add(artistName);
-
-            Grid.SetColumn(image, 0);
-            Grid.SetColumn(trackName, 1);
-            Grid.SetColumn(albumName, 1);
-            Grid.SetColumn(artistName, 1);
-
-            Grid.SetRow(image, 0);
-            Grid.SetRow(trackName, 0);
-            Grid.SetRow(albumName, 0);
-            Grid.SetRow(artistName, 0);
-
-            grid1.BorderBrush = new SolidColorBrush(Color.FromArgb(255, 0, 255, 12));
-            grid1.BorderThickness = new Thickness(0.2);
-            grid1.Margin = new Thickness(0, 1, 0, 0);
-            grid1.Name = "grid1";
-
-            currentPlaylistGridView.Items.Add(grid1);
-            await Task.Delay(3000);
-            setNowPlayingAnimation(0);
-        }
-
         private void createNowPlayingListItem(Track track, int index)
         {
             Grid grid1 = new Grid();
@@ -2208,8 +2056,8 @@ namespace Bermuda
         {
             //await Task.Delay(1000);
 
-            var lastItem = currentPlaylistGridView.ContainerFromIndex(lastSongIndex) as GridViewItem;
-            var lastGrid = lastItem.FindName("grid" + lastSongIndex) as Grid;
+            var lastItem = currentPlaylistGridView.ContainerFromIndex(np.prevSongIndex) as GridViewItem;
+            var lastGrid = lastItem.FindName("grid" + np.prevSongIndex) as Grid;
             lastGrid.Background = null;
             
 
@@ -2231,10 +2079,7 @@ namespace Bermuda
         {
             int index = this.currentPlaylistGridView.Items.IndexOf(e.ClickedItem);
 
-            lastSongIndex = nowPlayingIndex;
-            nowPlayingIndex = index;
-
-            playSong(currentPlaylist[nowPlayingIndex]);
+            playSong(np.GetSongFromIndex(index));
 
         }
     }
