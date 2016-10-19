@@ -111,7 +111,6 @@
     <Compile Include="NowPlaying.cs" />
     <Compile Include="PassSession.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Shuffle.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

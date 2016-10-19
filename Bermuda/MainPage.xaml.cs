@@ -270,7 +270,7 @@ namespace Bermuda
 
                 else
                 {
-                    generalFlyout.Text = "Something went wrong with your request.";
+                    generalFlyout.Text = "Suggestions was null. Try reloading the app.";
                     FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
                 }
             }
@@ -701,7 +701,7 @@ namespace Bermuda
                             if (track.AlbumArtReference != null)
                                 albumArtImage.Source = new BitmapImage(new Uri(track.AlbumArtReference[0].Url));
                             else
-                                albumArtImage.Source = new BitmapImage(new Uri("Assets/logo2480x1200.png", UriKind.Relative));
+                                albumArtImage.Source = new BitmapImage(new Uri("ms-appx:///Assets/logo2480x1200.png", UriKind.Absolute));
 
                             player.Source = MediaSource.CreateFromUri(uri);
                             trackPlayProgressBar.Maximum = (double)track.DurationMillis / 1000;
@@ -1973,7 +1973,7 @@ namespace Bermuda
             image.Margin = new Thickness(0, 0, 0, 0);
             image.HorizontalAlignment = HorizontalAlignment.Stretch;
             image.VerticalAlignment = VerticalAlignment.Stretch;
-            if (track.AlbumArtReference[0].Url != null)
+            if (track.AlbumArtReference != null)
             image.Source = new BitmapImage(new Uri(track.AlbumArtReference[0].Url));
             else
             image.Source = new BitmapImage(new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute));

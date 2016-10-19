@@ -20,8 +20,18 @@ namespace Bermuda
 
         public void PopulateSongs(Track[] sentTracks)
         {
-            foreach(Track track in sentTracks)
-                Songs.Add(track);
+            foreach (Track track in sentTracks)
+            {
+                try
+                {
+                    Songs.Add(track);
+                }
+                catch(Exception ex)
+                {
+                    System.Diagnostics.Debug.Write(ex);
+                    Songs.RemoveAt(Songs.Count - 1);
+                }
+            }
         }
 
         public Track GetSongFromIndex(int songIndex)
