@@ -232,7 +232,10 @@ namespace Bermuda
             await Task.Delay(3000);
 
             try
-            { 
+            {
+                if (recentsGridView.Items.Any())
+                    recentsGridView.Items.Clear();
+                    
                 ListListenNowTracksResponse listenNowResult = await mc.ListListenNowTracksAsync();
 
                 if (listenNowResult != null)
@@ -670,100 +673,109 @@ namespace Bermuda
 
         public async void playSong(Track track)
         {
-            np.isLoadingSong = true;
-            Uri uri;
-
-            if (track != null)
+            if (lastNetworkState != "No Internet Access")
             {
+                np.isLoadingSong = true;
+                Uri uri;
 
-                if (isFirstPlaySinceOpen)
-                    setupPlayer();
-
-                try
+                if (track != null)
                 {
-                    uri = await GetStreamUrl(mc, track);
-                }
 
-                catch(Exception e)
-                {
-                    System.Diagnostics.Debug.Write(e);
-                    uri = null;
-                }
+                    if (isFirstPlaySinceOpen)
+                        setupPlayer();
 
-                if (uri != null)
-                {
-                    await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    try
                     {
-                        try
+                        uri = await GetStreamUrl(mc, track);
+                    }
+
+                    catch (Exception e)
+                    {
+                        System.Diagnostics.Debug.Write(e);
+                        uri = null;
+                    }
+
+                    if (uri != null)
+                    {
+                        await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                         {
-                            setNowPlayingAnimation(np.currentSongIndex);
-
-                            if (track.AlbumArtReference != null)
-                                albumArtImage.Source = new BitmapImage(new Uri(track.AlbumArtReference[0].Url));
-                            else
-                                albumArtImage.Source = new BitmapImage(new Uri("ms-appx:///Assets/logo2480x1200.png", UriKind.Absolute));
-
-                            player.Source = MediaSource.CreateFromUri(uri);
-                            trackPlayProgressBar.Maximum = (double)track.DurationMillis / 1000;
-                            trackPlayProgressBar.Value = 0;
-
-                            if (track.Artist.ToString().Length > 20)
+                            try
                             {
-                                clartistnametextBlock.Text = track.Artist.ToString().Substring(0, 19) + "...";
-                            }
-                            else
-                                clartistnametextBlock.Text = track.Artist.ToString();
+                                setNowPlayingAnimation(np.currentSongIndex);
 
-                            if (track.Title.ToString().Length > 20)
+                                if (track.AlbumArtReference != null)
+                                    albumArtImage.Source = new BitmapImage(new Uri(track.AlbumArtReference[0].Url));
+                                else
+                                    albumArtImage.Source = new BitmapImage(new Uri("ms-appx:///Assets/logo2480x1200.png", UriKind.Absolute));
+
+                                player.Source = MediaSource.CreateFromUri(uri);
+                                trackPlayProgressBar.Maximum = (double)track.DurationMillis / 1000;
+                                trackPlayProgressBar.Value = 0;
+
+                                if (track.Artist.ToString().Length > 20)
+                                {
+                                    clartistnametextBlock.Text = track.Artist.ToString().Substring(0, 19) + "...";
+                                }
+                                else
+                                    clartistnametextBlock.Text = track.Artist.ToString();
+
+                                if (track.Title.ToString().Length > 20)
+                                {
+                                    clsongnametextBlock.Text = track.Title.ToString().Substring(0, 19) + "...";
+                                }
+                                else
+                                    clsongnametextBlock.Text = track.Title.ToString();
+
+
+                                np.isSongEnded = false;
+                                songTimer.Start();
+                                player.Play();
+
+                                if (stackPanel1.Visibility == Visibility.Collapsed)
+                                    stackPanel1.Visibility = Visibility.Visible;
+                                if (playButton.Visibility == Visibility.Visible)
+                                    playButton.Visibility = Visibility.Collapsed;
+                                if (pauseButton.Visibility == Visibility.Collapsed)
+                                    pauseButton.Visibility = Visibility.Visible;
+                                if (clCanvas.Visibility == Visibility.Collapsed)
+                                    clCanvas.Visibility = Visibility.Visible;
+                                if (shuffleButton.Visibility == Visibility.Collapsed)
+                                    shuffleButton.Visibility = Visibility.Visible;
+                                if (volumeSlider.Visibility == Visibility.Collapsed)
+                                    volumeSlider.Visibility = Visibility.Visible;
+                            }
+
+                            catch (Exception ex)
                             {
-                                clsongnametextBlock.Text = track.Title.ToString().Substring(0, 19) + "...";
+                                System.Diagnostics.Debug.Write(ex);
                             }
-                            else
-                                clsongnametextBlock.Text = track.Title.ToString();
 
+                        });
+                    }
 
-                            np.isSongEnded = false;
-                            songTimer.Start();
-                            player.Play();
-
-                            if (stackPanel1.Visibility == Visibility.Collapsed)
-                                stackPanel1.Visibility = Visibility.Visible;
-                            if (playButton.Visibility == Visibility.Visible)
-                                playButton.Visibility = Visibility.Collapsed;
-                            if (pauseButton.Visibility == Visibility.Collapsed)
-                                pauseButton.Visibility = Visibility.Visible;
-                            if (clCanvas.Visibility == Visibility.Collapsed)
-                                clCanvas.Visibility = Visibility.Visible;
-                            if (shuffleButton.Visibility == Visibility.Collapsed)
-                                shuffleButton.Visibility = Visibility.Visible;
-                            if (volumeSlider.Visibility == Visibility.Collapsed)
-                                volumeSlider.Visibility = Visibility.Visible;
-                        }
-
-                        catch (Exception ex)
+                    else
+                    {
+                        playSong(np.GetNextSong());
+                        await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                         {
-                            System.Diagnostics.Debug.Write(ex);
-                        }
-
-                    });
+                            generalFlyout.Text = "Moving on. Something screwy happened with that last one.";
+                            FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
+                        });
+                    }
                 }
 
                 else
                 {
                     playSong(np.GetNextSong());
-                    generalFlyout.Text = "Moving on. Something screwy happened with that last one.";
-                    FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
+                    await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+                        generalFlyout.Text = "Moving on. Something screwy happened with that last one.";
+                        FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
+                    });
                 }
-            }
 
-            else
-            {
-                playSong(np.GetNextSong());
-                generalFlyout.Text = "Moving on. Something screwy happened with that last one.";
-                FlyoutBase.ShowAttachedFlyout(appTitleTextBox);
+                np.isLoadingSong = false;
             }
-
-            np.isLoadingSong = false;
         }
 
         private void setupPlayer()
@@ -1892,6 +1904,24 @@ namespace Bermuda
 
                         FlyoutBase.ShowAttachedFlyout(settingsHeaderTextBlock);
 
+                        if (player.PlaybackSession.PlaybackState == MediaPlaybackState.Playing)
+                        {
+                            player.Pause();
+                        }
+
+                        if(np.Songs.Any())
+                        {
+                            var lastItem = currentPlaylistGridView.ContainerFromIndex(np.prevSongIndex) as GridViewItem;
+                            var lastGrid = lastItem.FindName("grid" + np.currentSongIndex) as Grid;
+                            lastGrid.Background = null;
+
+                            if(playButton.Visibility == Visibility.Collapsed)
+                                playButton.Visibility = Visibility.Visible;
+                            if (pauseButton.Visibility == Visibility.Visible)
+                                pauseButton.Visibility = Visibility.Collapsed;
+                        }
+                        
+
                     });
                 }
             }
@@ -2054,11 +2084,18 @@ namespace Bermuda
 
         private void setNowPlayingAnimation(int currentIndex)
         {
-            //await Task.Delay(1000);
+            try
+            {
+                var lastItem = currentPlaylistGridView.ContainerFromIndex(np.prevSongIndex) as GridViewItem;
+                var lastGrid = lastItem.FindName("grid" + np.prevSongIndex) as Grid;
+                lastGrid.Background = null;
+            }
 
-            var lastItem = currentPlaylistGridView.ContainerFromIndex(np.prevSongIndex) as GridViewItem;
-            var lastGrid = lastItem.FindName("grid" + np.prevSongIndex) as Grid;
-            lastGrid.Background = null;
+            catch(Exception e)
+            {
+                System.Diagnostics.Debug.Write(e);
+
+            }
             
 
             var item = currentPlaylistGridView.ContainerFromIndex(currentIndex) as GridViewItem;
