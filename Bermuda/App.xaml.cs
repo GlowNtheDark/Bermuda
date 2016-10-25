@@ -134,6 +134,7 @@ namespace Bermuda
             if (family == "Windows.Xbox")
             {
                 Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
+                bool result = Windows.UI.ViewManagement.ApplicationViewScaling.TrySetDisableLayoutScaling(true);
             }
 #endif
 
@@ -227,15 +228,20 @@ namespace Bermuda
 
         private void MemoryManager_AppMemoryUsageLimitChanging(object sender, AppMemoryUsageLimitChangingEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("New memory limit" + e.NewLimit.ToString());
             if (MemoryManager.AppMemoryUsage >= e.NewLimit)
             {
                 ReduceMemoryUsage(e.NewLimit);
+
             }
         }
 
         private void MemoryManager_AppMemoryUsageIncreased(object sender, object e)
         {
+            
             var level = MemoryManager.AppMemoryUsageLevel;
+
+            System.Diagnostics.Debug.WriteLine("Memory Usage increased. Lvl:" + level.ToString());
 
             if (level == AppMemoryUsageLevel.OverLimit || level == AppMemoryUsageLevel.High)
             {
@@ -245,6 +251,7 @@ namespace Bermuda
 
         public void ReduceMemoryUsage(ulong limit)
         {
+            System.Diagnostics.Debug.WriteLine("Reducing memory usage.");
             if (_isInBackgroundMode && Window.Current.Content != null)
             {
 
