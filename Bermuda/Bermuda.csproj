@@ -108,6 +108,9 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="NewMain.xaml.cs">
+      <DependentUpon>NewMain.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NowPlaying.cs" />
     <Compile Include="PassSession.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -126,7 +129,10 @@
     <Content Include="Assets\BadgeLogo.scale-200.png" />
     <Content Include="Assets\BadgeLogo.scale-400.png" />
     <Content Include="Assets\B_Logo16b.png" />
+    <Content Include="Assets\cogs.png" />
     <Content Include="Assets\Forest.png" />
+    <Content Include="Assets\glass.png" />
+    <Content Include="Assets\list.png" />
     <Content Include="Assets\logo2480x1200.png" />
     <Content Include="Assets\NewStoreLogo.scale-100.png" />
     <Content Include="Assets\NewStoreLogo.scale-125.png" />
@@ -134,6 +140,7 @@
     <Content Include="Assets\NewStoreLogo.scale-200.png" />
     <Content Include="Assets\NewStoreLogo.scale-400.png" />
     <Content Include="Assets\NextButton.png" />
+    <Content Include="Assets\note.png" />
     <Content Include="Assets\nowPlaying.gif" />
     <Content Include="Assets\no_image.png" />
     <Content Include="Assets\PauseButton.png" />
@@ -176,6 +183,7 @@
     <Content Include="Assets\StoreLogo.scale-150.png" />
     <Content Include="Assets\StoreLogo.scale-200.png" />
     <Content Include="Assets\StoreLogo.scale-400.png" />
+    <Content Include="Assets\triangle.png" />
     <Content Include="Assets\Wide310x150Logo.scale-100.png" />
     <Content Include="Assets\Wide310x150Logo.scale-125.png" />
     <Content Include="Assets\Wide310x150Logo.scale-150.png" />
@@ -200,6 +208,10 @@
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="NewMain.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
