@@ -78,8 +78,8 @@ namespace Bermuda
             {
                 if (storeMyCredentials)
                     storeCredentials(username, password);
-
-                Frame.Navigate(typeof(MainPage), new PassSession { session = mc });
+                PassSession.session = mc;
+                Frame.Navigate(typeof(NewMain));
             }
 
             else

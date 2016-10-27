@@ -105,15 +105,21 @@
     <Compile Include="LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainPage.xaml.cs">
-      <DependentUpon>MainPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="NewMain.xaml.cs">
       <DependentUpon>NewMain.xaml</DependentUpon>
     </Compile>
     <Compile Include="NowPlaying.cs" />
+    <Compile Include="NowPlayingScene.xaml.cs">
+      <DependentUpon>NowPlayingScene.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PassSession.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SettingsScene.xaml.cs">
+      <DependentUpon>SettingsScene.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SuggestionsScene.xaml.cs">
+      <DependentUpon>SuggestionsScene.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -205,11 +211,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="NewMain.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NowPlayingScene.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingsScene.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SuggestionsScene.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

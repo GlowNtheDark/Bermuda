@@ -1,24 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GoogleMusicApi.UWP.Structure;
 using System.Security.Cryptography;
+using Windows.Media;
+using Windows.UI.Xaml;
+using Windows.Media.Playback;
 
 namespace Bermuda
 {
-    public class NowPlaying
+    public static class NowPlaying
     {
-        public List<Track> Songs = new List<Track>();
-        public bool isLoadingSong { get; set; }
-        public bool isSongEnded { get; set; }
-        public int currentSongIndex { get; set; }
-        public int prevSongIndex { get; set; }
+        public static List<Track> Songs = new List<Track>();
+        public static bool isLoadingSong { get; set; }
+        public static bool isSongEnded { get; set; }
+        public static int currentSongIndex { get; set; }
+        public static int prevSongIndex { get; set; }
+        public static bool startPlaying { get; set; }
+        public static SystemMediaTransportControls systemMediaTransportControls;
+        public static MediaPlayer player = new MediaPlayer();
+        public static bool isFirstPlaySinceOpen = true;
 
         static Random rng = new Random();
 
-        public void PopulateSongs(Track[] sentTracks)
+
+        public static void PopulateSongs(Track[] sentTracks)
         {
             foreach (Track track in sentTracks)
             {
@@ -34,14 +39,14 @@ namespace Bermuda
             }
         }
 
-        public Track GetSongFromIndex(int songIndex)
+        public static Track GetSongFromIndex(int songIndex)
         {
             prevSongIndex = currentSongIndex;
             currentSongIndex = songIndex;
             return Songs[currentSongIndex];
         }
 
-        public Track GetNextSong()
+        public static Track GetNextSong()
         {
             prevSongIndex = currentSongIndex;
             currentSongIndex++;
@@ -49,7 +54,7 @@ namespace Bermuda
             return Songs[currentSongIndex];
         }
         
-        public Track GetPreviousSong()
+        public static Track GetPreviousSong()
         {
             prevSongIndex = currentSongIndex;
             currentSongIndex--;
@@ -57,12 +62,12 @@ namespace Bermuda
             return Songs[currentSongIndex];
         }
 
-        public Track GetCurrentSong()
+        public static Track GetCurrentSong()
         {
             return Songs[currentSongIndex];
         }
 
-        public void ShuffleSongs()
+        public static void ShuffleSongs()
         {
             currentSongIndex = 0;
 

@@ -7,8 +7,8 @@ using GoogleMusicApi.UWP.Common;
 
 namespace Bermuda
 {
-    public class PassSession
+    public static class PassSession
     {
-        public MobileClient session { get; set; }
+        public static MobileClient session { get; set; }
     }
 }

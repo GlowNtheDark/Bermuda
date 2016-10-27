@@ -62,7 +62,8 @@ namespace Bermuda
 
             if (await mc.LoginAsync(username, password))
             {
-                rootframe.Navigate(typeof(MainPage), new PassSession { session = mc });
+                PassSession.session = mc;
+                rootframe.Navigate(typeof(NewMain));
             }
         }
 
@@ -224,6 +225,9 @@ namespace Bermuda
             _isInBackgroundMode = true;
 
             System.Diagnostics.Debug.WriteLine("Entered background.");
+
+            Window.Current.Content = null;
+            GC.Collect();
         }
 
         private void MemoryManager_AppMemoryUsageLimitChanging(object sender, AppMemoryUsageLimitChangingEventArgs e)
@@ -303,7 +307,7 @@ namespace Bermuda
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(typeof(MainPage), arguments);
+                rootFrame.Navigate(typeof(NewMain), arguments);
             }
         }
     }

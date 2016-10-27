@@ -82,7 +82,7 @@ namespace Bermuda
         private string lastNetworkState;
         private string networkBackgroundTask = "Network-Awareness-Task";
         private string servicingBackgroundTask = "Servicing-Complete-Task";
-        public NowPlaying np = new NowPlaying();
+
        
         private async Task<RadioFeed> getArtistRadioStation(MobileClient mc, String artistId)
         {
@@ -185,8 +185,8 @@ namespace Bermuda
                     {
                         playButton.Visibility = Visibility.Collapsed;
                         pauseButton.Visibility = Visibility.Visible;
-                        if (np.isSongEnded)
-                            playSong(np.Songs[np.currentSongIndex]);
+                        if (NowPlaying.isSongEnded)
+                            playSong(NowPlaying.Songs[NowPlaying.currentSongIndex]);
                         else
                             player.Play();
                     });
@@ -202,16 +202,16 @@ namespace Bermuda
                 case SystemMediaTransportControlsButton.Next:
                     await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     {
-                        if (np.currentSongIndex < np.Songs.Count() - 1)
+                        if (NowPlaying.currentSongIndex < NowPlaying.Songs.Count() - 1)
                         {
-                            playSong(np.GetNextSong());
+                            playSong(NowPlaying.GetNextSong());
                         }
                     });
                     break;
                 case SystemMediaTransportControlsButton.Previous:
                     await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     {
-                        if (np.currentSongIndex > 0)
+                        if (NowPlaying.currentSongIndex > 0)
                         {
                             playSong(np.GetPreviousSong());
                         }
@@ -1654,8 +1654,7 @@ namespace Bermuda
         {
             try
             {
-                PassSession data = e.Parameter as PassSession;
-                mc = data.session;
+                mc = PassSession.session;
 
                 if (mc != null)
                 {
