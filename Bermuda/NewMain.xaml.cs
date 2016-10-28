@@ -62,6 +62,7 @@ namespace Bermuda
         Type npScene = typeof(NowPlayingScene);
         Type sgScene = typeof(SuggestionsScene);
         Type stScene = typeof(SettingsScene);
+        //Settings.localSettings Windows.Storage.ApplicationData.Current.LocalSettings;
         public MobileClient mc;
         public string lastNetworkState;
         private string networkBackgroundTask = "Network-Awareness-Task";
@@ -88,7 +89,10 @@ namespace Bermuda
 
                     if (await testAuthorizationLevel())
                     {
-                        loadFrame("Suggestions");
+                        if (AppSettings.localSettings.Values["lastPage"] != null)
+                            loadFrame(AppSettings.localSettings.Values["lastPage"].ToString());
+                        else
+                            loadFrame("Suggestions");
                     }
                     else
                     {
@@ -103,7 +107,12 @@ namespace Bermuda
 
                     if (await testAuthorizationLevel())
                     {
-                        loadFrame("Suggestions");
+                        string pageName = AppSettings.localSettings.Values["lastPage"].ToString();
+
+                        if (pageName != "")
+                            loadFrame(AppSettings.localSettings.Values["lastPage"].ToString());
+                        else
+                            loadFrame("Suggestions");
                     }
                     else
                     {

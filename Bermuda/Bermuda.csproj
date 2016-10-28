@@ -114,6 +114,7 @@
     </Compile>
     <Compile Include="PassSession.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="AppSettings.cs" />
     <Compile Include="SettingsScene.xaml.cs">
       <DependentUpon>SettingsScene.xaml</DependentUpon>
     </Compile>

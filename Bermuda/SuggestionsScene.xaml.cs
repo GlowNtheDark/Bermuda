@@ -111,7 +111,6 @@ namespace Bermuda
 
                     if (album.Tracks != null)
                     {
-
                         NowPlaying.PopulateSongs(album.Tracks);
                         NowPlaying.startPlaying = true;
                         NewMain.Current.loadFrame("NowPlaying");
@@ -317,6 +316,7 @@ namespace Bermuda
         {
             listenNowList = null;
             GC.Collect();
+            AppSettings.localSettings.Values["lastPage"] = "Suggestions";
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
