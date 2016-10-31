@@ -14,6 +14,9 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.Storage.Streams;
 using System.Threading.Tasks;
 using Windows.Media.Core;
+using BackgroundMediaPlayback.Services;
+using BackgroundMediaPlayback.DataModels;
+using BackgroundMediaPlayback.ViewModels;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -24,19 +27,25 @@ namespace Bermuda
     /// </summary>
     public sealed partial class NowPlayingScene : Page
     {
+
         public NowPlayingScene()
         {
             this.InitializeComponent();
 
-            //this.NavigationCacheMode = NavigationCacheMode.Required;
+            this.NavigationCacheMode = NavigationCacheMode.Disabled;
 
+            NowPlaying.dispatcher = this.Dispatcher;
         }
 
         public DispatcherTimer songTimer;
 
+        BitmapImage CurrentSongImg => NowPlaying.CurrentSongImg;
+
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            if(NowPlaying.Songs.Any())
+            NowPlaying.dispatcher = this.Dispatcher;
+
+            if (NowPlaying.Songs.Any())
                 loadUI();
 
             if (NowPlaying.startPlaying)
@@ -44,6 +53,8 @@ namespace Bermuda
                 NowPlaying.startPlaying = false;
                 playSong(NowPlaying.GetCurrentSong());
             }
+
+            NowPlaying.playlist.CurrentItemChanged += NowPlaying.Playlist_CurrentItemChanged;
 
             await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => { setNowPlayingAnimation(); });
 
@@ -144,7 +155,7 @@ namespace Bermuda
             if (NewMain.Current.lastNetworkState != "No Internet Access")
             {
                 NowPlaying.isLoadingSong = true;
-                Uri uri;
+                //Uri uri;
 
                 if (track != null)
                 {
@@ -154,32 +165,34 @@ namespace Bermuda
 
                     try
                     {
-                        uri = await GetStreamUrl(NewMain.Current.mc, track);
+                        //uri = await GetStreamUrl(NewMain.Current.mc, track);
                     }
 
                     catch (Exception e)
                     {
                         System.Diagnostics.Debug.Write(e);
-                        uri = null;
+                        //uri = null;
                     }
 
-                    if (uri != null)
-                    {
+                    //if (uri != null)
+                    //{
                             try
                             {
                                 setNowPlayingAnimation();
 
-                                NowPlaying.player.Source = MediaSource.CreateFromUri(uri);
+                        //NowPlaying.player.Source = MediaSource.CreateFromUri(uri);
 
-                            await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                        //if (NowPlaying.GetCurrentSong().AlbumArtReference != null)
+                           // NowPlaying.CurrentSongImg = new BitmapImage(new Uri(NowPlaying.GetCurrentSong().AlbumArtReference[0].Url));
+                        //else
+                            //NowPlaying.CurrentSongImg = new BitmapImage(new Uri("ms-appx:///Assets/logo2480x1200.png", UriKind.Absolute));
+
+                        await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                             {
                                 trackPlayProgressBar.Maximum = (double)track.DurationMillis / 1000;
                                 trackPlayProgressBar.Value = 0;
 
-                                if (NowPlaying.GetCurrentSong().AlbumArtReference != null)
-                                    albumArtImage.Source = new BitmapImage(new Uri(NowPlaying.GetCurrentSong().AlbumArtReference[0].Url));
-                                else
-                                    albumArtImage.Source = new BitmapImage(new Uri("ms-appx:///Assets/logo2480x1200.png", UriKind.Absolute));
+                                playButton.Style = (Style)this.Resources["customPauseButton"];
                             });
 
                             /*if (track.Artist.ToString().Length > 20)
@@ -214,7 +227,7 @@ namespace Bermuda
                                 if (volumeSlider.Visibility == Visibility.Collapsed)
                                     volumeSlider.Visibility = Visibility.Visible;*/
 
-                                playButton.Style = (Style)this.Resources["customPauseButton"];
+                                
                             }
 
                             catch (Exception ex)
@@ -223,16 +236,16 @@ namespace Bermuda
                             }
 
                         //});
-                    }
+                    //}
 
-                    else
-                    {
-                        playSong(NowPlaying.GetNextSong());
-                        await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                        {
+                   // else
+                   // {
+                      //  playSong(NowPlaying.GetNextSong());
+                       // await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                       // {
 
-                        });
-                    }
+                        //});
+                   // }
                 }
 
                 else
@@ -549,7 +562,7 @@ namespace Bermuda
         {
             //await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => { NowPlaying.songTimer.Stop(); });
 
-            NowPlaying.isSongEnded = true;
+            /*NowPlaying.isSongEnded = true;
 
             if (NowPlaying.currentSongIndex < NowPlaying.Songs.Count() - 1)
             {
@@ -571,7 +584,7 @@ namespace Bermuda
 
                     }
                 });
-            }
+            }*/
         }
 
         public async Task<Uri> GetStreamUrl(MobileClient mc, Track track)
