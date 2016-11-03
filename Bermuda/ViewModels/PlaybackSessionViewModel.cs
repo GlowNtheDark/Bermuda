@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Windows.Media.Playback;
 using Windows.UI.Core;
 
-namespace BackgroundMediaPlayback.ViewModels
+namespace Bermuda.ViewModels
 {
     public class PlaybackSessionViewModel : INotifyPropertyChanged, IDisposable
     {
@@ -17,6 +17,7 @@ namespace BackgroundMediaPlayback.ViewModels
         CoreDispatcher dispatcher;
 
         public MediaPlaybackState PlaybackState => playbackSession.PlaybackState;
+        public double Position => playbackSession.Position.TotalMilliseconds;
         public event PropertyChangedEventHandler PropertyChanged;
 
         public PlaybackSessionViewModel(MediaPlaybackSession playbackSession, CoreDispatcher dispatcher)
@@ -24,10 +25,19 @@ namespace BackgroundMediaPlayback.ViewModels
             this.player = playbackSession.MediaPlayer;
             this.playbackSession = playbackSession;
             this.dispatcher = dispatcher;
-
+           
             playbackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
+            playbackSession.PositionChanged += PlaybackSession_PositionChanged;
         }
- 
+
+        private async void PlaybackSession_PositionChanged(MediaPlaybackSession sender, object args)
+        {
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                RaisePropertyChanged("Position");
+            });
+        }
+
         private async void PlaybackSession_PlaybackStateChanged(MediaPlaybackSession sender, object args)
         {
             if (disposed) return;

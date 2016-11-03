@@ -1,4 +1,6 @@
-﻿using GoogleMusicApi.UWP.Common;
+﻿using Bermuda.Services;
+using Bermuda.ViewModels;
+using GoogleMusicApi.UWP.Common;
 using GoogleMusicApi.UWP.Requests.Data;
 using GoogleMusicApi.UWP.Structure;
 using GoogleMusicApi.UWP.Structure.Enums;
@@ -10,6 +12,8 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media.Core;
+using Windows.Media.Playback;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -36,11 +40,22 @@ namespace Bermuda
 
         private List<ListenNowItem> listenNowList = new List<ListenNowItem>();
 
+        MediaPlayer Player => PlayerService.Instance.Player;
+
+        MediaPlaybackList PlaybackList
+        {
+            get { return Player.Source as MediaPlaybackList; }
+            set { Player.Source = value; }
+        }
+
+        List<Track> MediaList
+        {
+            get { return PlayerService.Instance.songList; }
+            set { PlayerService.Instance.songList = value; }
+        }
+
         private async void getListenNow()
         {
-            //cts2 = new CancellationTokenSource();
-
-            //await Task.Delay(3000);
 
             try
             {
@@ -103,54 +118,55 @@ namespace Bermuda
             {
                 if (listenNowList[index].Type == "1") //Album Listing
                 {
-                    if (NowPlaying.Songs.Any())
-                        NowPlaying.Songs.Clear();
-                    NowPlaying.currentSongIndex = 0;
 
                     Album album = await getAlbum(NewMain.Current.mc, listenNowList[index].Album.Id.MetajamCompactKey.ToString());
-
+                    List<Track> temp = new List<Track>();
+                    MediaPlaybackList temp2 = new MediaPlaybackList();
                     if (album.Tracks != null)
                     {
-                        NowPlaying.PopulateSongs(album.Tracks);
-                        NowPlaying.startPlaying = true;
-                        NewMain.Current.loadFrame("NowPlaying");
-                        //playCurrentPlaylist(np.currentSongIndex);
+                        foreach (Track track in album.Tracks)
+                        {
+                            temp.Add(track);
+                            temp2.Items.Add(new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, track))));
+                        }
+                        MediaList = temp;
+                        PlaybackList = temp2;
                     }
 
                 }
 
                 else if (listenNowList[index].Type == "3") //Radio Listing
                 {
-                    if (NowPlaying.Songs != null)
-                        NowPlaying.Songs.Clear();
-                    NowPlaying.currentSongIndex = 0;
 
                     if (listenNowList[index].RadioStation.Id.Seeds[0].SeedType.ToString() == "3")
                     {
                         RadioFeed feed = await getArtistRadioStation(NewMain.Current.mc, listenNowList[index].RadioStation.Id.Seeds[0].ArtistId);
-
+                        List<Track> temp = new List<Track>();
+                        MediaPlaybackList temp2 = new MediaPlaybackList();
                         if (feed.Data.Stations[0].Tracks != null)
                         {
-                            NowPlaying.PopulateSongs(feed.Data.Stations[0].Tracks);
+                            foreach (Track track in feed.Data.Stations[0].Tracks)
+                            {
+                                temp.Add(track);
+                                temp2.Items.Add(new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, track))));
+                            }
 
-                            NowPlaying.startPlaying = true;
-                            NewMain.Current.loadFrame("NowPlaying");
-                            //playCurrentPlaylist(np.currentSongIndex);
+                            MediaList = temp;
+                            PlaybackList = temp2;
                         }
 
                     }
-                    else if (listenNowList[index].RadioStation.Id.Seeds[0].SeedType.ToString() == "5")
+                    else if (listenNowList[index].RadioStation.Id.Seeds[0].SeedType.ToString() == "5") // Genre Listing
                     {
                         RadioFeed feed = await getGenreRadioStation(NewMain.Current.mc, listenNowList[index].RadioStation.Id.Seeds[0].GenreId);
 
-
                         if (feed.Data.Stations[0].Tracks != null)
                         {
-                            NowPlaying.PopulateSongs(feed.Data.Stations[0].Tracks);
-
-                            NowPlaying.startPlaying = true;
-                            NewMain.Current.loadFrame("NowPlaying");
-                            //playCurrentPlaylist(np.currentSongIndex);
+                            foreach (Track track in feed.Data.Stations[0].Tracks)
+                            {
+                                MediaList.Add(track);
+                                PlaybackList.Items.Add(new MediaPlaybackItem(MediaSource.CreateFromUri((new Uri(track.Nid)))));
+                            }
                         }
                     }
                 }
@@ -161,6 +177,15 @@ namespace Bermuda
                 System.Diagnostics.Debug.Write(ex);
             }
 
+        }
+
+        public static async Task<Uri> GetStreamUrl(MobileClient mc, Track track)
+        {
+            Uri data;
+
+            data = await mc.GetStreamUrlAsync(track);
+
+            return data;
         }
 
         private void create_ListenNow(int index, string Title, string Artist, string imagePath)

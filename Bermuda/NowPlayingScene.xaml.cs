@@ -14,9 +14,9 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.Storage.Streams;
 using System.Threading.Tasks;
 using Windows.Media.Core;
-using BackgroundMediaPlayback.Services;
-using BackgroundMediaPlayback.DataModels;
-using BackgroundMediaPlayback.ViewModels;
+using Bermuda.ViewModels;
+using Bermuda.Services;
+using System.Collections.Generic;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -28,36 +28,36 @@ namespace Bermuda
     public sealed partial class NowPlayingScene : Page
     {
 
+        public NowPlayingViewModel PlayerViewModel { get; set; }
+
+        MediaPlayer Player => PlayerService.Instance.Player;
+
+        MediaPlaybackList PlaybackList
+        {
+            get { return Player.Source as MediaPlaybackList; }
+            set { Player.Source = value; }
+        }
+        List<Track> MediaList
+        {
+            get { return PlayerService.Instance.songList; }
+            set { PlayerService.Instance.songList = value; }
+        }
+
         public NowPlayingScene()
         {
             this.InitializeComponent();
 
             this.NavigationCacheMode = NavigationCacheMode.Disabled;
 
-            NowPlaying.dispatcher = this.Dispatcher;
+            PlayerViewModel = new NowPlayingViewModel(Player, Dispatcher);
         }
 
         public DispatcherTimer songTimer;
 
-        BitmapImage CurrentSongImg => NowPlaying.CurrentSongImg;
-
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            NowPlaying.dispatcher = this.Dispatcher;
-
-            if (NowPlaying.Songs.Any())
-                loadUI();
-
-            if (NowPlaying.startPlaying)
-            {
-                NowPlaying.startPlaying = false;
-                playSong(NowPlaying.GetCurrentSong());
-            }
-
-            NowPlaying.playlist.CurrentItemChanged += NowPlaying.Playlist_CurrentItemChanged;
-
-            await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => { setNowPlayingAnimation(); });
-
+            if(MediaList != null && PlaybackList != null)
+                PlayerViewModel.PlayList = new PlaylistViewModel(MediaList, PlaybackList, Dispatcher);
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
@@ -74,191 +74,7 @@ namespace Bermuda
 
         private void currentPlaylistGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            int index = this.currentPlaylistGridView.Items.IndexOf(e.ClickedItem);
 
-            playSong(NowPlaying.GetSongFromIndex(index));
-
-        }
-
-        private void volumeSlider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
-        {
-            NowPlaying.player.Volume = volumeSlider.Value / 100;
-        }
-
-        private void shuffleButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (NowPlaying.Songs.Count > 1)
-            {
-
-                NowPlaying.ShuffleSongs();
-                loadUI();
-                playSong(NowPlaying.GetCurrentSong());
-            }
-
-            else
-            {
-
-            }
-        }
-
-        private void nextButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (!NowPlaying.isLoadingSong)
-            {
-                if (NowPlaying.currentSongIndex < NowPlaying.Songs.Count() - 1)
-                {
-                    playSong(NowPlaying.GetNextSong());
-                }
-            }
-        }
-
-        private void previousButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (!NowPlaying.isLoadingSong)
-            {
-                if (NowPlaying.currentSongIndex > 0)
-                {
-                    playSong(NowPlaying.GetPreviousSong());
-                }
-                else
-                    NowPlaying.player.PlaybackSession.Position = TimeSpan.Zero;
-            }
-        }
-
-        private void playPause_Click(object sender, RoutedEventArgs e)
-        {
-            if (NowPlaying.player.PlaybackSession.PlaybackState == MediaPlaybackState.Playing)
-            {
-                NowPlaying.player.Pause();
-                //pauseButton.Visibility = Visibility.Collapsed;
-                //playButton.Visibility = Visibility.Visible;
-                playButton.Style = (Style)this.Resources["customPlayButton"];
-                playButton.Focus(FocusState.Programmatic);
-            }
-
-            else if (NowPlaying.player.PlaybackSession.PlaybackState == MediaPlaybackState.Paused)
-            {
-                //playButton.Visibility = Visibility.Collapsed;
-                //pauseButton.Visibility = Visibility.Visible;
-                playButton.Style = (Style)this.Resources["customPauseButton"];
-                playButton.Focus(FocusState.Programmatic);
-
-                if (NowPlaying.isSongEnded)
-                    playSong(NowPlaying.GetNextSong());
-                else
-                    NowPlaying.player.Play();
-            }
-        }
-
-        public async void playSong(Track track)
-        {
-            if (NewMain.Current.lastNetworkState != "No Internet Access")
-            {
-                NowPlaying.isLoadingSong = true;
-                //Uri uri;
-
-                if (track != null)
-                {
-
-                    if (NowPlaying.isFirstPlaySinceOpen)
-                        setupPlayer();
-
-                    try
-                    {
-                        //uri = await GetStreamUrl(NewMain.Current.mc, track);
-                    }
-
-                    catch (Exception e)
-                    {
-                        System.Diagnostics.Debug.Write(e);
-                        //uri = null;
-                    }
-
-                    //if (uri != null)
-                    //{
-                            try
-                            {
-                                setNowPlayingAnimation();
-
-                        //NowPlaying.player.Source = MediaSource.CreateFromUri(uri);
-
-                        //if (NowPlaying.GetCurrentSong().AlbumArtReference != null)
-                           // NowPlaying.CurrentSongImg = new BitmapImage(new Uri(NowPlaying.GetCurrentSong().AlbumArtReference[0].Url));
-                        //else
-                            //NowPlaying.CurrentSongImg = new BitmapImage(new Uri("ms-appx:///Assets/logo2480x1200.png", UriKind.Absolute));
-
-                        await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                            {
-                                trackPlayProgressBar.Maximum = (double)track.DurationMillis / 1000;
-                                trackPlayProgressBar.Value = 0;
-
-                                playButton.Style = (Style)this.Resources["customPauseButton"];
-                            });
-
-                            /*if (track.Artist.ToString().Length > 20)
-                            {
-                                clartistnametextBlock.Text = track.Artist.ToString().Substring(0, 19) + "...";
-                            }
-                            else
-                                clartistnametextBlock.Text = track.Artist.ToString();
-
-                            if (track.Title.ToString().Length > 20)
-                            {
-                                clsongnametextBlock.Text = track.Title.ToString().Substring(0, 19) + "...";
-                            }
-                            else
-                                clsongnametextBlock.Text = track.Title.ToString(); */
-
-
-                            NowPlaying.isSongEnded = false;
-
-                            NowPlaying.player.Play();
-
-                                /*if (stackPanel1.Visibility == Visibility.Collapsed)
-                                    stackPanel1.Visibility = Visibility.Visible;
-                                if (playButton.Visibility == Visibility.Collapsed)
-                                    playButton.Visibility = Visibility.Visible;
-                                //if (pauseButton.Visibility == Visibility.Collapsed)
-                                    //pauseButton.Visibility = Visibility.Visible;
-                                //if (clCanvas.Visibility == Visibility.Collapsed)
-                                //    clCanvas.Visibility = Visibility.Visible;
-                                if (shuffleButton.Visibility == Visibility.Collapsed)
-                                    shuffleButton.Visibility = Visibility.Visible;
-                                if (volumeSlider.Visibility == Visibility.Collapsed)
-                                    volumeSlider.Visibility = Visibility.Visible;*/
-
-                                
-                            }
-
-                            catch (Exception ex)
-                            {
-                                System.Diagnostics.Debug.Write(ex);
-                            }
-
-                        //});
-                    //}
-
-                   // else
-                   // {
-                      //  playSong(NowPlaying.GetNextSong());
-                       // await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                       // {
-
-                        //});
-                   // }
-                }
-
-                else
-                {
-                    playSong(NowPlaying.GetNextSong());
-                    await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                    {
-
-                    });
-                }
-
-                NowPlaying.isLoadingSong = false;
-            }
         }
 
         private void setupPlayer()
@@ -276,7 +92,6 @@ namespace Bermuda
 
             NowPlaying.systemMediaTransportControls.ButtonPressed += SystemMediaTransportControls_ButtonPressed;
             NowPlaying.player.MediaOpened += Player_MediaOpened;
-            NowPlaying.player.MediaEnded += Player_MediaEnded;
             NowPlaying.player.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
 
             NowPlaying.isFirstPlaySinceOpen = false;
@@ -289,36 +104,10 @@ namespace Bermuda
 
         public void loadUI()
         {
-            int index = 0;
-
-            if (currentPlaylistGridView.Items.Any())
-                currentPlaylistGridView.Items.Clear();
-
-            foreach (Track song in NowPlaying.Songs)
-            {
-                createNowPlayingListItem(song, index);
-                index++;
-            }
-
-            if (NowPlaying.GetCurrentSong().AlbumArtReference != null)
-                albumArtImage.Source = new BitmapImage(new Uri(NowPlaying.GetCurrentSong().AlbumArtReference[0].Url));
-            else
-                albumArtImage.Source = new BitmapImage(new Uri("ms-appx:///Assets/logo2480x1200.png", UriKind.Absolute));
-
             songTimer = new DispatcherTimer();
             songTimer.Tick += SongTimer_Tick;
             songTimer.Interval = new TimeSpan(0, 0, 0, 0, 17);
             songTimer.Start();
-
-            if (NowPlaying.player.PlaybackSession.PlaybackState == MediaPlaybackState.Playing)
-                playButton.Style = (Style)this.Resources["customPauseButton"];
-            else if(NowPlaying.player.PlaybackSession.PlaybackState == MediaPlaybackState.Paused)
-                playButton.Style = (Style)this.Resources["customPlayButton"];
-
-
-            trackPlayProgressBar.Maximum = (double)NowPlaying.GetCurrentSong().DurationMillis / 1000;
-            //Task.Delay(1000);
-
         }
 
         private void createNowPlayingListItem(Track track, int index)
@@ -439,9 +228,9 @@ namespace Bermuda
             currentPlaylistGridView.Items.Add(grid1);
         }
 
-        private async void setNowPlayingAnimation()
+        private  void setNowPlayingAnimation()
         {
-            await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => {
+            /*await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => {
 
                 if (NowPlaying.Songs.Any())
                 {
@@ -468,7 +257,7 @@ namespace Bermuda
                     currentPlaylistGridView.ScrollIntoView(currentPlaylistGridView.Items[NowPlaying.currentSongIndex], ScrollIntoViewAlignment.Leading);
 
                 }
-            });
+            });*/
         }
 
         private void PlaybackSession_PlaybackStateChanged(MediaPlaybackSession sender, object args)
@@ -494,13 +283,8 @@ namespace Bermuda
                 case SystemMediaTransportControlsButton.Play:
                     await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     {
-                        playButton.Style = (Style)this.Resources["customPauseButton"];
-                        //playButton.Visibility = Visibility.Collapsed;
-                        //pauseButton.Visibility = Visibility.Visible;
-                        if (NowPlaying.isSongEnded)
-                            playSong(NowPlaying.Songs[NowPlaying.currentSongIndex]);
-                        else
-                            NowPlaying.player.Play();
+                        //Player Play()
+
                     });
                     break;
                 case SystemMediaTransportControlsButton.Pause:
@@ -515,9 +299,9 @@ namespace Bermuda
                 case SystemMediaTransportControlsButton.Next:
                     await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     {
-                        if (NowPlaying.currentSongIndex < NowPlaying.Songs.Count() - 1)
+                        if (NowPlaying.isLoadingSong)
                         {
-                            playSong(NowPlaying.GetNextSong());
+                            //Start next song
                         }
                     });
                     break;
@@ -526,7 +310,7 @@ namespace Bermuda
                     {
                         if (NowPlaying.currentSongIndex > 0)
                         {
-                            playSong(NowPlaying.GetPreviousSong());
+                            //Start last song
                         }
                         else
                             NowPlaying.player.PlaybackSession.Position = TimeSpan.Zero;
@@ -539,11 +323,13 @@ namespace Bermuda
 
         private void Player_MediaOpened(MediaPlayer sender, object args)
         {
-            //playButton.Style = (Style)this.Resources["customPauseButton"];
             // Get the updater.
             SystemMediaTransportControlsDisplayUpdater updater = NowPlaying.systemMediaTransportControls.DisplayUpdater;
             updater.Type = MediaPlaybackType.Music;
-            updater.MusicProperties.AlbumArtist = NowPlaying.GetCurrentSong().Artist.ToString();
+
+            //Need to remodel for playlist.currentitem
+
+            /*updater.MusicProperties.AlbumArtist = NowPlaying.GetCurrentSong().Artist.ToString();
             updater.MusicProperties.AlbumTitle = NowPlaying.GetCurrentSong().Album.ToString();
             updater.MusicProperties.Title = NowPlaying.GetCurrentSong().Title.ToString();
 
@@ -554,46 +340,8 @@ namespace Bermuda
             else
                 updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri("Assets/logo2480x1200.png", UriKind.Relative));
 
-            updater.Update();
+            updater.Update();*/
 
-        }
-
-        private async void Player_MediaEnded(MediaPlayer sender, object args)
-        {
-            //await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => { NowPlaying.songTimer.Stop(); });
-
-            /*NowPlaying.isSongEnded = true;
-
-            if (NowPlaying.currentSongIndex < NowPlaying.Songs.Count() - 1)
-            {
-                NowPlaying.isSongEnded = false;
-                playSong(NowPlaying.GetNextSong());
-            }
-
-            else
-            {
-                await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    playButton.Style = (Style)this.Resources["customPlayButton"];
-                    //pauseButton.Visibility = Visibility.Collapsed;
-                    //playButton.Visibility = Visibility.Visible;
-                    //clCanvas.Visibility = Visibility.Collapsed;
-
-                    if (NowPlaying.currentSongIndex == NowPlaying.Songs.Count() - 1)
-                    {
-
-                    }
-                });
-            }*/
-        }
-
-        public async Task<Uri> GetStreamUrl(MobileClient mc, Track track)
-        {
-            Uri data;
-
-            data = await mc.GetStreamUrlAsync(track);
-
-            return data;
         }
     }
 }

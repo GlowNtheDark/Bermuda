@@ -102,9 +102,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DataModels\MediaItem.cs" />
-    <Compile Include="DataModels\MediaList.cs" />
-    <Compile Include="DataModels\MusicItem.cs" />
     <Compile Include="LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
@@ -118,17 +115,16 @@
     <Compile Include="PassSession.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AppSettings.cs" />
-    <Compile Include="Services\PlaybackService.cs" />
+    <Compile Include="Services\PlayerService.cs" />
     <Compile Include="SettingsScene.xaml.cs">
       <DependentUpon>SettingsScene.xaml</DependentUpon>
     </Compile>
     <Compile Include="SuggestionsScene.xaml.cs">
       <DependentUpon>SuggestionsScene.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\MediaItemViewModel.cs" />
-    <Compile Include="ViewModels\MediaListViewModel.cs" />
+    <Compile Include="ViewModels\NowPlayingViewModel.cs" />
     <Compile Include="ViewModels\PlaybackSessionViewModel.cs" />
-    <Compile Include="ViewModels\PlayerViewModel.cs" />
+    <Compile Include="ViewModels\PlaylistViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -242,6 +238,9 @@
       <Project>{1413d532-11d7-43be-b45e-a942baefccba}</Project>
       <Name>Tasks</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DataModels\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
