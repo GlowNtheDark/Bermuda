@@ -1,4 +1,5 @@
-﻿using GoogleMusicApi.UWP.Structure;
+﻿using Bermuda.Services;
+using GoogleMusicApi.UWP.Structure;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,7 +15,7 @@ namespace Bermuda.ViewModels
     public class PlaylistViewModel : INotifyPropertyChanged
     {
         CoreDispatcher dispatcher;
-        public int currentItemIndex = 0;
+
         bool disposed;
         bool initializing;
 
@@ -23,7 +24,6 @@ namespace Bermuda.ViewModels
         public Track[] songList { get; private set; }
         public MediaPlaybackItem playbackItem { get; private set; }
         public Track currentMediaItem { get; private set; }
-
         BitmapImage CurrentMediaImg;
         double CurrentMediaDuration;
 
@@ -55,12 +55,11 @@ namespace Bermuda.ViewModels
             }
         }
 
-        public PlaylistViewModel(Track[] sl, MediaPlaybackItem pbi, int csi, CoreDispatcher dispatcher)
+        public PlaylistViewModel(Track[] sl, MediaPlaybackItem pbi, CoreDispatcher dispatcher)
         {
             songList = sl;
             playbackItem = pbi;
             this.dispatcher = dispatcher;
-            currentItemIndex = csi;
 
             if(currentMediaItem != null)
             {
@@ -71,7 +70,7 @@ namespace Bermuda.ViewModels
 
             else
             {
-                currentMediaItem = songList[currentItemIndex];
+                currentMediaItem = songList[PlayerService.Instance.currentSongIndex];
                 currentMediaImg = new BitmapImage();
                 currentMediaImg.UriSource = new Uri(currentMediaItem.AlbumArtReference[0].Url);
                 currentMediaDuration = currentMediaItem.DurationMillis;
@@ -79,25 +78,24 @@ namespace Bermuda.ViewModels
 
         }
 
-        public async void setCurrentMediaItem()
+        public async Task setCurrentMediaItem()
         {
-            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                currentMediaItem = songList[currentItemIndex];
+                PlayerService.Instance.currentSongIndex++;
+                currentMediaItem = songList[PlayerService.Instance.currentSongIndex];
                 currentMediaImg = new BitmapImage();
                 currentMediaImg.UriSource = new Uri(currentMediaItem.AlbumArtReference[0].Url);
                 currentMediaDuration = currentMediaItem.DurationMillis;
-            });
-        }
-
-        public void addTracksToPlayback()
-        {
-            
+                RaisePropertyChanged("currentItemIndex");
         }
 
         private void RaisePropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void Dispose()
+        {
+
         }
 
     }

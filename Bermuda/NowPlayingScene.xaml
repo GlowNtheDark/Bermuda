@@ -10,6 +10,8 @@
     mc:Ignorable="d" Loaded="Page_Loaded" Unloaded="Page_Unloaded">
 
     <Page.Resources>
+        <vm:StringUriConverter x:Key="StringUriConverter"/>
+        
         <Style x:Key="customSlider" TargetType="Slider">
             <Setter Property="Background" Value="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" />
             <Setter Property="BorderThickness" Value="{ThemeResource SliderBorderThemeThickness}" />
@@ -821,11 +823,15 @@
                             <ColumnDefinition Width="100"/>
                             <ColumnDefinition Width="175"/>
                         </Grid.ColumnDefinitions>
-                        <Image Width="Auto" Height="Auto" Stretch="Fill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Grid.Column="0" Grid.Row="0" Source="Assets/no_image.png"/>
+                        <Image Width="Auto" Height="Auto" Stretch="Fill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Grid.Column="0" Grid.Row="0">
+                            <Image.Source>
+                                <BitmapImage UriSource="{x:Bind AlbumArtReference, Converter={StaticResource StringUriConverter}, Mode=OneWay}"/>
+                            </Image.Source>
+                        </Image>
                         <StackPanel Margin="0,0,10,0" Grid.Column="1" Grid.Row="0">
-                            <TextBlock Text="{x:Bind Title}" Height="25" FontSize="18" Margin="0,0,15,0" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Top"/>
-                            <TextBlock Text="{x:Bind Album}" Height="20" FontSize="15" Margin="0,0,15,0" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                            <TextBlock Text="{x:Bind Artist}" Height="20" FontSize="15" Margin="0,0,15,0" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+                            <TextBlock Text="{x:Bind Title}" Height="25" FontSize="18" Margin="0,0,15,0" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Top" TextTrimming="WordEllipsis"/>
+                            <TextBlock Text="{x:Bind Album}" Height="20" FontSize="15" Margin="0,0,15,0" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center" TextTrimming="WordEllipsis"/>
+                            <TextBlock Text="{x:Bind Artist}" Height="20" FontSize="15" Margin="0,0,15,0" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Bottom" TextTrimming="WordEllipsis"/>
                         </StackPanel>
                     </Grid>
                 </DataTemplate>

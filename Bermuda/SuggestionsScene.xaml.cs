@@ -120,23 +120,9 @@ namespace Bermuda
 
                     Album album = await getAlbum(NewMain.Current.mc, listenNowList[index].Album.Id.MetajamCompactKey.ToString());
                     
-                    /*MediaPlaybackList temp2 = new MediaPlaybackList();
-
-                    if (album.Tracks != null)
-                    {
-                        foreach (Track track in album.Tracks)
-                        {
-
-                            if (temp2.Items.Count < 2)
-                                temp2.Items.Add(new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, track))));
-                            else
-                                break;
-                        }
-                        */
-                        MediaList = album.Tracks;
-                        PlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, album.Tracks[0])));
+                    MediaList = album.Tracks;
+                    PlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, album.Tracks[0])));
                     Player.Play();
-                    //}
 
                 }
 
@@ -151,16 +137,10 @@ namespace Bermuda
 
                         if (feed.Data.Stations[0].Tracks != null)
                         {
-                            foreach (Track track in feed.Data.Stations[0].Tracks)
-                            {
-                                if(temp2.Items.Count < 2)
-                                   temp2.Items.Add(new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, track))));
-                                else
-                                    break;
-                            }
 
                             MediaList = feed.Data.Stations[0].Tracks;
-                            //PlaybackList = temp2;
+                            PlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
+                            Player.Play();
                         }
 
                     }
@@ -170,11 +150,9 @@ namespace Bermuda
 
                         if (feed.Data.Stations[0].Tracks != null)
                         {
-                            foreach (Track track in feed.Data.Stations[0].Tracks)
-                            {
-                                //MediaList.Add(track);
-                                //PlaybackList.Items.Add(new MediaPlaybackItem(MediaSource.CreateFromUri((new Uri(track.Nid)))));
-                            }
+                            MediaList = feed.Data.Stations[0].Tracks;
+                            PlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
+                            Player.Play();
                         }
                     }
                 }

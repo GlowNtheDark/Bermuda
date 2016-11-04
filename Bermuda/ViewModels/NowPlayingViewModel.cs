@@ -1,4 +1,5 @@
-﻿using GoogleMusicApi.UWP.Common;
+﻿using Bermuda.Services;
+using GoogleMusicApi.UWP.Common;
 using GoogleMusicApi.UWP.Structure;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.UI.Core;
@@ -14,7 +16,7 @@ namespace Bermuda.ViewModels
 {
     public class NowPlayingViewModel : INotifyPropertyChanged, IDisposable
     {
-        bool disposed;
+        //bool disposed;
 
         public MediaPlayer player;
         CoreDispatcher dispatcher;
@@ -23,6 +25,7 @@ namespace Bermuda.ViewModels
         public PlaylistViewModel playList;
 
         public PlaybackSessionViewModel PlaybackSession { get; private set; }
+        
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -31,35 +34,25 @@ namespace Bermuda.ViewModels
             this.player = player;
             this.dispatcher = dispatcher;
             PlaybackSession = new PlaybackSessionViewModel(player.PlaybackSession, dispatcher);
-            player.MediaEnded += Player_MediaEnded;
-        }
 
-        private async void Player_MediaEnded(MediaPlayer sender, object args)
-        {
-            playList.currentItemIndex++;
-            player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, playList.songList[playList.currentItemIndex])));
-            playList.setCurrentMediaItem();
-            player.Play();
         }
 
         public void skipPrevious()
         {
           
-            //RaisePropertyChanged("playList");
-            //RaisePropertyChanged("PlaybackSession");
         }
 
         public async void skipNext()
         {
-            playList.currentItemIndex++;
-            player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, playList.songList[playList.currentItemIndex])));
-            playList.setCurrentMediaItem();
+            await playList.setCurrentMediaItem();
+            player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, playList.songList[PlayerService.Instance.currentSongIndex])));
+
             player.Play();
         }
 
         public void togglePlayPause()
         {
-            switch (player.PlaybackSession.PlaybackState)
+            switch (PlaybackSession.PlaybackState)
             {
                 case MediaPlaybackState.Playing:
                     player.Pause();
@@ -119,10 +112,13 @@ namespace Bermuda.ViewModels
 
         public void Dispose()
         {
-            if (disposed)
-                return;
+            if (playList != null)
+            {
+                playList.Dispose();
+                playList = null; // Setter triggers vector unsubscribe logic
+            }
 
-            disposed = true;
+            PlaybackSession.Dispose();
         }
     }
 }
