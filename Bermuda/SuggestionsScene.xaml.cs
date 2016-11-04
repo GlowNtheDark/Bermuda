@@ -42,13 +42,13 @@ namespace Bermuda
 
         MediaPlayer Player => PlayerService.Instance.Player;
 
-        MediaPlaybackList PlaybackList
+        MediaPlaybackItem PlaybackItem
         {
-            get { return Player.Source as MediaPlaybackList; }
+            get { return Player.Source as MediaPlaybackItem; }
             set { Player.Source = value; }
         }
 
-        List<Track> MediaList
+        Track[] MediaList
         {
             get { return PlayerService.Instance.songList; }
             set { PlayerService.Instance.songList = value; }
@@ -94,7 +94,6 @@ namespace Bermuda
 
                     recentsGridView.IsItemClickEnabled = true;
                     recentsGridView.ItemClick += new ItemClickEventHandler(GridView_ItemClick);
-                    //listenNowProgressRing.IsActive = false;
                 }
 
                 else
@@ -120,18 +119,24 @@ namespace Bermuda
                 {
 
                     Album album = await getAlbum(NewMain.Current.mc, listenNowList[index].Album.Id.MetajamCompactKey.ToString());
-                    List<Track> temp = new List<Track>();
-                    MediaPlaybackList temp2 = new MediaPlaybackList();
+                    
+                    /*MediaPlaybackList temp2 = new MediaPlaybackList();
+
                     if (album.Tracks != null)
                     {
                         foreach (Track track in album.Tracks)
                         {
-                            temp.Add(track);
-                            temp2.Items.Add(new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, track))));
+
+                            if (temp2.Items.Count < 2)
+                                temp2.Items.Add(new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, track))));
+                            else
+                                break;
                         }
-                        MediaList = temp;
-                        PlaybackList = temp2;
-                    }
+                        */
+                        MediaList = album.Tracks;
+                        PlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, album.Tracks[0])));
+                    Player.Play();
+                    //}
 
                 }
 
@@ -141,18 +146,21 @@ namespace Bermuda
                     if (listenNowList[index].RadioStation.Id.Seeds[0].SeedType.ToString() == "3")
                     {
                         RadioFeed feed = await getArtistRadioStation(NewMain.Current.mc, listenNowList[index].RadioStation.Id.Seeds[0].ArtistId);
-                        List<Track> temp = new List<Track>();
+
                         MediaPlaybackList temp2 = new MediaPlaybackList();
+
                         if (feed.Data.Stations[0].Tracks != null)
                         {
                             foreach (Track track in feed.Data.Stations[0].Tracks)
                             {
-                                temp.Add(track);
-                                temp2.Items.Add(new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, track))));
+                                if(temp2.Items.Count < 2)
+                                   temp2.Items.Add(new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, track))));
+                                else
+                                    break;
                             }
 
-                            MediaList = temp;
-                            PlaybackList = temp2;
+                            MediaList = feed.Data.Stations[0].Tracks;
+                            //PlaybackList = temp2;
                         }
 
                     }
@@ -164,8 +172,8 @@ namespace Bermuda
                         {
                             foreach (Track track in feed.Data.Stations[0].Tracks)
                             {
-                                MediaList.Add(track);
-                                PlaybackList.Items.Add(new MediaPlaybackItem(MediaSource.CreateFromUri((new Uri(track.Nid)))));
+                                //MediaList.Add(track);
+                                //PlaybackList.Items.Add(new MediaPlaybackItem(MediaSource.CreateFromUri((new Uri(track.Nid)))));
                             }
                         }
                     }

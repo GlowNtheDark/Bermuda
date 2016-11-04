@@ -25,12 +25,14 @@ namespace Bermuda.Services
 
         public MediaPlayer Player { get; private set; }
 
-        public List<Track> songList { get; set; }
+        public Track[] songList { get; set; }
+
+        public int currentSongIndex { get; set; }
 
         public PlayerService()
         {
             Player = new MediaPlayer();
-            Player.AutoPlay = true;
+            Player.AutoPlay = false;
         }
     }
 }

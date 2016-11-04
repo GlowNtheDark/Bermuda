@@ -14,14 +14,14 @@ namespace Bermuda.ViewModels
     public class PlaylistViewModel : INotifyPropertyChanged
     {
         CoreDispatcher dispatcher;
-        int currentItemIndex = 0;
+        public int currentItemIndex = 0;
         bool disposed;
         bool initializing;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public List<Track> songList { get; private set; }
-        public MediaPlaybackList playbackList { get; private set; }
+        public Track[] songList { get; private set; }
+        public MediaPlaybackItem playbackItem { get; private set; }
         public Track currentMediaItem { get; private set; }
 
         BitmapImage CurrentMediaImg;
@@ -55,12 +55,12 @@ namespace Bermuda.ViewModels
             }
         }
 
-        public PlaylistViewModel(List<Track> sl, MediaPlaybackList pbl, CoreDispatcher dispatcher)
+        public PlaylistViewModel(Track[] sl, MediaPlaybackItem pbi, int csi, CoreDispatcher dispatcher)
         {
             songList = sl;
-            playbackList = pbl;
+            playbackItem = pbi;
             this.dispatcher = dispatcher;
-            currentItemIndex = (int)playbackList.CurrentItemIndex;
+            currentItemIndex = csi;
 
             if(currentMediaItem != null)
             {
@@ -77,38 +77,22 @@ namespace Bermuda.ViewModels
                 currentMediaDuration = currentMediaItem.DurationMillis;
             }
 
-            playbackList.CurrentItemChanged += PlaybackList_CurrentItemChanged;
         }
 
-        private async void PlaybackList_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
+        public async void setCurrentMediaItem()
         {
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-
-
-                var playbackItem = args.NewItem;
-
-                if (playbackItem == null)
-                {
-                    currentMediaItem = null;
-                }
-                else
-                {
-                    // Find the single item in this list with a playback item
-                    // matching the one we just received the event for.
-                    currentMediaItem = songList[(int)playbackList.CurrentItemIndex];
-                    currentMediaImg = new BitmapImage();
-                    currentMediaImg.UriSource = new Uri(currentMediaItem.AlbumArtReference[0].Url);
-                    currentMediaDuration = currentMediaItem.DurationMillis;
-                    RaisePropertyChanged("currentMediaItem");
-                }
+                currentMediaItem = songList[currentItemIndex];
+                currentMediaImg = new BitmapImage();
+                currentMediaImg.UriSource = new Uri(currentMediaItem.AlbumArtReference[0].Url);
+                currentMediaDuration = currentMediaItem.DurationMillis;
             });
         }
 
-        public void addTracksToPlaylist(Track[] trackList)
+        public void addTracksToPlayback()
         {
-            foreach (Track track in trackList)
-                songList.Add(track);
+            
         }
 
         private void RaisePropertyChanged(string propertyName)

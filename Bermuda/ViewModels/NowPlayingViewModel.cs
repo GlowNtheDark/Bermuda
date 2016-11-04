@@ -1,9 +1,12 @@
-﻿using System;
+﻿using GoogleMusicApi.UWP.Common;
+using GoogleMusicApi.UWP.Structure;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.UI.Core;
 
@@ -15,7 +18,7 @@ namespace Bermuda.ViewModels
 
         public MediaPlayer player;
         CoreDispatcher dispatcher;
-        MediaPlaybackList playbackList;
+        MediaPlaybackItem playbackItem;
 
         public PlaylistViewModel playList;
 
@@ -28,6 +31,15 @@ namespace Bermuda.ViewModels
             this.player = player;
             this.dispatcher = dispatcher;
             PlaybackSession = new PlaybackSessionViewModel(player.PlaybackSession, dispatcher);
+            player.MediaEnded += Player_MediaEnded;
+        }
+
+        private async void Player_MediaEnded(MediaPlayer sender, object args)
+        {
+            playList.currentItemIndex++;
+            player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, playList.songList[playList.currentItemIndex])));
+            playList.setCurrentMediaItem();
+            player.Play();
         }
 
         public void skipPrevious()
@@ -37,13 +49,25 @@ namespace Bermuda.ViewModels
             //RaisePropertyChanged("PlaybackSession");
         }
 
-        public void skipNext()
+        public async void skipNext()
         {
-            var list = player.Source as MediaPlaybackList;
-            if (list == null)
-                return;
+            playList.currentItemIndex++;
+            player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, playList.songList[playList.currentItemIndex])));
+            playList.setCurrentMediaItem();
+            player.Play();
+        }
 
-            list.MoveNext();
+        public void togglePlayPause()
+        {
+            switch (player.PlaybackSession.PlaybackState)
+            {
+                case MediaPlaybackState.Playing:
+                    player.Pause();
+                    break;
+                case MediaPlaybackState.Paused:
+                    player.Play();
+                    break;
+            }
         }
 
         public PlaylistViewModel PlayList
@@ -53,21 +77,19 @@ namespace Bermuda.ViewModels
             {
                 if (playList != value)
                 {
-                    if (playbackList != null)
+                    if (playbackItem != null)
                     {
-                        playbackList.CurrentItemChanged -= playbackList_CurrentItemChanged;
-                        playbackList = null;
+                        playbackItem = null;
                     }
 
                     playList = value;
 
                     if (playList != null)
                     {
-                        if (player.Source != playList.playbackList)
-                            player.Source = playList.playbackList;
+                        if (player.Source != playList.playbackItem)
+                            player.Source = playList.playbackItem;
 
-                        playbackList = playList.playbackList;
-                        playbackList.CurrentItemChanged += playbackList_CurrentItemChanged;
+                        playbackItem = playList.playbackItem;
 
                     }
                     else
@@ -81,9 +103,13 @@ namespace Bermuda.ViewModels
             }
         }
 
-        private void playbackList_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
+        public static async Task<Uri> GetStreamUrl(MobileClient mc, Track track)
         {
+            Uri data;
 
+            data = await mc.GetStreamUrlAsync(track);
+
+            return data;
         }
 
         private void RaisePropertyChanged(string propertyName)

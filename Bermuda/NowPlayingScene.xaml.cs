@@ -32,15 +32,21 @@ namespace Bermuda
 
         MediaPlayer Player => PlayerService.Instance.Player;
 
-        MediaPlaybackList PlaybackList
+        MediaPlaybackItem PlaybackItem
         {
-            get { return Player.Source as MediaPlaybackList; }
+            get { return Player.Source as MediaPlaybackItem; }
             set { Player.Source = value; }
         }
-        List<Track> MediaList
+        Track[] MediaList
         {
             get { return PlayerService.Instance.songList; }
             set { PlayerService.Instance.songList = value; }
+        }
+
+        int CurrentSongIndex
+        {
+            get { return PlayerService.Instance.currentSongIndex; }
+            set { PlayerService.Instance.currentSongIndex = value; }
         }
 
         public NowPlayingScene()
@@ -52,22 +58,14 @@ namespace Bermuda
             PlayerViewModel = new NowPlayingViewModel(Player, Dispatcher);
         }
 
-        public DispatcherTimer songTimer;
-
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            if(MediaList != null && PlaybackList != null)
-                PlayerViewModel.PlayList = new PlaylistViewModel(MediaList, PlaybackList, Dispatcher);
+            if(MediaList != null && PlaybackItem != null)
+                PlayerViewModel.PlayList = new PlaylistViewModel(MediaList, PlaybackItem, CurrentSongIndex, Dispatcher);
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
-            if (songTimer != null)
-            {
-                songTimer.Stop();
-                songTimer.Tick -= SongTimer_Tick;
-                songTimer = null;
-            }
             GC.Collect();
             AppSettings.localSettings.Values["lastPage"] = "NowPlaying";
         }
@@ -97,17 +95,9 @@ namespace Bermuda
             NowPlaying.isFirstPlaySinceOpen = false;
         }
 
-        private async void SongTimer_Tick(object sender, object e)
-        {
-            await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => { trackPlayProgressBar.Value = NowPlaying.player.PlaybackSession.Position.TotalSeconds; });
-        }
-
         public void loadUI()
         {
-            songTimer = new DispatcherTimer();
-            songTimer.Tick += SongTimer_Tick;
-            songTimer.Interval = new TimeSpan(0, 0, 0, 0, 17);
-            songTimer.Start();
+
         }
 
         private void createNowPlayingListItem(Track track, int index)
