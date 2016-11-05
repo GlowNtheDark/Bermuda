@@ -107,9 +107,7 @@ namespace Bermuda
 
                     if (await testAuthorizationLevel())
                     {
-                        string pageName = AppSettings.localSettings.Values["lastPage"].ToString();
-
-                        if (pageName != "")
+                        if (AppSettings.localSettings.Values["lastPage"] != null)
                             loadFrame(AppSettings.localSettings.Values["lastPage"].ToString());
                         else
                             loadFrame("Suggestions");
@@ -326,6 +324,12 @@ namespace Bermuda
                 mainFrame.Navigate(stScene);
             }
         
+        }
+
+        private void Page_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        {
+            if(e.Key == Windows.System.VirtualKey.GamepadView)
+                MySplitView.IsPaneOpen = !MySplitView.IsPaneOpen;
         }
     }
 }

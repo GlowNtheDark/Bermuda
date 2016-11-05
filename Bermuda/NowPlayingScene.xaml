@@ -829,9 +829,9 @@
                             </Image.Source>
                         </Image>
                         <StackPanel Margin="0,0,10,0" Grid.Column="1" Grid.Row="0">
-                            <TextBlock Text="{x:Bind Title}" Height="25" FontSize="18" Margin="0,0,15,0" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Top" TextTrimming="WordEllipsis"/>
-                            <TextBlock Text="{x:Bind Album}" Height="20" FontSize="15" Margin="0,0,15,0" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center" TextTrimming="WordEllipsis"/>
-                            <TextBlock Text="{x:Bind Artist}" Height="20" FontSize="15" Margin="0,0,15,0" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Bottom" TextTrimming="WordEllipsis"/>
+                            <TextBlock Text="{x:Bind Title}" Height="25" FontSize="18" Margin="0,0,15,0" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Top" TextTrimming="CharacterEllipsis"/>
+                            <TextBlock Text="{x:Bind Album}" Height="20" FontSize="15" Margin="0,0,15,0" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                            <TextBlock Text="{x:Bind Artist}" Height="20" FontSize="15" Margin="0,0,15,0" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Bottom" TextTrimming="CharacterEllipsis"/>
                         </StackPanel>
                     </Grid>
                 </DataTemplate>
@@ -840,16 +840,16 @@
         <Grid Grid.Column="0" Grid.Row="1" VerticalAlignment="Bottom">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="50"/>
+                <RowDefinition Height="51"/>
             </Grid.RowDefinitions>
-            <Image x:Name="albumArtImage"  Height="Auto" Width="Auto" Margin="0,10,0,0" Grid.Column="0" Grid.Row="0" Stretch="Fill" Source="{x:Bind PlayerViewModel.PlayList.currentMediaImg, Mode=OneWay}"/>
-            <StackPanel x:Name="stackPanel1" Orientation="Horizontal" HorizontalAlignment="Center" Height="50" Margin="0,0,0,0" VerticalAlignment="Bottom" Width="Auto" Grid.Row="2" Visibility="Visible">
-                <Button x:Name="previousButton" Style="{StaticResource customPrevButton}" Width="50" Margin="0,0,5,0" HorizontalAlignment="Left" Height="50" Foreground="White" Click="{x:Bind PlayerViewModel.skipPrevious}" Visibility="Visible"/>
-                <Button x:Name="playButton" Style="{StaticResource customPlayButton}" Width="50" HorizontalAlignment="Center" Height="50" Foreground="White" Click="{x:Bind PlayerViewModel.togglePlayPause}" Visibility="Visible"/>
-                <Button x:Name="nextButton" Style="{StaticResource customNextButton}" Width="50" Margin="5,0,0,0" HorizontalAlignment="Right" Height="50" Foreground="White" Click="{x:Bind PlayerViewModel.skipNext}" Visibility="Visible"/>
+            <Image x:Name="albumArtImage"  Height="Auto" Width="Auto" Margin="0,10,1,0" Grid.Column="0" Grid.Row="0" Stretch="Fill" Source="{x:Bind PlayerViewModel.PlayList.currentMediaImg, Mode=OneWay}"/>
+            <StackPanel x:Name="stackPanel1" Orientation="Horizontal" HorizontalAlignment="Center" Height="51" Margin="0,0,0,0" VerticalAlignment="Bottom" Width="Auto" Grid.Row="2" Visibility="Visible">
+                <Button x:Name="previousButton" Style="{StaticResource customPrevButton}" Width="50" Margin="0,0,5,5" HorizontalAlignment="Left" Height="48" Foreground="White" Click="{x:Bind PlayerViewModel.skipPrevious}" Visibility="Visible"/>
+                <Button x:Name="playButton" Style="{StaticResource customPlayButton}" Width="50" HorizontalAlignment="Center" Height="48" Margin="0,0,0,5" Foreground="White" Click="{x:Bind PlayerViewModel.togglePlayPause}" Visibility="Visible"/>
+                <Button x:Name="nextButton" Style="{StaticResource customNextButton}" Width="50" Margin="5,0,0,5" HorizontalAlignment="Right" Height="48" Foreground="White" Click="{x:Bind PlayerViewModel.skipNext}" Visibility="Visible"/>
             </StackPanel>
-            <Button x:Name="shuffleButton" Style="{StaticResource customShuffleButton}" Width="50" Margin="0,0,5,0" HorizontalAlignment="Left" Height="50" Foreground="White" Click="{x:Bind PlayerViewModel.skipPrevious}" Grid.Row="2" Visibility="Visible"/>
-            <Slider Visibility="Visible" Style="{StaticResource customSlider}" Foreground="#FF00FF0C" Value="{x:Bind PlayerViewModel.player.Volume}" Name="volumeSlider" Width="150" Height="50" Grid.Row="2" Margin="0,5,10,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" ValueChanged="{x:Bind PlayerViewModel.skipPrevious}" SmallChange="5" Maximum="100"/>
+            <Button x:Name="shuffleButton" Style="{StaticResource customShuffleButton}" Width="50" Margin="5,0,0,0" HorizontalAlignment="Left" Height="48" Foreground="White" Click="{x:Bind PlayerViewModel.skipPrevious}" Grid.Row="2" Visibility="Visible"/>
+            <Slider Visibility="Visible" Style="{StaticResource customSlider}" Foreground="#FF00FF0C" Value="{x:Bind PlayerViewModel.player.Volume}" Name="volumeSlider" Width="140" Height="50" Grid.Row="2" Margin="0,0,10,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" ValueChanged="{x:Bind PlayerViewModel.skipPrevious}" SmallChange="5" Maximum="100"/>
         </Grid>
     </Grid>
 </Page>
