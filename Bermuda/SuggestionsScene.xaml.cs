@@ -1,4 +1,5 @@
-﻿using Bermuda.Services;
+﻿using Bermuda.DataModels;
+using Bermuda.Services;
 using Bermuda.ViewModels;
 using GoogleMusicApi.UWP.Common;
 using GoogleMusicApi.UWP.Requests.Data;
@@ -6,6 +7,7 @@ using GoogleMusicApi.UWP.Structure;
 using GoogleMusicApi.UWP.Structure.Enums;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -48,10 +50,10 @@ namespace Bermuda
             set { Player.Source = value; }
         }
 
-        Track[] MediaList
+        TrackList MediaList
         {
-            get { return PlayerService.Instance.songList; }
-            set { PlayerService.Instance.songList = value; }
+            get { return PlayerService.Instance.CurrentPlaylist; }
+            set { PlayerService.Instance.CurrentPlaylist = value; }
         }
 
         private async void getListenNow()
@@ -119,8 +121,10 @@ namespace Bermuda
                 {
 
                     Album album = await getAlbum(NewMain.Current.mc, listenNowList[index].Album.Id.MetajamCompactKey.ToString());
-                    
-                    MediaList = album.Tracks;
+
+                    foreach (Track track in album.Tracks)
+                        MediaList.Add(track);
+
                     PlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, album.Tracks[0])));
                     Player.Play();
 
@@ -137,8 +141,8 @@ namespace Bermuda
 
                         if (feed.Data.Stations[0].Tracks != null)
                         {
-
-                            MediaList = feed.Data.Stations[0].Tracks;
+                            foreach(Track track in feed.Data.Stations[0].Tracks)
+                                MediaList.Add(track);
                             PlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
                             Player.Play();
                         }
@@ -150,7 +154,8 @@ namespace Bermuda
 
                         if (feed.Data.Stations[0].Tracks != null)
                         {
-                            MediaList = feed.Data.Stations[0].Tracks;
+                            foreach (Track track in feed.Data.Stations[0].Tracks)
+                                MediaList.Add(track);
                             PlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
                             Player.Play();
                         }

@@ -1,14 +1,18 @@
-﻿using Bermuda.ViewModels;
+﻿using Bermuda.DataModels;
+using Bermuda.ViewModels;
 using GoogleMusicApi.UWP.Common;
 using GoogleMusicApi.UWP.Structure;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
+using Windows.UI;
 using Windows.UI.Xaml;
 
 namespace Bermuda.Services
@@ -28,19 +32,22 @@ namespace Bermuda.Services
             }
         }
 
-
         public MediaPlayer Player { get; private set; }
 
-        public Track[] songList { get; set; }
+        public TrackList CurrentPlaylist { get; set; }
 
         public int currentSongIndex { get; set; }
+
+        public int previousSongIndex { get; set; }
 
         SystemMediaTransportControls Controls { get; set; }
 
         public PlayerService()
         {
             Player = new MediaPlayer();
+            CurrentPlaylist = new TrackList();
             Player.AutoPlay = false;
+            Player.Volume = .5;
             Player.CommandManager.IsEnabled = false;
             Controls = Player.SystemMediaTransportControls;
             Controls.IsEnabled = true;
@@ -70,8 +77,10 @@ namespace Bermuda.Services
 
         private async void Player_MediaEnded(MediaPlayer sender, object args)
         {
+            previousSongIndex = currentSongIndex;
             currentSongIndex++;
-            Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, songList[currentSongIndex])));
+
+            Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, CurrentPlaylist[currentSongIndex])));
             Player.Play();
         }
 
@@ -87,7 +96,7 @@ namespace Bermuda.Services
                     break;
                 case SystemMediaTransportControlsButton.Next:
                     currentSongIndex++;
-                    Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, songList[currentSongIndex])));
+                    Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, CurrentPlaylist[currentSongIndex])));
                     Player.Play();
                     break;
                 case SystemMediaTransportControlsButton.Previous:
@@ -106,5 +115,6 @@ namespace Bermuda.Services
 
             return data;
         }
+
     }
 }

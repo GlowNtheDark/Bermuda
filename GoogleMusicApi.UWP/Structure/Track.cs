@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using GoogleMusicApi.UWP.Structure.Enums;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Windows.UI.Xaml.Media;
+using Windows.UI;
 
 namespace GoogleMusicApi.UWP.Structure
 {
@@ -92,6 +94,8 @@ namespace GoogleMusicApi.UWP.Structure
 
         [JsonProperty("year")]
         public int Year { get; set; }
+
+        public SolidColorBrush tileColor { get; set; } = new SolidColorBrush(Colors.Transparent);
 
         public override string ToString()
         {

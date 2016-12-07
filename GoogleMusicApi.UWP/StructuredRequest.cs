@@ -80,7 +80,7 @@ namespace GoogleMusicApi.UWP
             catch (Exception ex)
             {
 
-                //throw;
+                throw;
             }
             return default(TResponse);
         }

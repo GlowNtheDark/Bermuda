@@ -17,6 +17,8 @@ using Windows.Media.Core;
 using Bermuda.ViewModels;
 using Bermuda.Services;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Bermuda.DataModels;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -29,7 +31,7 @@ namespace Bermuda
     {
 
         public NowPlayingViewModel PlayerViewModel { get; set; }
-
+        
         MediaPlayer Player => PlayerService.Instance.Player;
 
         MediaPlaybackItem PlaybackItem
@@ -38,10 +40,10 @@ namespace Bermuda
             set { Player.Source = value; }
         }
 
-        Track[] MediaList
+        TrackList MediaList
         {
-            get { return PlayerService.Instance.songList; }
-            set { PlayerService.Instance.songList = value; }
+            get { return PlayerService.Instance.CurrentPlaylist; }
+            set { PlayerService.Instance.CurrentPlaylist = value; }
         }
 
         public NowPlayingScene()
@@ -50,20 +52,31 @@ namespace Bermuda
 
             this.NavigationCacheMode = NavigationCacheMode.Disabled;
 
-            PlayerViewModel = new NowPlayingViewModel(Player, Dispatcher);
+            if(MediaList != null)
+                PlayerViewModel = new NowPlayingViewModel(Player, this.Dispatcher);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            if(MediaList != null && PlaybackItem != null)
-                PlayerViewModel.PlayList = new PlaylistViewModel(MediaList, PlaybackItem, Dispatcher);
+            try
+            {
+                if (MediaList != null && PlaybackItem != null)
+                    PlayerViewModel.SongList = new TrackListViewModel(MediaList, this.Dispatcher);
+            }
+            catch(Exception ex)
+            {
+
+            }
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
-            PlayerViewModel.Dispose();
-            PlayerViewModel = null;
-            GC.Collect();
+            if (PlayerViewModel != null)
+            {
+                PlayerViewModel.Dispose();
+                PlayerViewModel = null;
+                GC.Collect();
+            }
             AppSettings.localSettings.Values["lastPage"] = "NowPlaying";
         }
 

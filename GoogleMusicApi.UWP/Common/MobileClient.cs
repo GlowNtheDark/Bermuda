@@ -201,16 +201,6 @@ namespace GoogleMusicApi.UWP.Common
             return data;
         }
 
-        public async Task<ListListenNowTracksResponse> ListListenNowTracksAsync(System.Threading.CancellationToken cts)
-        {
-            if (!CheckSession())
-                return null;
-
-            var request = MakeRequest<ListListenNowTracks>();
-            var data = await request.GetAsync(new GetRequest(Session));
-            return data;
-        }
-
         /// <summary>
         /// Gets a list of <see cref="Playlist"/>'s associated to the account
         /// </summary>
@@ -513,12 +503,12 @@ namespace GoogleMusicApi.UWP.Common
         ///  A <see cref="SearchResponse"/> which contains a large amount of data including any amount of the following:
         /// <see cref="Track"/> / <see cref="Album"/> / <see cref="Artist"/> / <see cref="Station"/> / <see cref="Genre"/>
         ///  </returns>
-        public async Task<SearchResponse> SearchAsync(string query, int type)
+        public async Task<SearchResponse> SearchAsync(string query)
         {
             if (!CheckSession())
                 return null;
             var request = MakeRequest<ExecuteSearch>();
-            var data = await request.GetAsync(new SearchGetRequest(Session, query, type));
+            var data = await request.GetAsync(new SearchGetRequest(Session, query));
             return data;
         }
 

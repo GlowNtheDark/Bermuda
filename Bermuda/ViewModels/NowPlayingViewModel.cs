@@ -3,6 +3,7 @@ using GoogleMusicApi.UWP.Common;
 using GoogleMusicApi.UWP.Structure;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,10 @@ using System.Threading.Tasks;
 using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
+using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace Bermuda.ViewModels
 {
@@ -22,11 +26,12 @@ namespace Bermuda.ViewModels
         CoreDispatcher dispatcher;
         MediaPlaybackItem playbackItem;
 
-        public PlaylistViewModel playList;
-
+        //public PlaylistViewModel playList;
+        TrackListViewModel songList;
         public PlaybackSessionViewModel PlaybackSession { get; private set; }
-        
 
+        //public ObservableCollection<Track> songList;
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         public NowPlayingViewModel(MediaPlayer player, CoreDispatcher dispatcher)
@@ -34,7 +39,26 @@ namespace Bermuda.ViewModels
             this.player = player;
             this.dispatcher = dispatcher;
             PlaybackSession = new PlaybackSessionViewModel(player.PlaybackSession, dispatcher);
+            player.SourceChanged += Player_SourceChanged;
+        }
 
+        private async void Player_SourceChanged(MediaPlayer sender, object args)
+        {
+            /*await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                SongList[PlayerService.Instance.previousSongIndex].tileColor = new Windows.UI.Xaml.Media.SolidColorBrush(Colors.Transparent);
+            });
+
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                SongList[PlayerService.Instance.currentSongIndex].tileColor = new Windows.UI.Xaml.Media.SolidColorBrush(Colors.Green);
+            });
+
+            await Task.Delay(1000);
+
+            RaisePropertyChanged("SongList");*/
+
+            SongList.CurrentItem.setTileColor();
         }
 
         public void skipPrevious()
@@ -44,10 +68,18 @@ namespace Bermuda.ViewModels
 
         public async void skipNext()
         {
-            await playList.setCurrentMediaItem();
-            player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, playList.songList[PlayerService.Instance.currentSongIndex])));
+            PlayerService.Instance.previousSongIndex = PlayerService.Instance.currentSongIndex;
+
+            PlayerService.Instance.currentSongIndex++;
+
+            player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, SongList[PlayerService.Instance.currentSongIndex].song)));
 
             player.Play();
+        }
+
+        public void volumeChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            player.Volume = e.NewValue;
         }
 
         public void togglePlayPause()
@@ -63,7 +95,7 @@ namespace Bermuda.ViewModels
             }
         }
 
-        public PlaylistViewModel PlayList
+       /* public PlaylistViewModel PlayList
         {
             get { return playList; }
             set
@@ -94,6 +126,20 @@ namespace Bermuda.ViewModels
                     RaisePropertyChanged("PlayList");
                 }
             }
+        }*/
+
+        public TrackListViewModel SongList
+        {
+            get { return songList; }
+
+            set
+            {
+                if (songList != value)
+                {
+                    songList = value;
+                    RaisePropertyChanged("SongList");
+                }
+            }
         }
 
         public static async Task<Uri> GetStreamUrl(MobileClient mc, Track track)
@@ -112,11 +158,13 @@ namespace Bermuda.ViewModels
 
         public void Dispose()
         {
-            if (playList != null)
+            if (SongList != null)
             {
-                playList.Dispose();
-                playList = null; // Setter triggers vector unsubscribe logic
+                SongList.Dispose();
+                SongList = null; // Setter triggers vector unsubscribe logic
             }
+
+            player.SourceChanged -= Player_SourceChanged;
 
             PlaybackSession.Dispose();
         }

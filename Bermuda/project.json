@@ -1,7 +1,6 @@
 ﻿{
   "dependencies": {
     "CryptoRT": "1.0.2",
-    "Google.Music.Api": "1.0.0.20",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2"
   },
   "frameworks": {
