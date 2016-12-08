@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Bermuda.DataModels;
 
+
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace Bermuda
@@ -27,7 +28,7 @@ namespace Bermuda
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class NowPlayingScene : Page
+    public partial class NowPlayingScene : Page
     {
 
         public NowPlayingViewModel PlayerViewModel { get; set; }
@@ -80,66 +81,5 @@ namespace Bermuda
             AppSettings.localSettings.Values["lastPage"] = "NowPlaying";
         }
 
-        private void currentPlaylistGridView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-
-        }
-
-        private  void setNowPlayingAnimation()
-        {
-            /*await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => {
-
-                if (NowPlaying.Songs.Any())
-                {
-                    if (NowPlaying.prevSongIndex != NowPlaying.currentSongIndex)
-                    {
-                        try
-                        {
-                            var lastItem = currentPlaylistGridView.ContainerFromIndex(NowPlaying.prevSongIndex) as GridViewItem;
-                            var lastGrid = lastItem.FindName("grid" + NowPlaying.prevSongIndex) as Grid;
-                                lastGrid.Background = new SolidColorBrush(Colors.Transparent);
-                        }
-
-                        catch (Exception e)
-                        {
-                            System.Diagnostics.Debug.Write(e);
-
-                        }
-                    }
-
-                    var item = currentPlaylistGridView.ContainerFromIndex(NowPlaying.currentSongIndex) as GridViewItem;
-                    var grid = item.FindName("grid" + NowPlaying.currentSongIndex) as Grid;
-
-                    grid.Background = new SolidColorBrush(Colors.Green);
-                    currentPlaylistGridView.ScrollIntoView(currentPlaylistGridView.Items[NowPlaying.currentSongIndex], ScrollIntoViewAlignment.Leading);
-
-                }
-            });*/
-        }
-
-        
-
-        private void Player_MediaOpened(MediaPlayer sender, object args)
-        {
-            // Get the updater.
-            SystemMediaTransportControlsDisplayUpdater updater = NowPlaying.systemMediaTransportControls.DisplayUpdater;
-            updater.Type = MediaPlaybackType.Music;
-
-            //Need to remodel for playlist.currentitem
-
-            /*updater.MusicProperties.AlbumArtist = NowPlaying.GetCurrentSong().Artist.ToString();
-            updater.MusicProperties.AlbumTitle = NowPlaying.GetCurrentSong().Album.ToString();
-            updater.MusicProperties.Title = NowPlaying.GetCurrentSong().Title.ToString();
-
-            // Set the album art thumbnail.
-            // RandomAccessStreamReference is defined in Windows.Storage.Streams
-            if (NowPlaying.GetCurrentSong().AlbumArtReference[0].Url != null)
-                updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(NowPlaying.GetCurrentSong().AlbumArtReference[0].Url));
-            else
-                updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri("Assets/logo2480x1200.png", UriKind.Relative));
-
-            updater.Update();*/
-
-        }
     }
 }

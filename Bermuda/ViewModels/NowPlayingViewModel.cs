@@ -24,15 +24,38 @@ namespace Bermuda.ViewModels
 
         public MediaPlayer player;
         CoreDispatcher dispatcher;
-        MediaPlaybackItem playbackItem;
-
-        //public PlaylistViewModel playList;
         TrackListViewModel songList;
+        bool canSkipNext;
+        bool canSkipPrevious;
         public PlaybackSessionViewModel PlaybackSession { get; private set; }
 
-        //public ObservableCollection<Track> songList;
-        
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool CanSkipNext
+        {
+            get { return canSkipNext; }
+            set
+            {
+                if (canSkipNext != value)
+                {
+                    canSkipNext = value;
+                    RaisePropertyChanged("CanSkipNext");
+                }
+            }
+        }
+
+        public bool CanSkipPrevious
+        {
+            get { return canSkipPrevious; }
+            set
+            {
+                if (canSkipPrevious != value)
+                {
+                    canSkipPrevious = value;
+                    RaisePropertyChanged("CanSkipPrevious");
+                }
+            }
+        }
 
         public NowPlayingViewModel(MediaPlayer player, CoreDispatcher dispatcher)
         {
@@ -40,37 +63,86 @@ namespace Bermuda.ViewModels
             this.dispatcher = dispatcher;
             PlaybackSession = new PlaybackSessionViewModel(player.PlaybackSession, dispatcher);
             player.SourceChanged += Player_SourceChanged;
+
+            if (PlayerService.Instance.CurrentPlaylist.Count == 0)
+            {
+                CanSkipNext = false;
+                CanSkipPrevious = false;
+            }
+            else
+            {
+                CanSkipNext = true;
+                CanSkipPrevious = true;
+            }
         }
 
-        private async void Player_SourceChanged(MediaPlayer sender, object args)
+        private void Player_SourceChanged(MediaPlayer sender, object args)
         {
-            /*await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                SongList[PlayerService.Instance.previousSongIndex].tileColor = new Windows.UI.Xaml.Media.SolidColorBrush(Colors.Transparent);
-            });
-
-            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                SongList[PlayerService.Instance.currentSongIndex].tileColor = new Windows.UI.Xaml.Media.SolidColorBrush(Colors.Green);
-            });
-
-            await Task.Delay(1000);
-
-            RaisePropertyChanged("SongList");*/
-
-            SongList.CurrentItem.setTileColor();
+            SongList.Update();
         }
 
-        public void skipPrevious()
+        public async void skipPrevious()
         {
-          
+            if (!CanSkipPrevious)
+                return;
+
+            if (((float)player.PlaybackSession.Position.TotalMilliseconds / SongList[PlayerService.Instance.currentSongIndex].song.DurationMillis) > .1)
+            {
+                player.PlaybackSession.Position = new TimeSpan(0);
+            }
+            else
+            {
+                if (PlayerService.Instance.currentSongIndex > 0)
+                {
+                    CanSkipPrevious = false;
+
+                    PlayerService.Instance.previousSongIndex = PlayerService.Instance.currentSongIndex;
+
+                    PlayerService.Instance.currentSongIndex--;
+
+                    player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, SongList[PlayerService.Instance.currentSongIndex].song)));
+
+                    player.Play();
+
+                    CanSkipPrevious = true;
+                }
+            }
+
         }
 
         public async void skipNext()
         {
+            if (!CanSkipNext)
+                return;
+
+            CanSkipNext = false;
+
             PlayerService.Instance.previousSongIndex = PlayerService.Instance.currentSongIndex;
 
             PlayerService.Instance.currentSongIndex++;
+
+            player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, SongList[PlayerService.Instance.currentSongIndex].song)));
+
+            player.Play();
+            CanSkipNext = true;
+        }
+
+        public async void Shuffle()
+        {
+            songList.Shuffle();
+            PlayerService.Instance.currentSongIndex = 0;
+            player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, SongList[PlayerService.Instance.currentSongIndex].song)));
+            player.Play();
+        }
+
+        public async void ItemClicked(object sender, ItemClickEventArgs e)
+        {
+            GridView gv = sender as GridView;
+            int index = gv.Items.IndexOf(e.ClickedItem);
+
+            PlayerService.Instance.previousSongIndex = PlayerService.Instance.currentSongIndex;
+
+            PlayerService.Instance.currentSongIndex = index;
 
             player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, SongList[PlayerService.Instance.currentSongIndex].song)));
 
@@ -94,39 +166,6 @@ namespace Bermuda.ViewModels
                     break;
             }
         }
-
-       /* public PlaylistViewModel PlayList
-        {
-            get { return playList; }
-            set
-            {
-                if (playList != value)
-                {
-                    if (playbackItem != null)
-                    {
-                        playbackItem = null;
-                    }
-
-                    playList = value;
-
-                    if (playList != null)
-                    {
-                        if (player.Source != playList.playbackItem)
-                            player.Source = playList.playbackItem;
-
-                        playbackItem = playList.playbackItem;
-
-                    }
-                    else
-                    {
-                        //CanSkipNext = false;
-                        //CanSkipPrevious = false;
-                    }
-
-                    RaisePropertyChanged("PlayList");
-                }
-            }
-        }*/
 
         public TrackListViewModel SongList
         {

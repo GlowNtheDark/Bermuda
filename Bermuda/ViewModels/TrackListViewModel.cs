@@ -1,10 +1,12 @@
 ﻿using Bermuda.DataModels;
 using Bermuda.Services;
+using GoogleMusicApi.UWP.Structure;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Core;
@@ -14,7 +16,8 @@ namespace Bermuda.ViewModels
     public class TrackListViewModel : ObservableCollection<TrackViewModel>, IDisposable
     {
         public CoreDispatcher dispatcher;
-        int currentItemIndex = -1;
+        int currentItemIndex => PlayerService.Instance.currentSongIndex;
+        int previousItemIndex => PlayerService.Instance.previousSongIndex;
         bool disposed;
         bool initializing;
 
@@ -38,6 +41,24 @@ namespace Bermuda.ViewModels
             }
         }
 
+        public TrackViewModel PreviousItem
+        {
+            get { return previousItemIndex == -1 ? null : this[previousItemIndex]; }
+            set
+            {
+                if (value == null)
+                {
+                    PreviousItemIndex = -1;
+                    return;
+                }
+
+                if (previousItemIndex == -1 || this[previousItemIndex] != value)
+                {
+                    PreviousItemIndex = IndexOf(value);
+                }
+            }
+        }
+
         public int CurrentItemIndex
         {
             get
@@ -48,12 +69,54 @@ namespace Bermuda.ViewModels
             {
                 if (currentItemIndex != value)
                 {
-                    currentItemIndex = value;
+                    //currentItemIndex = value;
 
                     OnPropertyChanged(new PropertyChangedEventArgs("CurrentItemIndex"));
                     OnPropertyChanged(new PropertyChangedEventArgs("CurrentItem"));
                 }
             }
+        }
+
+        public int PreviousItemIndex
+        {
+            get
+            {
+                return previousItemIndex;
+            }
+            set
+            {
+                if (previousItemIndex != value)
+                {
+                    //currentItemIndex = value;
+
+                    OnPropertyChanged(new PropertyChangedEventArgs("PreviousItemIndex"));
+                    OnPropertyChanged(new PropertyChangedEventArgs("PreviousItem"));
+                }
+            }
+        }
+
+        public void Shuffle()
+        {
+            RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
+            int n = this.Count;
+            while (n > 1)
+            {
+                byte[] box = new byte[1];
+                do provider.GetBytes(box);
+                while (!(box[0] < n * (Byte.MaxValue / n)));
+                int k = (box[0] % n);
+                n--;
+                base.MoveItem(k, n);
+            }
+        }
+
+        public async void Update()
+        {
+            await dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                OnPropertyChanged(new PropertyChangedEventArgs("CurrentItem"));
+                OnPropertyChanged(new PropertyChangedEventArgs("PreviousItem"));
+            });
         }
 
         public TrackListViewModel(TrackList trackList, CoreDispatcher dispatcher)

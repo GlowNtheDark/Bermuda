@@ -120,11 +120,13 @@
     <Compile Include="SettingsScene.xaml.cs">
       <DependentUpon>SettingsScene.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Shuffle.cs" />
     <Compile Include="SuggestionsScene.xaml.cs">
       <DependentUpon>SuggestionsScene.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\NowPlayingViewModel.cs" />
     <Compile Include="ViewModels\PlaybackSessionViewModel.cs" />
+    <Compile Include="ViewModels\PlaybackStateToButtonIconConverter.cs" />
     <Compile Include="ViewModels\PlaylistViewModel.cs" />
     <Compile Include="ViewModels\StringUriConverter.cs" />
     <Compile Include="ViewModels\TrackListViewModel.cs" />

@@ -26,7 +26,7 @@ namespace Bermuda.ViewModels
             this.playbackSession = playbackSession;
             this.dispatcher = dispatcher;
            
-            //playbackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
+            playbackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
             playbackSession.PositionChanged += PlaybackSession_PositionChanged;
         }
 

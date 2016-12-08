@@ -29,7 +29,7 @@ namespace Bermuda.ViewModels
 
         public SolidColorBrush tileColor => song.tileColor;
 
-        public double currentSongDuration => song.DurationMillis;
+        public double currentSongDuration;
 
         BitmapImage previewImage;
 
@@ -43,6 +43,20 @@ namespace Bermuda.ViewModels
                 {
                     previewImage = value;
                     RaisePropertyChanged("PreviewImage");
+                }
+            }
+        }
+
+        public double CurrentSongDuration
+        {
+            get { return currentSongDuration; }
+
+            private set
+            {
+                if (currentSongDuration != value)
+                {
+                    currentSongDuration = value;
+                    RaisePropertyChanged("CurrentSongDuration");
                 }
             }
         }
@@ -63,13 +77,23 @@ namespace Bermuda.ViewModels
             // between tracks on transitions when changing artwork.
             PreviewImage = new BitmapImage();
             PreviewImage.UriSource = new Uri(song.AlbumArtReference[0].Url);
+            CurrentSongDuration = song.DurationMillis;
         }
 
-        public async void setTileColor()
+        public async void setSongActiveColor()
         {
             await listViewModel.dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
                 song.tileColor = new Windows.UI.Xaml.Media.SolidColorBrush(Colors.Green);
+                RaisePropertyChanged("tileColor");
+            });
+        }
+
+        public async void setSongInactiveColor()
+        {
+            await listViewModel.dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                song.tileColor = new Windows.UI.Xaml.Media.SolidColorBrush(Colors.Transparent);
                 RaisePropertyChanged("tileColor");
             });
         }
