@@ -14,6 +14,7 @@ using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage.Streams;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
@@ -22,6 +23,8 @@ namespace Bermuda.Services
     public class PlayerService
     {
         static PlayerService instance;
+
+        public CoreDispatcher dispatcher;
 
         public static PlayerService Instance
         {
@@ -105,9 +108,13 @@ namespace Bermuda.Services
         {
             try
             {
-                //Marshalled from a different thread. Need to update colors in the background.
-                CurrentPlaylist[currentSongIndex].tileColor = new SolidColorBrush(Colors.Green);
-                CurrentPlaylist[previousSongIndex].tileColor = new SolidColorBrush(Colors.Transparent);
+                await dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    //Marshalled from a different thread. Need to update colors in the background.
+                    CurrentPlaylist[currentSongIndex].tileColor = new SolidColorBrush(Colors.Green);
+                    if(previousSongIndex != currentSongIndex)
+                        CurrentPlaylist[previousSongIndex].tileColor = new SolidColorBrush(Colors.Transparent);
+                });
             }
             catch(Exception e)
             {

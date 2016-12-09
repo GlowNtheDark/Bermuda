@@ -80,20 +80,19 @@ namespace Bermuda.ViewModels
             CurrentSongDuration = song.DurationMillis;
         }
 
-        public async void setSongActiveColor()
+        public async void setTileColorDefault()
         {
             await listViewModel.dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
-                song.tileColor = new Windows.UI.Xaml.Media.SolidColorBrush(Colors.Green);
+                song.tileColor = new SolidColorBrush(Colors.Transparent);
                 RaisePropertyChanged("tileColor");
             });
         }
 
-        public async void setSongInactiveColor()
+        public async void Update()
         {
             await listViewModel.dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
-                song.tileColor = new Windows.UI.Xaml.Media.SolidColorBrush(Colors.Transparent);
                 RaisePropertyChanged("tileColor");
             });
         }

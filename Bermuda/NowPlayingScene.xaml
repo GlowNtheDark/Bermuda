@@ -835,12 +835,12 @@
                 </DataTemplate>
             </GridView.ItemTemplate>
         </GridView>
-        <Grid Grid.Column="0" Grid.Row="1" VerticalAlignment="Bottom">
+        <Grid Grid.Column="0" Grid.Row="1" BorderBrush="Green" VerticalAlignment="Bottom" Margin="1,0,1,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="57"/>
             </Grid.RowDefinitions>
-            <Image x:Name="albumArtImage"  Height="Auto" Width="Auto" Margin="0,0,1,0" Grid.Column="0" Grid.Row="0" Stretch="Fill" Source="{x:Bind PlayerViewModel.SongList.CurrentItem.PreviewImage, Mode=OneWay}"/>
+            <Image x:Name="albumArtImage"  Height="Auto" Width="Auto" Margin="0,0,1," Grid.Column="0" Grid.Row="0" Stretch="Fill" Source="{x:Bind PlayerViewModel.SongList.CurrentItem.PreviewImage, Mode=OneWay}"/>
             <StackPanel x:Name="stackPanel1" Orientation="Horizontal" HorizontalAlignment="Center" Height="55" Margin="263,0,262,0" VerticalAlignment="Bottom" Width="160" Grid.Row="1" Visibility="Visible">
                 <Button x:Name="previousButton" Style="{StaticResource customPrevButton}" Width="50" Margin="0,0,5,5" HorizontalAlignment="Left" Height="50" Foreground="White" Click="{x:Bind PlayerViewModel.skipPrevious}" Visibility="Visible"/>
                 <Button x:Name="playButton" Style="{StaticResource customPlayButton}" Width="50" HorizontalAlignment="Center" Height="50" Margin="0,0,0,5" Foreground="White" Click="{x:Bind PlayerViewModel.togglePlayPause}" Visibility="Visible"/>

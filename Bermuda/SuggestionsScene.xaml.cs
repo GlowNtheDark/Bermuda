@@ -38,6 +38,8 @@ namespace Bermuda
         public SuggestionsScene()
         {
             this.InitializeComponent();
+
+            PlayerService.Instance.dispatcher = this.Dispatcher;
         }
 
         private List<ListenNowItem> listenNowList = new List<ListenNowItem>();

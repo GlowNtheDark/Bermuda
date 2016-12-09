@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Media;
@@ -76,9 +77,13 @@ namespace Bermuda.ViewModels
             }
         }
 
-        private void Player_SourceChanged(MediaPlayer sender, object args)
+        private async void Player_SourceChanged(MediaPlayer sender, object args)
         {
             SongList.Update();
+            /*await dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                RaisePropertyChanged("SongList");
+            });*/
         }
 
         public async void skipPrevious()
@@ -129,8 +134,28 @@ namespace Bermuda.ViewModels
 
         public async void Shuffle()
         {
-            songList.Shuffle();
+            SongList.setCurrentTileDefault();
+
+            RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
+            int n = SongList.Count;
+            while (n > 1)
+            {
+                byte[] box = new byte[1];
+                do provider.GetBytes(box);
+                while (!(box[0] < n * (Byte.MaxValue / n)));
+                int k = (box[0] % n);
+                n--;
+                Track value = PlayerService.Instance.CurrentPlaylist[k];
+                PlayerService.Instance.CurrentPlaylist[k] = PlayerService.Instance.CurrentPlaylist[n];
+                PlayerService.Instance.CurrentPlaylist[n] = value;
+            }
+
+            SongList.Dispose();
+            SongList = null;
+            SongList = new TrackListViewModel(PlayerService.Instance.CurrentPlaylist, dispatcher);
+
             PlayerService.Instance.currentSongIndex = 0;
+            PlayerService.Instance.previousSongIndex = 0;
             player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, SongList[PlayerService.Instance.currentSongIndex].song)));
             player.Play();
         }
