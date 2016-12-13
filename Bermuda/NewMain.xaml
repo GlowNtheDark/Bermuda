@@ -14,15 +14,15 @@
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
             <Button x:Name="HamburgerButton" Margin="4,5,0,0" Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Left" FontFamily="Segoe MDL2 Assets" Content="&#xE700;" Width="33" Height="45" Background="Transparent" Click="HamburgerButton_Click"/>
-            <TextBlock Name="pageTitle" Margin="5,0,0,0" Text="Current Page Title" FontSize="25" VerticalAlignment="Center"/>
+            <TextBlock Name="pageTitle" Margin="5,0,0,0" Text="Current Page Title" FontSize="25" VerticalAlignment="Center" Visibility="Collapsed"/>
         </StackPanel>
         <SplitView x:Name="MySplitView" Margin="0,5,0,0" IsTabStop="False" Grid.Row="1" DisplayMode="Overlay" IsPaneOpen="False" OpenPaneLength="210" CompactPaneLength="37">
             <SplitView.Pane>
                 <GridView IsItemClickEnabled="True" Width="210" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False" ItemClick="GridView_ItemClick">
                     <GridViewItem Width="205">
-                        <StackPanel Name="Suggestions" Orientation="Horizontal" Width="200" HorizontalAlignment="Left">
+                        <StackPanel Name="QuickPlay" Orientation="Horizontal" Width="200" HorizontalAlignment="Left">
                             <Image Width="30" Height="30" Source="Assets/triangle.png"/>
-                            <TextBlock Name="sgText" Margin="15,0,0,0" Text="Suggestions" FontSize="18" VerticalAlignment="Center"/>
+                            <TextBlock Name="qpText" Margin="15,0,0,0" Text="QuickPlay" FontSize="18" VerticalAlignment="Center"/>
                         </StackPanel>
                     </GridViewItem>
                     <GridViewItem Width="205">

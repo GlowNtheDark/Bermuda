@@ -15,8 +15,6 @@ namespace Bermuda.ViewModels
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        //TrackViewModel trackViewModel;
-
         TrackListViewModel listViewModel;
 
         public Track song { get; private set; }

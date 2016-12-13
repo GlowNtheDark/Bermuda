@@ -60,7 +60,7 @@ namespace Bermuda
         }
 
         Type npScene = typeof(NowPlayingScene);
-        Type sgScene = typeof(SuggestionsScene);
+        Type qpScene = typeof(QuickPlayScene);
         Type stScene = typeof(SettingsScene);
         //Settings.localSettings Windows.Storage.ApplicationData.Current.LocalSettings;
         public MobileClient mc;
@@ -92,7 +92,7 @@ namespace Bermuda
                         if (AppSettings.localSettings.Values["lastPage"] != null)
                             loadFrame(AppSettings.localSettings.Values["lastPage"].ToString());
                         else
-                            loadFrame("Suggestions");
+                            loadFrame("QuickPlay");
                     }
                     else
                     {
@@ -110,7 +110,7 @@ namespace Bermuda
                         if (AppSettings.localSettings.Values["lastPage"] != null)
                             loadFrame(AppSettings.localSettings.Values["lastPage"].ToString());
                         else
-                            loadFrame("Suggestions");
+                            loadFrame("QuickPlay");
                     }
                     else
                     {
@@ -310,17 +310,20 @@ namespace Bermuda
             if (frameName == "NowPlaying")
             {
                 pageTitle.Text = "Now Playing";
+                pageTitle.Visibility = Visibility.Visible;
                 mainFrame.Navigate(npScene);
             }
-            else if (frameName == "Suggestions")
+            else if (frameName == "QuickPlay")
             {
-                pageTitle.Text = "Suggestions";
-                mainFrame.Navigate(sgScene);
+                pageTitle.Text = "QuickPlay";
+                pageTitle.Visibility = Visibility.Visible;
+                mainFrame.Navigate(qpScene);
             }
 
             else if (frameName == "Settings")
             {
                 pageTitle.Text = "Settings";
+                pageTitle.Visibility = Visibility.Visible;
                 mainFrame.Navigate(stScene);
             }
         

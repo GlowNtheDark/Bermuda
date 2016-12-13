@@ -102,6 +102,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DataModels\QuickPlayList.cs" />
     <Compile Include="DataModels\TrackList.cs" />
     <Compile Include="LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
@@ -121,14 +122,18 @@
       <DependentUpon>SettingsScene.xaml</DependentUpon>
     </Compile>
     <Compile Include="Shuffle.cs" />
-    <Compile Include="SuggestionsScene.xaml.cs">
-      <DependentUpon>SuggestionsScene.xaml</DependentUpon>
+    <Compile Include="QuickPlayScene.xaml.cs">
+      <DependentUpon>QuickPlayScene.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\ListenNowItemViewModel.cs" />
     <Compile Include="ViewModels\NowPlayingViewModel.cs" />
     <Compile Include="ViewModels\PlaybackSessionViewModel.cs" />
     <Compile Include="ViewModels\PlaybackStateToButtonIconConverter.cs" />
     <Compile Include="ViewModels\PlaylistViewModel.cs" />
+    <Compile Include="ViewModels\QuickPlayListViewModel.cs" />
+    <Compile Include="ViewModels\QuickPlayViewModel.cs" />
     <Compile Include="ViewModels\StringUriConverter.cs" />
+    <Compile Include="ViewModels\TextBoxSizeConverter.cs" />
     <Compile Include="ViewModels\TrackListViewModel.cs" />
     <Compile Include="ViewModels\TrackViewModel.cs" />
   </ItemGroup>
@@ -234,7 +239,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SuggestionsScene.xaml">
+    <Page Include="QuickPlayScene.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

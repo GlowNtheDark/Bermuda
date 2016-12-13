@@ -77,13 +77,9 @@ namespace Bermuda.ViewModels
             }
         }
 
-        private async void Player_SourceChanged(MediaPlayer sender, object args)
+        private void Player_SourceChanged(MediaPlayer sender, object args)
         {
             SongList.Update();
-            /*await dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-            {
-                RaisePropertyChanged("SongList");
-            });*/
         }
 
         public async void skipPrevious()

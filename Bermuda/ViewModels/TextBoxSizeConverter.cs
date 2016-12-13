@@ -1,5 +1,4 @@
-﻿using GoogleMusicApi.UWP.Structure;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,23 +7,21 @@ using Windows.UI.Xaml.Data;
 
 namespace Bermuda.ViewModels
 {
-    class StringUriConverter : IValueConverter
+    class TextBoxSizeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             try
             {
-                var newvalue = value as ArtReference[];
-                // The value parameter is the data from the source object.
-                string url = newvalue[0].Url;
+                string thing = (string)value;
 
-                Uri uri = new Uri(url);
-
-                // Return the uri value to pass to the target.
-                return uri;
+                if (thing == "1")
+                    return (double)80;
+                else
+                    return (double)80;      
             }
 
-            catch(Exception e)
+            catch (Exception e)
             {
                 System.Diagnostics.Debug.Write(e);
                 return null;
