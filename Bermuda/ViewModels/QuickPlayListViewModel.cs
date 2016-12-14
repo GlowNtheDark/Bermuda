@@ -32,7 +32,10 @@ namespace Bermuda.ViewModels
                 if (listenNowResult != null)
                 {
                     foreach (var item in listenNowResult.Items)
-                        Add(new ListenNowItemViewModel(item, QPViewModel));
+                    {
+                        if(item != null)
+                            Add(new ListenNowItemViewModel(item, QPViewModel));
+                    }
                 }
 
                 else

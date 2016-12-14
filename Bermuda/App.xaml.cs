@@ -49,7 +49,7 @@ namespace Bermuda
             this.LeavingBackground += App_LeavingBackground;
             Windows.System.MemoryManager.AppMemoryUsageLimitChanging += MemoryManager_AppMemoryUsageLimitChanging;
             Windows.System.MemoryManager.AppMemoryUsageIncreased += MemoryManager_AppMemoryUsageIncreased;
-
+            
         }
 
         bool _isInBackgroundMode = false;
@@ -217,6 +217,7 @@ namespace Bermuda
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
+            AppSettings.localSettings.Values["lastPage"] = "QuickPlay";
             deferral.Complete();
         }
 

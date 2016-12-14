@@ -113,7 +113,7 @@ namespace Bermuda.ViewModels
 
         public async void skipNext()
         {
-            if (!CanSkipNext)
+            if (!CanSkipNext || SongList.CurrentItemIndex == SongList.Count - 1)
                 return;
 
             CanSkipNext = false;
@@ -168,6 +168,9 @@ namespace Bermuda.ViewModels
             player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, SongList[PlayerService.Instance.currentSongIndex].song)));
 
             player.Play();
+
+            RaisePropertyChanged("CanSkipNext");
+            RaisePropertyChanged("CanSkipPrevious");
         }
 
         public void volumeChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)

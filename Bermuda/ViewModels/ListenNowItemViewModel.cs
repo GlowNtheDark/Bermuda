@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Bermuda.ViewModels
@@ -19,7 +20,39 @@ namespace Bermuda.ViewModels
 
         public bool menuOpen;
 
+        public Visibility isvisiblezero;
+
+        public Visibility isvisibleone;
+
         public BitmapImage itemImage;
+
+        public Visibility IsVisibleZero
+        {
+            get { return isvisiblezero; }
+
+            private set
+            {
+                if (isvisiblezero != value)
+                {
+                    isvisiblezero = value;
+                    RaisePropertyChanged("IsVisibleZero");
+                }
+            }
+        }
+
+        public Visibility IsVisibleOne
+        {
+            get { return isvisibleone; }
+
+            private set
+            {
+                if (isvisibleone != value)
+                {
+                    isvisibleone = value;
+                    RaisePropertyChanged("IsVisibleOne");
+                }
+            }
+        }
 
         public bool MenuOpen
         {
@@ -56,6 +89,23 @@ namespace Bermuda.ViewModels
             MenuOpen = !MenuOpen;
         }
 
+        public async void showCheckMark(int index)
+        {
+            if (index == 0)
+            {
+                IsVisibleZero = Visibility.Visible;
+                await Task.Delay(3000);
+                IsVisibleZero = Visibility.Collapsed;
+            }
+
+            else
+            {
+                IsVisibleOne = Visibility.Visible;
+                await Task.Delay(3000);
+                IsVisibleOne = Visibility.Collapsed;
+            }
+        }
+
         public ListenNowItemViewModel(ListenNowItem Item, QuickPlayViewModel qpviewmodel)
         {
             this.item = Item;
@@ -69,9 +119,13 @@ namespace Bermuda.ViewModels
             RaisePropertyChanged("QuickPlayText");
 
             ItemImage = new BitmapImage();
-            ItemImage.UriSource = new Uri(Item.Images[0].Url);
+
+            if(Item.Images[0].Url != null)
+                ItemImage.UriSource = new Uri(Item.Images[0].Url);
 
             MenuOpen = false;
+            IsVisibleZero = Visibility.Collapsed;
+            IsVisibleOne = Visibility.Collapsed;
         }
 
         private void RaisePropertyChanged(string propertyName)

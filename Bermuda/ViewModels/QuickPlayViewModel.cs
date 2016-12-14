@@ -128,6 +128,8 @@ namespace Bermuda.ViewModels
                 {
                     System.Diagnostics.Debug.Write(ex);
                 }
+
+                itemviewmodel.showCheckMark(0);
             }
 
             else
@@ -188,6 +190,8 @@ namespace Bermuda.ViewModels
                 {
                     System.Diagnostics.Debug.Write(ex);
                 }
+
+                itemviewmodel.showCheckMark(1);
             }
         }
 

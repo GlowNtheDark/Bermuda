@@ -1,4 +1,7 @@
-﻿using GoogleMusicApi.UWP.Common;
+﻿using Bermuda.DataModels;
+using Bermuda.Services;
+using Bermuda.ViewModels;
+using GoogleMusicApi.UWP.Common;
 using GoogleMusicApi.UWP.Structure;
 using System;
 using System.Collections.Generic;
@@ -10,6 +13,7 @@ using Windows.ApplicationModel.Background;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
+using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Core;
@@ -29,11 +33,15 @@ namespace Bermuda
     {
         public static NewMain Current;
 
+        MediaPlayer Player => PlayerService.Instance.Player;
+
         public NewMain()
         {
             this.InitializeComponent();
 
             Current = this;
+
+            MainViewModel = new MainMenuViewModel(Player, this.Dispatcher);
 
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
             {
@@ -59,11 +67,14 @@ namespace Bermuda
                 reregisterServicingTask(servicingBackgroundTask);
         }
 
+
         Type npScene = typeof(NowPlayingScene);
         Type qpScene = typeof(QuickPlayScene);
         Type stScene = typeof(SettingsScene);
-        //Settings.localSettings Windows.Storage.ApplicationData.Current.LocalSettings;
+        Type plScene = typeof(PlaylistsScene);
+
         public MobileClient mc;
+        MainMenuViewModel MainViewModel;
         public string lastNetworkState;
         private string networkBackgroundTask = "Network-Awareness-Task";
         private string servicingBackgroundTask = "Servicing-Complete-Task";
@@ -326,7 +337,14 @@ namespace Bermuda
                 pageTitle.Visibility = Visibility.Visible;
                 mainFrame.Navigate(stScene);
             }
-        
+
+            else if (frameName == "Playlists")
+            {
+                pageTitle.Text = "Playlists";
+                pageTitle.Visibility = Visibility.Visible;
+                mainFrame.Navigate(plScene);
+            }
+
         }
 
         private void Page_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)

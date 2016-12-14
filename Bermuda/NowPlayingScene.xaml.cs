@@ -66,7 +66,7 @@ namespace Bermuda
             }
             catch(Exception ex)
             {
-
+                System.Diagnostics.Debug.WriteLine(ex);
             }
         }
 

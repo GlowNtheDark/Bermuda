@@ -115,6 +115,9 @@
       <DependentUpon>NowPlayingScene.xaml</DependentUpon>
     </Compile>
     <Compile Include="PassSession.cs" />
+    <Compile Include="PlaylistsScene.xaml.cs">
+      <DependentUpon>PlaylistsScene.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AppSettings.cs" />
     <Compile Include="Services\PlayerService.cs" />
@@ -126,6 +129,7 @@
       <DependentUpon>QuickPlayScene.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\ListenNowItemViewModel.cs" />
+    <Compile Include="ViewModels\MainMenuViewModel.cs" />
     <Compile Include="ViewModels\NowPlayingViewModel.cs" />
     <Compile Include="ViewModels\PlaybackSessionViewModel.cs" />
     <Compile Include="ViewModels\PlaybackStateToButtonIconConverter.cs" />
@@ -165,6 +169,7 @@
     <Content Include="Assets\note.png" />
     <Content Include="Assets\nowPlaying.gif" />
     <Content Include="Assets\no_image.png" />
+    <Content Include="Assets\check.png" />
     <Content Include="Assets\PauseButton.png" />
     <Content Include="Assets\PlayButton.png" />
     <Content Include="Assets\ShuffleButton.png" />
@@ -232,6 +237,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="NowPlayingScene.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PlaylistsScene.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

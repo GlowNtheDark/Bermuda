@@ -37,7 +37,7 @@
                             <TextBlock Name="plText" Margin="15,0,0,0" Text="Playlists" FontSize="18" VerticalAlignment="Center"/>
                         </StackPanel>
                     </GridViewItem>
-                    <GridViewItem Width="205">
+                    <GridViewItem Width="205" IsEnabled="{x:Bind MainViewModel.IsEnabledNP, Mode=OneWay}">
                         <StackPanel Name="NowPlaying" Orientation="Horizontal" Width="200">
                             <Image Source="Assets/note.png" Width="30" Height="30"/>
                             <TextBlock Name="npText" Margin="15,0,0,0" Text="Now Playing" FontSize="18" VerticalAlignment="Center"/>

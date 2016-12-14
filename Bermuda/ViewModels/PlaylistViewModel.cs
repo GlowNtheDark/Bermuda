@@ -98,7 +98,7 @@ namespace Bermuda.ViewModels
 
             catch (Exception e)
             {
-
+                System.Diagnostics.Debug.WriteLine(e);
             }
 
         }
@@ -123,7 +123,7 @@ namespace Bermuda.ViewModels
             }
             catch(Exception e)
             {
-
+                System.Diagnostics.Debug.WriteLine(e);
             }
         }
 

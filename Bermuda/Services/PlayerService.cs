@@ -115,10 +115,11 @@ namespace Bermuda.Services
                     if(previousSongIndex != currentSongIndex)
                         CurrentPlaylist[previousSongIndex].tileColor = new SolidColorBrush(Colors.Transparent);
                 });
+
             }
             catch(Exception e)
             {
-
+                System.Diagnostics.Debug.WriteLine(e);
             }
         }
 
@@ -141,7 +142,7 @@ namespace Bermuda.Services
                     Player.Pause();
                     break;
                 case SystemMediaTransportControlsButton.Next:
-                    if (!canSkipNext)
+                    if (!canSkipNext || currentSongIndex == CurrentPlaylist.Count - 1)
                         break;
                     canSkipNext = false;
                     previousSongIndex = currentSongIndex;
