@@ -102,6 +102,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DataModels\PlaylistGroup.cs" />
     <Compile Include="DataModels\QuickPlayList.cs" />
     <Compile Include="DataModels\TrackList.cs" />
     <Compile Include="LoginPage.xaml.cs">
@@ -133,6 +134,8 @@
     <Compile Include="ViewModels\NowPlayingViewModel.cs" />
     <Compile Include="ViewModels\PlaybackSessionViewModel.cs" />
     <Compile Include="ViewModels\PlaybackStateToButtonIconConverter.cs" />
+    <Compile Include="ViewModels\PlaylistGroupViewModel.cs" />
+    <Compile Include="ViewModels\PlaylistItemViewModel.cs" />
     <Compile Include="ViewModels\PlaylistViewModel.cs" />
     <Compile Include="ViewModels\QuickPlayListViewModel.cs" />
     <Compile Include="ViewModels\QuickPlayViewModel.cs" />

@@ -1,4 +1,5 @@
-﻿using Bermuda.Services;
+﻿using Bermuda.DataModels;
+using Bermuda.Services;
 using GoogleMusicApi.UWP.Structure;
 using System;
 using System.Collections.Generic;
@@ -17,115 +18,35 @@ namespace Bermuda.ViewModels
     public class PlaylistViewModel : INotifyPropertyChanged
     {
         CoreDispatcher dispatcher;
-
+        MediaPlayer Player;
+        PlaylistGroupViewModel groupviewmodel;
+        PlaylistGroup listgroup;
         bool disposed;
         bool initializing;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        //public Track[] SongList => PlayerService.Instance.songList;
-        public ObservableCollection<Track> SongList;
-        public MediaPlaybackItem playbackItem { get; private set; }
-        public Track currentMediaItem { get; private set; }
-        BitmapImage CurrentMediaImg;
-        double CurrentMediaDuration;
 
-        public BitmapImage currentMediaImg
+        public PlaylistViewModel(MediaPlayer player, CoreDispatcher dispatcher)
         {
-            get { return CurrentMediaImg; }
+            this.Player = player;
+            this.dispatcher = dispatcher;
+        }
 
-            private set
+        public PlaylistGroupViewModel GroupViewModel
+        {
+            get { return groupviewmodel; }
+
+            set
             {
-                if (CurrentMediaImg != value)
+                if (groupviewmodel != value)
                 {
-                    CurrentMediaImg = value;
-                    RaisePropertyChanged("currentMediaImg");
+                    groupviewmodel = value;
+                    RaisePropertyChanged("GroupViewModel");
                 }
             }
         }
 
-        public double currentMediaDuration
-        {
-            get { return CurrentMediaDuration; }
-
-            private set
-            {
-                if (CurrentMediaDuration != value)
-                {
-                    CurrentMediaDuration = value;
-                    RaisePropertyChanged("currentMediaDuration");
-                }
-            }
-        }
-
-        /*public Track[] SongList
-        {
-            get { return songList; }
-
-            private set
-            {
-                if (songList != value)
-                {
-                    songList = value;
-                    RaisePropertyChanged("songList");
-                }
-            }
-        }*/
-
-        public PlaylistViewModel(ObservableCollection<Track> sl, MediaPlaybackItem pbi, CoreDispatcher dsp)
-        {
-            try
-            {
-                this.SongList = sl;
-                this.playbackItem = pbi;
-                this.dispatcher = dsp;
-
-                if (currentMediaItem != null)
-                {
-                    currentMediaImg = new BitmapImage();
-                    currentMediaImg.UriSource = new Uri(currentMediaItem.AlbumArtReference[0].Url);
-                    currentMediaDuration = currentMediaItem.DurationMillis;
-                }
-
-                else
-                {
-                    currentMediaItem = SongList[PlayerService.Instance.currentSongIndex];
-                    currentMediaImg = new BitmapImage();
-                    currentMediaImg.UriSource = new Uri(currentMediaItem.AlbumArtReference[0].Url);
-                    currentMediaDuration = currentMediaItem.DurationMillis;
-                }
-            }
-
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e);
-            }
-
-        }
-
-        public async void setCurrentMediaItem()
-        {
-            try
-            {
-                currentMediaItem = SongList[PlayerService.Instance.currentSongIndex];
-
-                await this.dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                {
-
-                    //RaisePropertyChanged("SongList");
-                    currentMediaImg = new BitmapImage();
-                    currentMediaImg.UriSource = new Uri(currentMediaItem.AlbumArtReference[0].Url);
-                    currentMediaDuration = currentMediaItem.DurationMillis;
-                    RaisePropertyChanged("currentMediaDuration");
-                }); 
-                
-
-            }
-            catch(Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e);
-            }
-        }
 
         private void RaisePropertyChanged(string propertyName)
         {

@@ -13,6 +13,10 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using GoogleMusicApi.UWP.Structure;
+using Bermuda.ViewModels;
+using Bermuda.Services;
+using Bermuda.DataModels;
+using Windows.Media.Playback;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -23,22 +27,47 @@ namespace Bermuda
     /// </summary>
     public sealed partial class PlaylistsScene : Page
     {
+        public PlaylistViewModel PLViewModel { get; set; }
+
+        MediaPlayer Player => PlayerService.Instance.Player;
+
+        TrackList MediaList
+        {
+            get { return PlayerService.Instance.CurrentPlaylist; }
+            set { PlayerService.Instance.CurrentPlaylist = value; }
+        }
+
         public PlaylistsScene()
         {
             this.InitializeComponent();
+
+            this.NavigationCacheMode = NavigationCacheMode.Disabled;
+
+            PLViewModel = new PlaylistViewModel(Player, this.Dispatcher);
+
+            PlayerService.Instance.dispatcher = this.Dispatcher;
         }
 
-        private async void TempButton_Click(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            ResultList<Playlist> result = new ResultList<Playlist>();
-            List<Track> tracks = new List<Track>();
+            PLViewModel.GroupViewModel = new PlaylistGroupViewModel(this.Dispatcher);
+        }
 
-            result = await NewMain.Current.mc.ListPlaylistsAsync();
+        private void TempButton_Click(object sender, RoutedEventArgs e)
+        {
+            /* List<Track> tracks = new List<Track>();
+
 
             tracks = await NewMain.Current.mc.ListTracksFromPlaylist(result.Data.Items[0]);
 
             foreach(Track track in tracks)
                 TempListBox.Items.Add(track.Title);
+                */
+        }
+
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
