@@ -551,7 +551,7 @@ namespace GoogleMusicApi.UWP.Common
             return data;
         }
 
-        public async Task<MutateResponse> DetelePlaylist(params Playlist[] playlists)
+        public async Task<MutateResponse> DeletePlaylist(params Playlist[] playlists)
         {
             if (!CheckSession())
                 return null;

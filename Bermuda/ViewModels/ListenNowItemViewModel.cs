@@ -108,24 +108,31 @@ namespace Bermuda.ViewModels
 
         public ListenNowItemViewModel(ListenNowItem Item, QuickPlayViewModel qpviewmodel)
         {
-            this.item = Item;
-            this.QPViewModel = qpviewmodel;
+            try
+            {
+                this.item = Item;
+                this.QPViewModel = qpviewmodel;
 
-            if (item.Type == "1")
-                QuickPlayText = item.Album.Id.Artist + "\n" + item.Album.Id.Title;
-            else
-                QuickPlayText = item.RadioStation.Title + " Radio";
+                if (item.Type == "1")
+                    QuickPlayText = item.Album.Id.Artist + "\n" + item.Album.Id.Title;
+                else
+                    QuickPlayText = item.RadioStation.Title + " Radio";
 
-            RaisePropertyChanged("QuickPlayText");
+                RaisePropertyChanged("QuickPlayText");
 
-            ItemImage = new BitmapImage();
+                ItemImage = new BitmapImage();
 
-            if(Item.Images[0].Url != null)
-                ItemImage.UriSource = new Uri(Item.Images[0].Url);
+                if (Item.Images != null)
+                    ItemImage.UriSource = new Uri(Item.Images[0].Url);
 
-            MenuOpen = false;
-            IsVisibleZero = Visibility.Collapsed;
-            IsVisibleOne = Visibility.Collapsed;
+                MenuOpen = false;
+                IsVisibleZero = Visibility.Collapsed;
+                IsVisibleOne = Visibility.Collapsed;
+            }
+            catch(Exception ex)
+            {
+                System.Diagnostics.Debug.Write(ex);
+            }
         }
 
         private void RaisePropertyChanged(string propertyName)

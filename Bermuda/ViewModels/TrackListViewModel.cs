@@ -113,22 +113,34 @@ namespace Bermuda.ViewModels
 
         public TrackListViewModel(TrackList trackList, CoreDispatcher dispatcher)
         {
-            SongList = trackList;
-            this.dispatcher = dispatcher;
+            try
+            {
+                SongList = trackList;
+                this.dispatcher = dispatcher;
 
-            // Initialize the view model items
-            initializing = true;
+                // Initialize the view model items
+                initializing = true;
 
-            foreach (var mediaItem in trackList)
-                Add(new TrackViewModel(this, mediaItem));
+                foreach (var mediaItem in trackList)
+                    Add(new TrackViewModel(this, mediaItem));
 
-            initializing = false;
+                initializing = false;
 
-            // The view model supports TwoWay binding so update when the playback list item changes
-            //PlaybackList.CurrentItemChanged += PlaybackList_CurrentItemChanged;
+                // The view model supports TwoWay binding so update when the playback list item changes
+                //PlaybackList.CurrentItemChanged += PlaybackList_CurrentItemChanged;
 
-            // Start where the playback list is currently at
-            CurrentItemIndex = (int)PlayerService.Instance.currentSongIndex;
+                // Start where the playback list is currently at
+                CurrentItemIndex = (int)PlayerService.Instance.currentSongIndex;
+            }
+            catch(Exception ex)
+            {
+                System.Diagnostics.Debug.Write(ex);
+            }
+        }
+
+        public TrackListViewModel()
+        {
+
         }
 
         public void Dispose()

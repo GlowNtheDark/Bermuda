@@ -8,6 +8,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" Loaded="Page_Loaded" Unloaded="Page_Unloaded">
 
+    <Page.Resources>
+        <vm:MillisecondsConverter x:Key="MillisecondsConverter"/>
+    </Page.Resources>
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="320"/>
@@ -16,7 +20,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <ListView Grid.Row="0" ItemsSource="{ x:Bind PLViewModel.GroupViewModel, Mode=OneWay}" IsItemClickEnabled="True" Grid.Column="0" Width="Auto" Height="325" Margin="5,10,0,0" IsTabStop="False" SelectionMode="Single" ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.VerticalScrollMode="Disabled"  ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+        <ListView Grid.Row="0" ItemsSource="{ x:Bind PLViewModel.GroupViewModel, Mode=OneWay}" IsItemClickEnabled="True" SelectionChanged="{x:Bind PLViewModel.playlistSelectionChanged}" Grid.Column="0" Width="Auto" Height="325" Margin="5,10,0,0" IsTabStop="False" SelectionMode="Single" ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.VerticalScrollMode="Disabled"  ScrollViewer.HorizontalScrollBarVisibility="Hidden" ItemClick="{x:Bind PLViewModel.playlistClicked}">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsStackPanel Orientation="Horizontal"/>
@@ -24,17 +28,25 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:PlaylistItemViewModel">
-                    <SplitView Name="ItemSplitView" Margin="0,0,15,0" DisplayMode="Overlay" OpenPaneLength="155" IsPaneOpen="false">
+                    <SplitView Name="ItemSplitView" Margin="5,0,15,0" DisplayMode="Overlay" OpenPaneLength="175" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}">
                         <SplitView.Pane>
-                            <GridView IsItemClickEnabled="True" Width="155" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False">
-                                <GridViewItem Width="147">
-                                    <StackPanel Orientation="Horizontal" Width="147">
+                            <GridView IsItemClickEnabled="True" Width="175" ItemClick="{x:Bind PLViewModel.playlistItemMenuClicked}" ScrollViewer.IsHorizontalRailEnabled="False" IsTabStop="False" ScrollViewer.IsVerticalRailEnabled="False">
+                                <GridViewItem Width="174">
+                                    <StackPanel Orientation="Horizontal" Width="170">
                                         <TextBlock Margin="5,0,0,0" Text="Add to queue." FontSize="15" VerticalAlignment="Center"/>
+                                        <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleZero, Mode=OneWay}"/>
                                     </StackPanel>
                                 </GridViewItem>
-                                <GridViewItem Width="147">
-                                    <StackPanel Orientation="Horizontal" Width="147">
+                                <GridViewItem Width="174">
+                                    <StackPanel Orientation="Horizontal" Width="170">
                                         <TextBlock Margin="5,0,0,0" Text="Clear queue and play." FontSize="15" VerticalAlignment="Center"/>
+                                        <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleOne, Mode=OneWay}"/>
+                                    </StackPanel>
+                                </GridViewItem>
+                                <GridViewItem Width="174">
+                                    <StackPanel Orientation="Horizontal" Width="170">
+                                        <TextBlock Margin="5,0,0,0" Text="Delete playlist." FontSize="15" VerticalAlignment="Center"/>
+                                        <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleTwo, Mode=OneWay}"/>
                                     </StackPanel>
                                 </GridViewItem>
                             </GridView>
@@ -50,6 +62,42 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <Frame Name="ResultsFrame" Grid.Row="1"/>
+        <ListView Grid.Row="1" Grid.Column="0" Width="Auto" Margin="0,10,0,0" ItemsSource="{x:Bind PLViewModel.TLViewModel, Mode=OneWay}" IsItemClickEnabled="True">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="vm:TrackViewModel">
+                    <SplitView Name="ItemSplitView" Margin="0,0,0,5" OpenPaneLength="100" IsPaneOpen="False" PanePlacement="Right" DisplayMode="Overlay">
+                        <SplitView.Pane>
+                            <StackPanel Orientation="Horizontal" Width="100">
+                                <Button Margin="25,0,0,0" Content="X" FontSize="15" Width="30" HorizontalAlignment="Right"/>
+                            </StackPanel>
+                        </SplitView.Pane>
+                        <SplitView.Content>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="50"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Image Height="50" Width="75" Grid.Column="0" HorizontalAlignment="Left" Margin="0,0,30,0" Stretch="Fill" Source="{x:Bind PreviewImage, Mode=OneWay}"/>
+                                <TextBlock Text="{x:Bind Title}" Margin="0,0,30,0" Grid.Column="1" Height="30" Width="Auto" FontSize="20"/>
+                                <TextBlock Text="{x:Bind Album}" Margin="0,0,30,0" Grid.Column="2" Height="30" Width="Auto" FontSize="20"/>
+                                <TextBlock Text="{x:Bind Artist}" Margin="0,0,30,0" Grid.Column="3" Height="30" Width="Auto" FontSize="20"/>
+                                <TextBlock Text="{x:Bind CurrentSongDuration, Converter={StaticResource MillisecondsConverter}}" Grid.Column="4" Height="30" Width="Auto" FontSize="20"/>
+                            </Grid>
+                        </SplitView.Content>
+                    </SplitView>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </Page>

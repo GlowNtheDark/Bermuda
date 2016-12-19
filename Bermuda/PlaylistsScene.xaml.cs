@@ -43,31 +43,20 @@ namespace Bermuda
 
             this.NavigationCacheMode = NavigationCacheMode.Disabled;
 
-            PLViewModel = new PlaylistViewModel(Player, this.Dispatcher);
+            PLViewModel = new PlaylistViewModel(Player, MediaList, this.Dispatcher);
 
             PlayerService.Instance.dispatcher = this.Dispatcher;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            PLViewModel.GroupViewModel = new PlaylistGroupViewModel(this.Dispatcher);
-        }
-
-        private void TempButton_Click(object sender, RoutedEventArgs e)
-        {
-            /* List<Track> tracks = new List<Track>();
-
-
-            tracks = await NewMain.Current.mc.ListTracksFromPlaylist(result.Data.Items[0]);
-
-            foreach(Track track in tracks)
-                TempListBox.Items.Add(track.Title);
-                */
+            PLViewModel.GroupViewModel = new PlaylistGroupViewModel(this.Dispatcher, PLViewModel);
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
 
         }
+
     }
 }

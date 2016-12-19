@@ -131,6 +131,7 @@
     </Compile>
     <Compile Include="ViewModels\ListenNowItemViewModel.cs" />
     <Compile Include="ViewModels\MainMenuViewModel.cs" />
+    <Compile Include="ViewModels\MillisecondsConverter.cs" />
     <Compile Include="ViewModels\NowPlayingViewModel.cs" />
     <Compile Include="ViewModels\PlaybackSessionViewModel.cs" />
     <Compile Include="ViewModels\PlaybackStateToButtonIconConverter.cs" />

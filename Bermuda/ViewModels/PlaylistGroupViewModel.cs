@@ -13,14 +13,15 @@ namespace Bermuda.ViewModels
     public class PlaylistGroupViewModel : ObservableCollection<PlaylistItemViewModel>, IDisposable
     {
         public PlaylistGroup PlGroup { get; private set; }
+        public PlaylistViewModel PLViewModel;
         public CoreDispatcher dispatcher;
         bool disposed;
         bool initializing;
 
-        public PlaylistGroupViewModel(CoreDispatcher dispatcher)
+        public PlaylistGroupViewModel(CoreDispatcher dispatcher, PlaylistViewModel plviewmodel)
         {
             this.dispatcher = dispatcher;
-
+            this.PLViewModel = plviewmodel;
             getPlaylists();
         }
 
@@ -31,7 +32,10 @@ namespace Bermuda.ViewModels
             result = await NewMain.Current.mc.ListPlaylistsAsync();
 
             foreach (var playlistitem in result.Data.Items)
-                Add(new PlaylistItemViewModel(playlistitem));
+            {
+                if(playlistitem.Deleted != true)
+                    Add(new PlaylistItemViewModel(playlistitem, PLViewModel));
+            }
         }
 
         public void Dispose()

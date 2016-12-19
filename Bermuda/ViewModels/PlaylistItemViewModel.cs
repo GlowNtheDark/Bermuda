@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Bermuda.ViewModels
@@ -15,7 +16,83 @@ namespace Bermuda.ViewModels
 
         public Playlist playlist { get; private set; }
 
+        public PlaylistViewModel PLViewModel;
+
         public string Name => playlist.Name;
+
+        public bool menuOpen;
+
+        public Visibility isvisiblezero;
+
+        public Visibility isvisibleone;
+
+        public Visibility isvisibletwo;
+
+        public Visibility IsVisibleZero
+        {
+            get { return isvisiblezero; }
+
+            private set
+            {
+                if (isvisiblezero != value)
+                {
+                    isvisiblezero = value;
+                    RaisePropertyChanged("IsVisibleZero");
+                }
+            }
+        }
+
+        public Visibility IsVisibleOne
+        {
+            get { return isvisibleone; }
+
+            private set
+            {
+                if (isvisibleone != value)
+                {
+                    isvisibleone = value;
+                    RaisePropertyChanged("IsVisibleOne");
+                }
+            }
+        }
+
+        public Visibility IsVisibleTwo
+        {
+            get { return isvisibletwo; }
+
+            private set
+            {
+                if (isvisibletwo != value)
+                {
+                    isvisibletwo = value;
+                    RaisePropertyChanged("IsVisibleTwo");
+                }
+            }
+        }
+
+        public async void showCheckMark(int index)
+        {
+            if (index == 0)
+            {
+                IsVisibleZero = Visibility.Visible;
+                await Task.Delay(3000);
+                IsVisibleZero = Visibility.Collapsed;
+            }
+
+            else if(index == 1)
+            {
+                IsVisibleOne = Visibility.Visible;
+                await Task.Delay(3000);
+                IsVisibleOne = Visibility.Collapsed;
+            }
+
+            else
+            {
+                IsVisibleTwo = Visibility.Visible;
+                await Task.Delay(3000);
+                IsVisibleTwo = Visibility.Collapsed;
+            }
+        }
 
         BitmapImage listImage;
 
@@ -33,14 +110,38 @@ namespace Bermuda.ViewModels
             }
         }
 
-        public PlaylistItemViewModel(Playlist playlist)
+        public bool MenuOpen
+        {
+            get { return menuOpen; }
+
+            private set
+            {
+                if (menuOpen != value)
+                {
+                    menuOpen = value;
+                    RaisePropertyChanged("MenuOpen");
+                }
+            }
+        }
+
+        public void openCloseMenu()
+        {
+            MenuOpen = !MenuOpen;
+        }
+
+        public PlaylistItemViewModel(Playlist playlist, PlaylistViewModel plviewmodel)
         {
             this.playlist = playlist;
-
+            this.PLViewModel = plviewmodel;
             RaisePropertyChanged("Name");
 
             ListImage = new BitmapImage();
             ListImage.UriSource = new Uri(playlist.OwnerProfilePhotoUrl);
+
+            MenuOpen = false;
+            IsVisibleZero = Visibility.Collapsed;
+            IsVisibleOne = Visibility.Collapsed;
+            IsVisibleTwo = Visibility.Collapsed;
         }
 
         private void RaisePropertyChanged(string propertyName)
