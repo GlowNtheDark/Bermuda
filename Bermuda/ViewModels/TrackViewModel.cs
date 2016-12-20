@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -15,7 +16,7 @@ namespace Bermuda.ViewModels
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        TrackListViewModel listViewModel;
+        public TrackListViewModel listViewModel;
 
         public Track song { get; private set; }
 
@@ -28,6 +29,8 @@ namespace Bermuda.ViewModels
         public SolidColorBrush tileColor => song.tileColor;
 
         public double currentSongDuration;
+
+        public bool menuOpen;
 
         BitmapImage previewImage;
 
@@ -57,6 +60,25 @@ namespace Bermuda.ViewModels
                     RaisePropertyChanged("CurrentSongDuration");
                 }
             }
+        }
+
+        public bool MenuOpen
+        {
+            get { return menuOpen; }
+
+            private set
+            {
+                if (menuOpen != value)
+                {
+                    menuOpen = value;
+                    RaisePropertyChanged("MenuOpen");
+                }
+            }
+        }
+
+        public void openCloseMenu()
+        {
+            MenuOpen = !MenuOpen;
         }
 
         public TrackViewModel(TrackListViewModel trackViewModel, Track song)

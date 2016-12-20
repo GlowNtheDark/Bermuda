@@ -10,6 +10,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Bermuda.ViewModels
 {
@@ -98,6 +100,13 @@ namespace Bermuda.ViewModels
         public void setCurrentTileDefault()
         {
             CurrentItem.setTileColorDefault();
+        }
+
+        public async void removeTrack(object sender, ItemClickEventArgs e)
+        {
+            //StackPanel sp = e.OriginalSource as StackPanel;
+            //Plentry plentry = await NewMain.Current.mc.GetTrackPlaylistEntry();
+            //await NewMain.Current.mc.RemoveSongsFromPlaylist(plentry);
         }
 
         public async void Update()

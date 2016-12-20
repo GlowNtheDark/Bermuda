@@ -62,7 +62,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <ListView Grid.Row="1" Grid.Column="0" Width="Auto" Margin="0,10,0,0" ItemsSource="{x:Bind PLViewModel.TLViewModel, Mode=OneWay}" IsItemClickEnabled="True">
+        <ListView Grid.Row="1" Grid.Column="0" Width="Auto" Margin="0,10,0,0" ItemsSource="{x:Bind PLViewModel.TLViewModel, Mode=OneWay}" IsItemClickEnabled="True" ItemClick="{x:Bind PLViewModel.listItemClicked}">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -70,14 +70,16 @@
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:TrackViewModel">
-                    <SplitView Name="ItemSplitView" Margin="0,0,0,5" OpenPaneLength="100" IsPaneOpen="False" PanePlacement="Right" DisplayMode="Overlay">
+                    <SplitView Name="ItemSplitView" Margin="0,0,0,5" OpenPaneLength="75" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}" PanePlacement="Right" DisplayMode="Overlay">
                         <SplitView.Pane>
-                            <StackPanel Orientation="Horizontal" Width="100">
-                                <Button Margin="25,0,0,0" Content="X" FontSize="15" Width="30" HorizontalAlignment="Right"/>
-                            </StackPanel>
+                            
+                                    <StackPanel Orientation="Horizontal" Width="75" Height="Auto">
+                                        <Button Margin="5,0,0,0" Content="X" Foreground="White" FontSize="15" Width="30"/>
+                                    </StackPanel>
+
                         </SplitView.Pane>
                         <SplitView.Content>
-                            <Grid>
+                            <Grid BorderBrush="Green" BorderThickness="1">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="50"/>
                                 </Grid.RowDefinitions>

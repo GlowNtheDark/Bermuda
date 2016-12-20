@@ -92,6 +92,13 @@ namespace Bermuda.ViewModels
             RaisePropertyChanged("GroupViewModel");
         }
 
+        public void listItemClicked(object sender, ItemClickEventArgs e)
+        {
+            TrackViewModel item = e.ClickedItem as TrackViewModel;
+            item.openCloseMenu();
+            RaisePropertyChanged("TLViewModel");
+        }
+
         public async void playlistItemMenuClicked(object sender, ItemClickEventArgs e)
         {
             GridView gv = sender as GridView;
