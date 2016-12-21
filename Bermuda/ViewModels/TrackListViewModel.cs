@@ -102,13 +102,6 @@ namespace Bermuda.ViewModels
             CurrentItem.setTileColorDefault();
         }
 
-        public async void removeTrack(object sender, ItemClickEventArgs e)
-        {
-            //StackPanel sp = e.OriginalSource as StackPanel;
-            //Plentry plentry = await NewMain.Current.mc.GetTrackPlaylistEntry();
-            //await NewMain.Current.mc.RemoveSongsFromPlaylist(plentry);
-        }
-
         public async void Update()
         {
             await dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
@@ -118,6 +111,33 @@ namespace Bermuda.ViewModels
                 OnPropertyChanged(new PropertyChangedEventArgs("CurrentItem"));
                 OnPropertyChanged(new PropertyChangedEventArgs("PreviousItem"));
             });
+        }
+
+        public TrackListViewModel(TrackList trackList, CoreDispatcher dispatcher, Playlist playlist)
+        {
+            try
+            {
+                SongList = trackList;
+                this.dispatcher = dispatcher;
+
+                // Initialize the view model items
+                initializing = true;
+
+                foreach (var mediaItem in trackList)
+                    Add(new TrackViewModel(this, mediaItem, playlist));
+
+                initializing = false;
+
+                // The view model supports TwoWay binding so update when the playback list item changes
+                //PlaybackList.CurrentItemChanged += PlaybackList_CurrentItemChanged;
+
+                // Start where the playback list is currently at
+                CurrentItemIndex = (int)PlayerService.Instance.currentSongIndex;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.Write(ex);
+            }
         }
 
         public TrackListViewModel(TrackList trackList, CoreDispatcher dispatcher)

@@ -81,7 +81,7 @@ namespace Bermuda.ViewModels
 
             catch(Exception ex)
             {
-
+                System.Diagnostics.Debug.Write(ex);
             }
         }
 
@@ -162,12 +162,12 @@ namespace Bermuda.ViewModels
             foreach (Track track in templist)
             {
                 Plentry plentry = NewMain.Current.mc.GetTrackPlaylistEntry(playlist, track);
-
+                
                 if(!plentry.Deleted)
                     list.Add(plentry.Track);
             }
 
-            TLViewModel = new TrackListViewModel(list, dispatcher);
+            TLViewModel = new TrackListViewModel(list, dispatcher, playlist);
         }
 
         public static async Task<Uri> GetStreamUrl(MobileClient mc, Track track)

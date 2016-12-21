@@ -1,10 +1,15 @@
-﻿using GoogleMusicApi.UWP.Structure;
+﻿using Bermuda.Services;
+using GoogleMusicApi.UWP.Common;
+using GoogleMusicApi.UWP.Requests.Data;
+using GoogleMusicApi.UWP.Structure;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Media.Core;
+using Windows.Media.Playback;
 using Windows.UI;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -19,6 +24,8 @@ namespace Bermuda.ViewModels
         public TrackListViewModel listViewModel;
 
         public Track song { get; private set; }
+
+        public Playlist playlist { get; private set; }
 
         public string Title => song.Title;
 
@@ -100,6 +107,56 @@ namespace Bermuda.ViewModels
             CurrentSongDuration = song.DurationMillis;
         }
 
+        public TrackViewModel(TrackListViewModel trackViewModel, Track song, Playlist playlist)
+        {
+            this.listViewModel = trackViewModel;
+            this.song = song;
+
+            RaisePropertyChanged("Title");
+
+            // This app caches all images by loading the BitmapImage
+            // when the item is created, but production apps would
+            // use a more resource friendly paging mechanism or
+            // just use PreviewImageUri directly.
+            //
+            // The reason we cache here is to avoid audio gaps 
+            // between tracks on transitions when changing artwork.
+            PreviewImage = new BitmapImage();
+            PreviewImage.UriSource = new Uri(song.AlbumArtReference[0].Url);
+            CurrentSongDuration = song.DurationMillis;
+
+            this.playlist = playlist;
+        }
+
+        public async void menuItemClicked(object sender, ItemClickEventArgs e)
+        {
+            GridView gv = sender as GridView;
+            StackPanel sp = e.ClickedItem as StackPanel;
+            int index = gv.Items.IndexOf(sp.Parent);
+            var itemviewmodel = gv.DataContext as TrackViewModel;
+
+            if(index == 0) //Clear queue and play
+            {
+                PlayerService.Instance.CurrentPlaylist.Clear();
+                PlayerService.Instance.CurrentPlaylist.Add(itemviewmodel.song);
+                PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
+                PlayerService.Instance.Player.Play();
+
+            }
+
+            else if(index == 1) //Add to end of queue
+            {
+                PlayerService.Instance.CurrentPlaylist.Add(itemviewmodel.song);
+            }
+
+            else // Delete song from playlist
+            {
+                Plentry plentry = NewMain.Current.mc.GetTrackPlaylistEntry(itemviewmodel.playlist, itemviewmodel.song);
+                MutateResponse response = await NewMain.Current.mc.RemoveSongsFromPlaylist(plentry);
+                itemviewmodel.listViewModel.Remove(itemviewmodel);
+            }
+        }
+
         public async void setTileColorDefault()
         {
             await listViewModel.dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
@@ -116,6 +173,16 @@ namespace Bermuda.ViewModels
                 RaisePropertyChanged("tileColor");
             });
         }
+
+        public static async Task<Uri> GetStreamUrl(MobileClient mc, Track track)
+        {
+            Uri data;
+
+            data = await mc.GetStreamUrlAsync(track);
+
+            return data;
+        }
+
 
         private void RaisePropertyChanged(string propertyName)
         {

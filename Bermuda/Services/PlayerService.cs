@@ -3,11 +3,6 @@ using Bermuda.ViewModels;
 using GoogleMusicApi.UWP.Common;
 using GoogleMusicApi.UWP.Structure;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Media;
 using Windows.Media.Core;
@@ -125,10 +120,13 @@ namespace Bermuda.Services
 
         private async void Player_MediaEnded(MediaPlayer sender, object args)
         {
-            previousSongIndex = currentSongIndex;
-            currentSongIndex++;
-            Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, CurrentPlaylist[currentSongIndex])));
-            Player.Play();
+            if(currentSongIndex != CurrentPlaylist.Count - 1)
+            {
+                previousSongIndex = currentSongIndex;
+                currentSongIndex++;
+                Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, CurrentPlaylist[currentSongIndex])));
+                Player.Play();
+            }
         }
 
         private async void SystemMediaTransportControls_ButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args)

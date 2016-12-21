@@ -159,6 +159,7 @@
     <Content Include="Assets\BadgeLogo.scale-200.png" />
     <Content Include="Assets\BadgeLogo.scale-400.png" />
     <Content Include="Assets\B_Logo16b.png" />
+    <Content Include="Assets\cancel.png" />
     <Content Include="Assets\cogs.png" />
     <Content Include="Assets\Forest.png" />
     <Content Include="Assets\glass.png" />
@@ -175,7 +176,9 @@
     <Content Include="Assets\no_image.png" />
     <Content Include="Assets\check.png" />
     <Content Include="Assets\PauseButton.png" />
+    <Content Include="Assets\play.png" />
     <Content Include="Assets\PlayButton.png" />
+    <Content Include="Assets\plus.png" />
     <Content Include="Assets\ShuffleButton.png" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\SplashScreen.scale-125.png" />

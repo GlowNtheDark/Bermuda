@@ -62,7 +62,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <ListView Grid.Row="1" Grid.Column="0" Width="Auto" Margin="0,10,0,0" ItemsSource="{x:Bind PLViewModel.TLViewModel, Mode=OneWay}" IsItemClickEnabled="True" ItemClick="{x:Bind PLViewModel.listItemClicked}">
+        <ListView Grid.Row="1" Grid.Column="0" Width="Auto" Margin="0,10,0,0" ItemsSource="{x:Bind PLViewModel.TLViewModel, Mode=OneWay}" ScrollViewer.VerticalScrollBarVisibility="Hidden" IsItemClickEnabled="True" ItemClick="{x:Bind PLViewModel.listItemClicked}">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -70,18 +70,35 @@
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:TrackViewModel">
-                    <SplitView Name="ItemSplitView" Margin="0,0,0,5" OpenPaneLength="75" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}" PanePlacement="Right" DisplayMode="Overlay">
+                    <SplitView Name="ResultSplitView" Margin="0,0,0,10" OpenPaneLength="150" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}" PanePlacement="Right" DisplayMode="Overlay">
                         <SplitView.Pane>
-                            
-                                    <StackPanel Orientation="Horizontal" Width="75" Height="Auto">
-                                        <Button Margin="5,0,0,0" Content="X" Foreground="White" FontSize="15" Width="30"/>
+                            <GridView Width="Auto" Height="70" IsItemClickEnabled="True" ItemClick="{x:Bind menuItemClicked}" ScrollViewer.IsHorizontalRailEnabled="False" IsTabStop="False" ScrollViewer.IsVerticalRailEnabled="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                                <GridView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <ItemsStackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </GridView.ItemsPanel>
+                                <GridViewItem>
+                                    <StackPanel Orientation="Horizontal" Width="25" Height="55">
+                                        <Image Margin="0,0,0,0" Height="25" Width="25" Source="Assets/play.png"/>
                                     </StackPanel>
-
+                                </GridViewItem>
+                                <GridViewItem>
+                                    <StackPanel Orientation="Horizontal" Width="25" Height="55">
+                                        <Image Margin="0,0,0,0" Height="25" Width="25" Source="Assets/plus.png"/>
+                                    </StackPanel>
+                                </GridViewItem>
+                                <GridViewItem>
+                                    <StackPanel Orientation="Horizontal" Width="25" Height="55">
+                                        <Image Margin="0,0,0,0" Height="25" Width="25" Source="Assets/cancel.png"/>
+                                    </StackPanel>
+                                </GridViewItem>
+                            </GridView>
                         </SplitView.Pane>
                         <SplitView.Content>
                             <Grid BorderBrush="Green" BorderThickness="1">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="50"/>
+                                    <RowDefinition Height="70"/>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
