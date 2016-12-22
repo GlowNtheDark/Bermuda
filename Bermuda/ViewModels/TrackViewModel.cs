@@ -95,13 +95,6 @@ namespace Bermuda.ViewModels
 
             RaisePropertyChanged("Title");
 
-            // This app caches all images by loading the BitmapImage
-            // when the item is created, but production apps would
-            // use a more resource friendly paging mechanism or
-            // just use PreviewImageUri directly.
-            //
-            // The reason we cache here is to avoid audio gaps 
-            // between tracks on transitions when changing artwork.
             PreviewImage = new BitmapImage();
             PreviewImage.UriSource = new Uri(song.AlbumArtReference[0].Url);
             CurrentSongDuration = song.DurationMillis;
@@ -182,7 +175,6 @@ namespace Bermuda.ViewModels
 
             return data;
         }
-
 
         private void RaisePropertyChanged(string propertyName)
         {

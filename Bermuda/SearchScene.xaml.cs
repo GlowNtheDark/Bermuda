@@ -1,10 +1,14 @@
-﻿using System;
+﻿using Bermuda.DataModels;
+using Bermuda.Services;
+using Bermuda.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media.Playback;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -12,11 +16,6 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using GoogleMusicApi.UWP.Structure;
-using Bermuda.ViewModels;
-using Bermuda.Services;
-using Bermuda.DataModels;
-using Windows.Media.Playback;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -25,11 +24,17 @@ namespace Bermuda
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class PlaylistsScene : Page
+    public sealed partial class SearchScene : Page
     {
-        public PlaylistViewModel PLViewModel { get; set; }
+        public SearchViewModel searchviewmodel {get; set;}
 
         MediaPlayer Player => PlayerService.Instance.Player;
+
+        MediaPlaybackItem PlaybackItem
+        {
+            get { return Player.Source as MediaPlaybackItem; }
+            set { Player.Source = value; }
+        }
 
         TrackList MediaList
         {
@@ -37,28 +42,27 @@ namespace Bermuda
             set { PlayerService.Instance.CurrentPlaylist = value; }
         }
 
-        public PlaylistsScene()
+        public SearchScene()
         {
             this.InitializeComponent();
 
             this.NavigationCacheMode = NavigationCacheMode.Disabled;
 
-            PLViewModel = new PlaylistViewModel(Player, MediaList, this.Dispatcher);
+            searchviewmodel = new SearchViewModel(Player, MediaList, this.Dispatcher);
 
             PlayerService.Instance.dispatcher = this.Dispatcher;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            PLViewModel.GroupViewModel = new PlaylistGroupViewModel(this.Dispatcher, PLViewModel);
+            
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
-            PLViewModel = null;
+            searchviewmodel = null;
             GC.Collect();
-            AppSettings.localSettings.Values["lastPage"] = "Playlists";
+            AppSettings.localSettings.Values["lastPage"] = "Search";
         }
-
     }
 }

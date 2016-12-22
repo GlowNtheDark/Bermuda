@@ -72,6 +72,7 @@ namespace Bermuda
         Type qpScene = typeof(QuickPlayScene);
         Type stScene = typeof(SettingsScene);
         Type plScene = typeof(PlaylistsScene);
+        Type srScene = typeof(SearchScene);
 
         public MobileClient mc;
         MainMenuViewModel MainViewModel;
@@ -343,6 +344,13 @@ namespace Bermuda
                 pageTitle.Text = "Playlists";
                 pageTitle.Visibility = Visibility.Visible;
                 mainFrame.Navigate(plScene);
+            }
+
+            else
+            {
+                pageTitle.Text = "Search";
+                pageTitle.Visibility = Visibility.Visible;
+                mainFrame.Navigate(srScene);
             }
 
         }

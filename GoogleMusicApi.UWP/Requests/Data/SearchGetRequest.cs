@@ -11,11 +11,11 @@ namespace GoogleMusicApi.UWP.Requests.Data
 
         public int[] ReturnTypes { get; set; }
 
-        public SearchGetRequest(Session session, string query) : base(session)
+        public SearchGetRequest(Session session, string query, int type) : base(session)
         {
             Query = query;
             NumberOfResults = 100;
-            ReturnTypes = new[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+            ReturnTypes = new[] {type};
         }
 
         //TODO (Low): Get types and turn to a flag or enum array
