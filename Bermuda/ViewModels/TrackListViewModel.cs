@@ -167,6 +167,27 @@ namespace Bermuda.ViewModels
             }
         }
 
+        public TrackListViewModel(SearchResponse response, CoreDispatcher dispatcher)
+        {
+            try
+            {
+                this.dispatcher = dispatcher;
+
+                // Initialize the view model items
+                initializing = true;
+
+                foreach (SearchResult result in response.Entries)
+                    Add(new TrackViewModel(this, result.Track));
+
+                initializing = false;
+
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.Write(ex);
+            }
+        }
+
         public TrackListViewModel()
         {
 

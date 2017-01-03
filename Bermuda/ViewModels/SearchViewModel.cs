@@ -14,6 +14,8 @@ namespace Bermuda.ViewModels
         TrackList SongList;
         CoreDispatcher dispatcher;
         AlbumListViewModel alviewmodel;
+        TrackListViewModel tlviewmodel;
+        ArtistListViewModel arlviewmodel;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -38,16 +40,68 @@ namespace Bermuda.ViewModels
             }
         }
 
-        public void AlbumItemClick()
+        public TrackListViewModel TLViewModel
         {
+            get { return tlviewmodel; }
 
+            set
+            {
+                if (tlviewmodel != value)
+                {
+                    tlviewmodel = value;
+                    RaisePropertyChanged("TLViewModel");
+                }
+            }
+        }
+
+        public ArtistListViewModel ArLViewModel
+        {
+            get { return arlviewmodel; }
+
+            set
+            {
+                if (arlviewmodel != value)
+                {
+                    arlviewmodel = value;
+                    RaisePropertyChanged("ArLViewModel");
+                }
+            }
+        }
+
+        public void AlbumItemClick(object sender, ItemClickEventArgs e)
+        {
+            AlbumViewModel item = e.ClickedItem as AlbumViewModel;
+            item.openCloseMenu();
+            RaisePropertyChanged("ALViewModel");
+        }
+
+        public void TrackItemClick(object sender, ItemClickEventArgs e)
+        {
+            TrackViewModel item = e.ClickedItem as TrackViewModel;
+            item.openCloseMenu();
+            RaisePropertyChanged("TLViewModel");
+        }
+
+        public void ArtistItemClick(object sender, ItemClickEventArgs e)
+        {
+            ArtistViewModel item = e.ClickedItem as ArtistViewModel;
+            item.openCloseMenu();
+            RaisePropertyChanged("ArLViewModel");
         }
 
         public async void QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            SearchResponse response = await NewMain.Current.mc.SearchAsync(args.QueryText, 3); //3 for Album Search
+            SearchResponse trackresponse = await NewMain.Current.mc.SearchAsync(args.QueryText, 1); //1 for Track Search
 
-            ALViewModel = new AlbumListViewModel(response, dispatcher);
+            SearchResponse artistresponse = await NewMain.Current.mc.SearchAsync(args.QueryText, 2); //2 for Artist Search
+
+            SearchResponse albumresponse = await NewMain.Current.mc.SearchAsync(args.QueryText, 3); //3 for Album Search
+
+            ALViewModel = new AlbumListViewModel(albumresponse, dispatcher);
+
+            TLViewModel = new TrackListViewModel(trackresponse, dispatcher);
+
+            ArLViewModel = new ArtistListViewModel(artistresponse, dispatcher);
 
         }
 

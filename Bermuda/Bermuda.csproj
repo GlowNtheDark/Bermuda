@@ -136,6 +136,8 @@
     </Compile>
     <Compile Include="ViewModels\AlbumViewModel.cs" />
     <Compile Include="ViewModels\AlbumListViewModel.cs" />
+    <Compile Include="ViewModels\ArtistListViewModel.cs" />
+    <Compile Include="ViewModels\ArtistViewModel.cs" />
     <Compile Include="ViewModels\ListenNowItemViewModel.cs" />
     <Compile Include="ViewModels\MainMenuViewModel.cs" />
     <Compile Include="ViewModels\MillisecondsConverter.cs" />

@@ -9,7 +9,7 @@ namespace Bermuda.DataModels
 {
     public class AlbumList : List<Album>
     {
-        AlbumList()
+        public AlbumList()
         {
 
         }
