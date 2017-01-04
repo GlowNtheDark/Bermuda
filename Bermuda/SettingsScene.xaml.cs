@@ -28,9 +28,7 @@ namespace Bermuda
                 vault.Remove(new Windows.Security.Credentials.PasswordCredential("Bermuda", credential.UserName, credential.Password));
 
             NewMain.Current.mc = null;
-
-            //clearLists();
-
+  
             Frame.Navigate(typeof(LoginPage));
 
         }

@@ -246,9 +246,9 @@
         </Style>
     </Page.Resources>
 
-    <Grid Margin="0,0,0,0" Height="Auto" Width="Auto">
+    <Grid>
         <Grid.Background>
-            <ImageBrush Stretch="Fill" ImageSource="Assets/Forest.png" Opacity="0.5"/>
+            <ImageBrush Stretch="Fill" ImageSource="Assets/Space.png" Opacity="0.5"/>
         </Grid.Background>
         <TextBlock Name="Header" Text="Welcome to Bermuda!" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,100,0,0" FontSize="50" Foreground="White"/>
         <Canvas HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,50,0,0" Height="225" Width="350">

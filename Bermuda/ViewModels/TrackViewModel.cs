@@ -238,6 +238,12 @@ namespace Bermuda.ViewModels
             {
                 PlayerService.Instance.CurrentPlaylist.Add(itemviewmodel.song);
 
+                if (PlayerService.Instance.Player.Source == null)
+                {
+                    PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
+                    PlayerService.Instance.Player.Play();
+                }
+
                 itemviewmodel.showCheckMark(0);
             }
 

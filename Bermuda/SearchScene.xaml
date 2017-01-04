@@ -11,12 +11,18 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <AutoSuggestBox QueryIcon="Find" Width="500" HorizontalAlignment="Right" Background="White" QuerySubmitted="{x:Bind searchviewmodel.QuerySubmitted}"/>
-        <ListView Name="ArtistLV" Grid.Row="1" Margin="0,5,0,0" ItemsSource="{x:Bind searchviewmodel.ArLViewModel, Mode=OneWay}" ItemClick="{x:Bind searchviewmodel.ArtistItemClick}" IsItemClickEnabled="True" IsTabStop="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+        <AutoSuggestBox QueryIcon="Find" Grid.Row="0" Width="500" HorizontalAlignment="Right" Background="White" QuerySubmitted="{x:Bind searchviewmodel.QuerySubmitted}"/>
+        <Grid Grid.Row="1" Background="Green">
+            <TextBlock Text="Artists" Margin="10,0,0,0" Height="40" FontSize="30"/>
+        </Grid>
+        <ListView Name="ArtistLV" Grid.Row="2" Margin="0,5,0,5" ItemsSource="{x:Bind searchviewmodel.ArLViewModel, Mode=OneWay}" ItemClick="{x:Bind searchviewmodel.ArtistItemClick}" IsItemClickEnabled="True" IsTabStop="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsStackPanel Orientation="Horizontal"/>
@@ -52,7 +58,10 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <ListView Name="AlbumLV" Grid.Row="2" Margin="0,5,0,0" ItemsSource="{x:Bind searchviewmodel.ALViewModel, Mode=OneWay}" ItemClick="{x:Bind searchviewmodel.AlbumItemClick}" IsItemClickEnabled="True" IsTabStop="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+        <Grid Grid.Row="3" Background="Green">
+            <TextBlock Text="Albums" Margin="10,0,0,0" Height="40" FontSize="30"/>
+        </Grid>
+        <ListView Name="AlbumLV" Grid.Row="4" Margin="0,5,0,5" ItemsSource="{x:Bind searchviewmodel.ALViewModel, Mode=OneWay}" ItemClick="{x:Bind searchviewmodel.AlbumItemClick}" IsItemClickEnabled="True" IsTabStop="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsStackPanel Orientation="Horizontal"/>
@@ -60,17 +69,19 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:AlbumViewModel">
-                    <SplitView Name="AlbumSplitView" DisplayMode="Overlay" OpenPaneLength="155" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}">
+                    <SplitView Name="AlbumSplitView" DisplayMode="Overlay" OpenPaneLength="175" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}">
                         <SplitView.Pane>
-                            <GridView IsItemClickEnabled="True" Width="155" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False">
-                                <GridViewItem Width="147">
-                                    <StackPanel Orientation="Horizontal" Width="147">
+                            <GridView IsItemClickEnabled="True" Width="175" ItemClick="{x:Bind searchMenuItemClicked}" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False">
+                                <GridViewItem Width="170">
+                                    <StackPanel Orientation="Horizontal" Width="170">
                                         <TextBlock Margin="5,0,0,0" Text="Add to queue." FontSize="15" VerticalAlignment="Center"/>
+                                        <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleZero, Mode=OneWay}"/>
                                     </StackPanel>
                                 </GridViewItem>
-                                <GridViewItem Width="147">
-                                    <StackPanel Orientation="Horizontal" Width="147">
+                                <GridViewItem Width="170">
+                                    <StackPanel Orientation="Horizontal" Width="170">
                                         <TextBlock Margin="5,0,0,0" Text="Clear queue and play." FontSize="15" VerticalAlignment="Center"/>
+                                        <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleOne, Mode=OneWay}"/>
                                     </StackPanel>
                                 </GridViewItem>
                             </GridView>
@@ -86,7 +97,10 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <ListView Name="TrackLV" Grid.Row="3" Margin="0,5,0,0" ItemsSource="{x:Bind searchviewmodel.TLViewModel, Mode=OneWay}" ItemClick="{x:Bind searchviewmodel.TrackItemClick}" IsItemClickEnabled="True" IsTabStop="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+        <Grid Grid.Row="5" Background="Green">
+            <TextBlock Text="Tracks" Margin="10,0,0,0" Height="40" FontSize="30" Grid.Row="5"/>
+        </Grid>
+        <ListView Name="TrackLV" Grid.Row="6" Margin="0,5,0,5" ItemsSource="{x:Bind searchviewmodel.TLViewModel, Mode=OneWay}" ItemClick="{x:Bind searchviewmodel.TrackItemClick}" IsItemClickEnabled="True" IsTabStop="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsStackPanel Orientation="Horizontal"/>

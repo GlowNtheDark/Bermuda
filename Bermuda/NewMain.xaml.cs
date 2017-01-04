@@ -67,7 +67,6 @@ namespace Bermuda
                 reregisterServicingTask(servicingBackgroundTask);
         }
 
-
         Type npScene = typeof(NowPlayingScene);
         Type qpScene = typeof(QuickPlayScene);
         Type stScene = typeof(SettingsScene);

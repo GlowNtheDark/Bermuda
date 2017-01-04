@@ -113,7 +113,6 @@
     <Compile Include="NewMain.xaml.cs">
       <DependentUpon>NewMain.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NowPlaying.cs" />
     <Compile Include="NowPlayingScene.xaml.cs">
       <DependentUpon>NowPlayingScene.xaml</DependentUpon>
     </Compile>
@@ -228,6 +227,7 @@
     <Content Include="Assets\StoreLogo.scale-200.png" />
     <Content Include="Assets\StoreLogo.scale-400.png" />
     <Content Include="Assets\triangle.png" />
+    <Content Include="Assets\space.png" />
     <Content Include="Assets\Wide310x150Logo.scale-100.png" />
     <Content Include="Assets\Wide310x150Logo.scale-125.png" />
     <Content Include="Assets\Wide310x150Logo.scale-150.png" />

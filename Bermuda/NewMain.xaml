@@ -55,6 +55,5 @@
                 <Frame x:Name="mainFrame" Margin="0,5,0,0"/>
             </SplitView.Content>
         </SplitView>
-
     </Grid>
 </Page>
