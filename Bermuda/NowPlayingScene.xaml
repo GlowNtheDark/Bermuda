@@ -849,7 +849,6 @@
                     <Button x:Name="nextButton" Style="{StaticResource customNextButton}" Width="50" Margin="0,0,0,5" HorizontalAlignment="Right" Height="50" Foreground="White" Click="{x:Bind PlayerViewModel.skipNext}" Visibility="Visible"/>
                 </StackPanel>
                 <Button x:Name="shuffleButton" Style="{StaticResource customShuffleButton}" Width="50" Margin="5,1,0,6" HorizontalAlignment="Left" Height="50" Foreground="White" Click="{x:Bind PlayerViewModel.Shuffle}" Visibility="Visible"/>
-                <TextBlock  x:Name="TempTime" Text="{x:Bind PlayerViewModel.SongList.CurrentItem.CurrentSongDuration, Mode=OneWay}" Width="75" Height="20" HorizontalAlignment="Left" Margin="75,0,0,0"/>
                 <Slider Visibility="Visible" Style="{StaticResource customSlider}" Foreground="#FF00FF0C" Value="{x:Bind PlayerViewModel.player.Volume}" Name="volumeSlider" Width="140" Height="50" Margin="0,0,10,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" SmallChange="0.1" Maximum="1" ValueChanged="{x:Bind PlayerViewModel.volumeChanged}" LargeChange="0.1" StepFrequency="0.1" IsThumbToolTipEnabled="False"/>
             </Grid>
         </Grid>

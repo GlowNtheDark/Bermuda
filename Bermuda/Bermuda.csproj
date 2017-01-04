@@ -125,6 +125,7 @@
     <Compile Include="SearchScene.xaml.cs">
       <DependentUpon>SearchScene.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\MessagingService.cs" />
     <Compile Include="Services\PlayerService.cs" />
     <Compile Include="SettingsScene.xaml.cs">
       <DependentUpon>SettingsScene.xaml</DependentUpon>
@@ -170,6 +171,7 @@
     <Content Include="Assets\B_Logo16b.png" />
     <Content Include="Assets\cancel.png" />
     <Content Include="Assets\cogs.png" />
+    <Content Include="Assets\Exclamation.png" />
     <Content Include="Assets\Forest.png" />
     <Content Include="Assets\glass.png" />
     <Content Include="Assets\list.png" />

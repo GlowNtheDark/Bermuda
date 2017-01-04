@@ -19,7 +19,6 @@ namespace Bermuda
 
         private void logoutButton_Click(object sender, RoutedEventArgs e)
         {
-
             var vault = new Windows.Security.Credentials.PasswordVault();
 
             Windows.Security.Credentials.PasswordCredential credential = GetCredentialFromLocker();
@@ -28,9 +27,7 @@ namespace Bermuda
                 vault.Remove(new Windows.Security.Credentials.PasswordCredential("Bermuda", credential.UserName, credential.Password));
 
             NewMain.Current.mc = null;
-  
-            Frame.Navigate(typeof(LoginPage));
-
+            NewMain.Current.loadLoginFrame();
         }
 
         private Windows.Security.Credentials.PasswordCredential GetCredentialFromLocker()

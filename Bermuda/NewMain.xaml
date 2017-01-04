@@ -13,7 +13,8 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
-            <Button x:Name="HamburgerButton" Margin="4,5,0,0" Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Left" FontFamily="Segoe MDL2 Assets" Content="&#xE700;" Width="33" Height="45" Background="Transparent" Click="HamburgerButton_Click"/>
+            <Image Name="alertImage" Width="20" Height="25" VerticalAlignment="Center" Source="/Assets/Exclamation.png" Margin="5,5,0,0"/>
+            <Button x:Name="HamburgerButton" Margin="0,5,0,0" Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Left" FontFamily="Segoe MDL2 Assets" Content="&#xE700;" Width="33" Height="45" Background="Transparent" Click="HamburgerButton_Click"/>
             <TextBlock Name="pageTitle" Margin="5,0,0,0" Text="Current Page Title" FontSize="25" VerticalAlignment="Center" Visibility="Collapsed"/>
         </StackPanel>
         <SplitView x:Name="MySplitView" Margin="0,5,0,0" IsTabStop="False" Grid.Row="1" DisplayMode="Overlay" IsPaneOpen="False" OpenPaneLength="210" CompactPaneLength="37">

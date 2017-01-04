@@ -82,6 +82,10 @@ namespace Bermuda
         private void HamburgerButton_Click(object sender, RoutedEventArgs e)
         {
             MySplitView.IsPaneOpen = !MySplitView.IsPaneOpen;
+            if(alertImage.Visibility == Visibility.Visible)
+                alertImage.Visibility = Visibility.Collapsed;
+            else
+                alertImage.Visibility = Visibility.Visible;
         }
 
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)
@@ -352,6 +356,11 @@ namespace Bermuda
                 mainFrame.Navigate(srScene);
             }
 
+        }
+
+        public void loadLoginFrame()
+        {
+            Frame.Navigate(typeof(LoginPage));
         }
 
         private void Page_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
