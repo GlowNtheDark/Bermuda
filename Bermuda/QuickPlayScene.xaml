@@ -40,9 +40,9 @@
                         </SplitView.Pane>
                         <SplitView.Content>
                             <Grid>
-                                <Image Height="500" Width="500" VerticalAlignment="Center" Stretch="Fill" Source="{x:Bind ItemImage}"/>
+                                <Image Height="400" Width="400" VerticalAlignment="Center" Stretch="Fill" Source="{x:Bind ItemImage}"/>
                                 <Grid VerticalAlignment="Bottom" Height="80" Background="Black" Opacity=".80"/>
-                                <TextBlock VerticalAlignment="Bottom" Height="80" Width="500" Text="{x:Bind QuickPlayText}" FontSize="30" TextAlignment="Left" Foreground="White" TextTrimming="CharacterEllipsis"/>
+                                <TextBlock VerticalAlignment="Bottom" Height="80" Width="400" Text="{x:Bind QuickPlayText}" FontSize="30" TextAlignment="Left" Foreground="White" TextTrimming="CharacterEllipsis"/>
                             </Grid>
                         </SplitView.Content>
                     </SplitView>
