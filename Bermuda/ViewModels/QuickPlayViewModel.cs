@@ -90,8 +90,6 @@ namespace Bermuda.ViewModels
                         {
                             RadioFeed feed = await getArtistRadioStation(NewMain.Current.mc, item.RadioStation.Id.Seeds[0].ArtistId);
 
-                            MediaPlaybackList temp2 = new MediaPlaybackList();
-
                             if (feed.Data.Stations[0].Tracks != null)
                             {
                                 foreach (Track track in feed.Data.Stations[0].Tracks)
@@ -159,8 +157,6 @@ namespace Bermuda.ViewModels
                         if (item.RadioStation.Id.Seeds[0].SeedType.ToString() == "3")
                         {
                             RadioFeed feed = await getArtistRadioStation(NewMain.Current.mc, item.RadioStation.Id.Seeds[0].ArtistId);
-
-                            MediaPlaybackList temp2 = new MediaPlaybackList();
 
                             if (feed.Data.Stations[0].Tracks != null)
                             {

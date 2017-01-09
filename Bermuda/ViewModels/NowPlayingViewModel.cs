@@ -21,7 +21,7 @@ namespace Bermuda.ViewModels
 {
     public class NowPlayingViewModel : INotifyPropertyChanged, IDisposable
     {
-        //bool disposed;
+        bool disposed;
 
         public MediaPlayer player;
         CoreDispatcher dispatcher;

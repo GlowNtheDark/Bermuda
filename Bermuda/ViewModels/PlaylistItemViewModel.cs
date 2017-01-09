@@ -92,6 +92,8 @@ namespace Bermuda.ViewModels
                 await Task.Delay(3000);
                 IsVisibleTwo = Visibility.Collapsed;
             }
+
+            MenuOpen = false;
         }
 
         BitmapImage listImage;

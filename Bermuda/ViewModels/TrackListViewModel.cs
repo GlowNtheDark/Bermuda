@@ -177,7 +177,10 @@ namespace Bermuda.ViewModels
                 initializing = true;
 
                 foreach (SearchResult result in response.Entries)
-                    Add(new TrackViewModel(this, result.Track));
+                {
+                    if(result.Track != null)
+                        Add(new TrackViewModel(this, result.Track));
+                }
 
                 initializing = false;
 

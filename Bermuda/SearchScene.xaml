@@ -13,8 +13,8 @@
             <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <AutoSuggestBox QueryIcon="Find" Grid.Row="0" Width="300" HorizontalAlignment="Right" Background="White" QuerySubmitted="{x:Bind searchviewmodel.QuerySubmitted}"/>
-        <GridView Grid.Row="1" IsTabStop="False" SelectionMode="None" IsItemClickEnabled="False">
+        <AutoSuggestBox QueryIcon="Find" Grid.Row="0" Width="300" Margin="0,0,10,0" HorizontalAlignment="Right" Background="White" QuerySubmitted="{x:Bind searchviewmodel.QuerySubmitted}"/>
+        <GridView Grid.Row="1" IsTabStop="False" SelectionMode="None" IsItemClickEnabled="False" Visibility="{x:Bind searchviewmodel.GridViewVisibility, Mode=OneWay}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
@@ -45,6 +45,12 @@
                                             <StackPanel Orientation="Horizontal" Width="170">
                                                 <TextBlock Margin="5,0,0,0" Text="Clear queue and play." FontSize="15" VerticalAlignment="Center"/>
                                                 <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleOne, Mode=OneWay}"/>
+                                            </StackPanel>
+                                        </GridViewItem>
+                                        <GridViewItem Width="170">
+                                            <StackPanel Orientation="Horizontal" Width="170">
+                                                <TextBlock Margin="5,0,0,0" Text="Start Radio" FontSize="15" VerticalAlignment="Center"/>
+                                                <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleTwo, Mode=OneWay}"/>
                                             </StackPanel>
                                         </GridViewItem>
                                     </GridView>
@@ -92,7 +98,13 @@
                                                     <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleOne, Mode=OneWay}"/>
                                                 </StackPanel>
                                             </GridViewItem>
-                                        </GridView>
+                                        <GridViewItem Width="170">
+                                            <StackPanel Orientation="Horizontal" Width="170">
+                                                <TextBlock Margin="5,0,0,0" Text="Start Radio" FontSize="15" VerticalAlignment="Center"/>
+                                                <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleTwo, Mode=OneWay}"/>
+                                            </StackPanel>
+                                        </GridViewItem>
+                                    </GridView>
                                     </SplitView.Pane>
                                     <SplitView.Content>
                                         <Grid BorderBrush="Green" BorderThickness="1">
@@ -135,6 +147,12 @@
                                             <StackPanel Orientation="Horizontal" Width="170">
                                                 <TextBlock Margin="5,0,0,0" Text="Clear queue and play." FontSize="15" VerticalAlignment="Center"/>
                                                 <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleOne, Mode=OneWay}"/>
+                                            </StackPanel>
+                                        </GridViewItem>
+                                        <GridViewItem Width="170">
+                                            <StackPanel Orientation="Horizontal" Width="170">
+                                                <TextBlock Margin="5,0,0,0" Text="Start Radio" FontSize="15" VerticalAlignment="Center"/>
+                                                <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleTwo, Mode=OneWay}"/>
                                             </StackPanel>
                                         </GridViewItem>
                                     </GridView>

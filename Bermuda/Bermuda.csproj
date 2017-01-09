@@ -104,6 +104,7 @@
     </Compile>
     <Compile Include="DataModels\AlbumList.cs" />
     <Compile Include="DataModels\ArtistList.cs" />
+    <Compile Include="DataModels\MessageList.cs" />
     <Compile Include="DataModels\PlaylistGroup.cs" />
     <Compile Include="DataModels\QuickPlayList.cs" />
     <Compile Include="DataModels\TrackList.cs" />
@@ -140,6 +141,8 @@
     <Compile Include="ViewModels\ArtistViewModel.cs" />
     <Compile Include="ViewModels\ListenNowItemViewModel.cs" />
     <Compile Include="ViewModels\MainMenuViewModel.cs" />
+    <Compile Include="ViewModels\MessageItemViewModel.cs" />
+    <Compile Include="ViewModels\MessageListViewModel.cs" />
     <Compile Include="ViewModels\MillisecondsConverter.cs" />
     <Compile Include="ViewModels\NowPlayingViewModel.cs" />
     <Compile Include="ViewModels\PlaybackSessionViewModel.cs" />

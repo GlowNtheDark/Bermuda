@@ -12,7 +12,7 @@ namespace Bermuda.ViewModels
 {
     public class PlaylistGroupViewModel : ObservableCollection<PlaylistItemViewModel>, IDisposable
     {
-        public PlaylistGroup PlGroup { get; private set; }
+        //public PlaylistGroup PlGroup { get; private set; }
         public PlaylistViewModel PLViewModel;
         public CoreDispatcher dispatcher;
         bool disposed;

@@ -29,7 +29,10 @@ namespace Bermuda.ViewModels
                 initializing = true;
 
                 foreach (SearchResult result in response.Entries)
-                    Add(new AlbumViewModel(this, result.Album));
+                {
+                    if(result.Album != null)
+                        Add(new AlbumViewModel(this, result.Album));
+                }
 
                 initializing = false;
 

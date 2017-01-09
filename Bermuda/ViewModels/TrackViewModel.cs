@@ -2,6 +2,7 @@
 using GoogleMusicApi.UWP.Common;
 using GoogleMusicApi.UWP.Requests.Data;
 using GoogleMusicApi.UWP.Structure;
+using GoogleMusicApi.UWP.Structure.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -132,6 +133,8 @@ namespace Bermuda.ViewModels
             }
         }
 
+        public string TrackId => song.Nid;
+
         public void openCloseMenu()
         {
             MenuOpen = !MenuOpen;
@@ -171,7 +174,10 @@ namespace Bermuda.ViewModels
             RaisePropertyChanged("Title");
 
             PreviewImage = new BitmapImage();
-            PreviewImage.UriSource = new Uri(song.AlbumArtReference[0].Url);
+
+            if (song.AlbumArtReference != null)
+                PreviewImage.UriSource = new Uri(song.AlbumArtReference[0].Url);
+
             CurrentSongDuration = song.DurationMillis;
 
             MenuOpen = false;
@@ -210,33 +216,13 @@ namespace Bermuda.ViewModels
 
             if(index == 0) //Clear queue and play
             {
-               PlayerService.Instance.CurrentPlaylist.Add(itemviewmodel.song);
-            }
-
-            else if(index == 1) //Add to end of queue
-            {
                 PlayerService.Instance.CurrentPlaylist.Clear();
                 PlayerService.Instance.CurrentPlaylist.Add(itemviewmodel.song);
                 PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
                 PlayerService.Instance.Player.Play();
             }
 
-            else // Delete song from playlist
-            {
-                Plentry plentry = NewMain.Current.mc.GetTrackPlaylistEntry(itemviewmodel.playlist, itemviewmodel.song);
-                MutateResponse response = await NewMain.Current.mc.RemoveSongsFromPlaylist(plentry);
-                itemviewmodel.listViewModel.Remove(itemviewmodel);
-            }
-        }
-
-        public async void searchMenuItemClicked(object sender, ItemClickEventArgs e)
-        {
-            GridView gv = sender as GridView;
-            StackPanel sp = e.ClickedItem as StackPanel;
-            int index = gv.Items.IndexOf(sp.Parent);
-            var itemviewmodel = gv.DataContext as TrackViewModel;
-
-            if (index == 0) //Add to end of queue
+            else if(index == 1) //Add to end of queue
             {
                 PlayerService.Instance.CurrentPlaylist.Add(itemviewmodel.song);
 
@@ -245,22 +231,85 @@ namespace Bermuda.ViewModels
                     PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
                     PlayerService.Instance.Player.Play();
                 }
-
-                itemviewmodel.showCheckMark(0);
             }
 
-            else if (index == 1) //Clear queue and play
-            {         
-                PlayerService.Instance.CurrentPlaylist.Clear();
-                PlayerService.Instance.previousSongIndex = 0;
-                PlayerService.Instance.currentSongIndex = 0;
-                PlayerService.Instance.CurrentPlaylist.Add(itemviewmodel.song);
-                PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
-                PlayerService.Instance.Player.Play();
-
-                itemviewmodel.showCheckMark(1);
+            else // Delete song from playlist
+            {
+                Plentry plentry = NewMain.Current.mc.GetTrackPlaylistEntry(itemviewmodel.playlist, itemviewmodel.song);
+                MutateResponse response = await NewMain.Current.mc.RemoveSongsFromPlaylist(plentry);
+                itemviewmodel.listViewModel.Remove(itemviewmodel);
             }
 
+            MenuOpen = false;
+        }
+
+        public async void searchMenuItemClicked(object sender, ItemClickEventArgs e)
+        {
+            GridView gv = sender as GridView;
+            StackPanel sp = e.ClickedItem as StackPanel;
+            int index = gv.Items.IndexOf(sp.Parent);
+            var itemviewmodel = gv.DataContext as TrackViewModel;
+            if (index == 2) //start radio
+            {
+                var feed = await NewMain.Current.mc.GetStationFeed(ExplicitType.Explicit,
+                    new StationFeedStation
+                    {
+                        LibraryContentOnly = false,
+                        NumberOfEntries = 50,
+                        RecentlyPlayed = new Track[0],
+                        Seed = new StationSeed
+                        {
+                            SeedType = 1,
+                            TrackId = itemviewmodel.TrackId
+                        }
+                    }
+                );
+
+                if (feed.Data.Stations[0].Tracks != null)
+                {
+
+                    PlayerService.Instance.CurrentPlaylist.Clear();
+                    PlayerService.Instance.previousSongIndex = 0;
+                    PlayerService.Instance.currentSongIndex = 0;
+
+                    foreach (Track track in feed.Data.Stations[0].Tracks)
+                        PlayerService.Instance.CurrentPlaylist.Add(track);
+
+                    PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
+                    PlayerService.Instance.Player.Play();
+
+                }
+
+                itemviewmodel.showCheckMark(2);
+            }
+
+            else
+            {
+                if (index == 0) //Add to end of queue
+                {
+                    PlayerService.Instance.CurrentPlaylist.Add(itemviewmodel.song);
+
+                    if (PlayerService.Instance.Player.Source == null)
+                    {
+                        PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
+                        PlayerService.Instance.Player.Play();
+                    }
+
+                    itemviewmodel.showCheckMark(0);
+                }
+
+                else if (index == 1) //Clear queue and play
+                {
+                    PlayerService.Instance.CurrentPlaylist.Clear();
+                    PlayerService.Instance.previousSongIndex = 0;
+                    PlayerService.Instance.currentSongIndex = 0;
+                    PlayerService.Instance.CurrentPlaylist.Add(itemviewmodel.song);
+                    PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
+                    PlayerService.Instance.Player.Play();
+
+                    itemviewmodel.showCheckMark(1);
+                }
+            }
         }
 
         public async void setTileColorDefault()

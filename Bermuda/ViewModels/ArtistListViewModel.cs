@@ -28,7 +28,10 @@ namespace Bermuda.ViewModels
                 initializing = true;
 
                 foreach (SearchResult result in response.Entries)
-                    Add(new ArtistViewModel(this, result.Artist));
+                {
+                    if(result.Artist != null)
+                        Add(new ArtistViewModel(this, result.Artist));
+                }
 
                 initializing = false;
 

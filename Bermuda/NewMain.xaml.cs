@@ -35,13 +35,19 @@ namespace Bermuda
 
         MediaPlayer Player => PlayerService.Instance.Player;
 
+        MessageList Messagelist
+        {
+            get { return MessagingService.Instance.Messagelist; }
+            set { MessagingService.Instance.Messagelist = value; }
+        }
+
         public NewMain()
         {
             this.InitializeComponent();
 
             Current = this;
 
-            MainViewModel = new MainMenuViewModel(Player, this.Dispatcher);
+            MainViewModel = new MainMenuViewModel(Player, Messagelist, this.Dispatcher);
 
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
             {
@@ -74,7 +80,7 @@ namespace Bermuda
         Type srScene = typeof(SearchScene);
 
         public MobileClient mc;
-        MainMenuViewModel MainViewModel;
+        public MainMenuViewModel MainViewModel { get; set; }
         public string lastNetworkState;
         private string networkBackgroundTask = "Network-Awareness-Task";
         private string servicingBackgroundTask = "Servicing-Complete-Task";
@@ -82,10 +88,11 @@ namespace Bermuda
         private void HamburgerButton_Click(object sender, RoutedEventArgs e)
         {
             MySplitView.IsPaneOpen = !MySplitView.IsPaneOpen;
-            if(alertImage.Visibility == Visibility.Visible)
-                alertImage.Visibility = Visibility.Collapsed;
-            else
-                alertImage.Visibility = Visibility.Visible;
+            if (MainViewModel.AlertVisibility == Visibility.Visible)
+            {
+                MainViewModel.AlertVisibility = Visibility.Collapsed;
+                MessagingService.Instance.isNewAlert = false;
+            }
         }
 
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)

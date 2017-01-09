@@ -104,6 +104,8 @@ namespace Bermuda.ViewModels
                 await Task.Delay(3000);
                 IsVisibleOne = Visibility.Collapsed;
             }
+
+            MenuOpen = false;
         }
 
         public ListenNowItemViewModel(ListenNowItem Item, QuickPlayViewModel qpviewmodel)

@@ -12,29 +12,64 @@ using Windows.UI.Xaml;
 
 namespace Bermuda.ViewModels
 {
-    class MainMenuViewModel : INotifyPropertyChanged
+    public class MainMenuViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
         MediaPlayer player;
         public bool isEnabledNP;
         CoreDispatcher dispatcher;
+        MessageListViewModel mlviewmodel;
+        MessageList list;
+        Visibility alertVisibility;
 
-        public MainMenuViewModel(MediaPlayer player, CoreDispatcher dispatcher)
+        public Visibility AlertVisibility
+            {
+                get { return alertVisibility; }
+
+                set
+                {
+                if (alertVisibility != value)
+                {
+                    alertVisibility = value;
+
+                    Update();
+                }
+            }
+            }
+
+        public MainMenuViewModel(MediaPlayer player, MessageList list, CoreDispatcher dispatcher)
         {
-            this.player = player;
-            player.SourceChanged += Player_SourceChanged;
             this.dispatcher = dispatcher;
+            this.player = player;
+            this.list = list;
+
+            MLViewModel = new MessageListViewModel(list);
+
+            player.SourceChanged += Player_SourceChanged;
+            
             if (player.Source == null)
                 IsEnabledNP = false;
             else
                 IsEnabledNP = true;
+
+            if(MessagingService.Instance.isNewAlert)
+                AlertVisibility = Visibility.Visible;
+            else
+                AlertVisibility = Visibility.Collapsed;
         }
 
         private void Player_SourceChanged(MediaPlayer sender, object args)
         {
             if (player.Source != null)
                 IsEnabledNP = true;
+
+            list.Add("Source Changed!");
+            AlertVisibility = Visibility.Visible;
+            MessagingService.Instance.isNewAlert = true;
+
+            MLViewModel = null;
+            MLViewModel = new MessageListViewModel(list);
         }
 
         public bool IsEnabledNP
@@ -52,11 +87,28 @@ namespace Bermuda.ViewModels
             }
         }
 
+        public MessageListViewModel MLViewModel
+        {
+            get { return mlviewmodel; }
+
+            set
+            {
+                if (mlviewmodel != value)
+                {
+                    mlviewmodel = value;
+
+                    Update();
+                }
+            }
+        }
+
         async void Update()
         {
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 RaisePropertyChanged("IsEnabledNP");
+                RaisePropertyChanged("MLViewModel");
+                RaisePropertyChanged("AlertVisibility");
             });
         }
 

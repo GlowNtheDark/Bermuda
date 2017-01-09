@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using Windows.Media.Playback;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Bermuda.ViewModels
@@ -16,6 +17,7 @@ namespace Bermuda.ViewModels
         AlbumListViewModel alviewmodel;
         TrackListViewModel tlviewmodel;
         ArtistListViewModel arlviewmodel;
+        Visibility gridViewVisibility;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -24,6 +26,20 @@ namespace Bermuda.ViewModels
             this.Player = player;
             this.SongList = tracklist;
             this.dispatcher = dispatcher;
+            GridViewVisibility = Visibility.Collapsed;
+        }
+        public Visibility GridViewVisibility
+        {
+            get { return gridViewVisibility; }
+
+            set
+            {
+                if (gridViewVisibility != value)
+                {
+                    gridViewVisibility = value;
+                    RaisePropertyChanged("GridViewVisibility");
+                }
+            }
         }
 
         public AlbumListViewModel ALViewModel
@@ -103,6 +119,7 @@ namespace Bermuda.ViewModels
 
             ArLViewModel = new ArtistListViewModel(artistresponse, dispatcher);
 
+            GridViewVisibility = Visibility.Visible;
         }
 
         private void RaisePropertyChanged(string propertyName)
