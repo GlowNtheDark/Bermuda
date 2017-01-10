@@ -40,6 +40,8 @@ namespace Bermuda.Services
 
         public int previousSongIndex { get; set; }
 
+        public bool isRadioMode { get; set; }
+
         bool canSkipNext { get; set; }
 
         bool canSkipPrevious { get; set; }

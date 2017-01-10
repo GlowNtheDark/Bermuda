@@ -1,6 +1,7 @@
 ﻿using Bermuda.DataModels;
 using Bermuda.Services;
 using GoogleMusicApi.UWP.Common;
+using GoogleMusicApi.UWP.Requests.Data;
 using GoogleMusicApi.UWP.Structure;
 using GoogleMusicApi.UWP.Structure.Enums;
 using System;
@@ -20,7 +21,9 @@ namespace Bermuda.ViewModels
     {
         MediaPlayer Player;
         CoreDispatcher dispatcher;
-        QuickPlayListViewModel quickplaylistviewmodel;
+        QuickPlayRadioViewModel qpradioviewmodel;
+        QuickPlayAlbumViewModel qpalbumviewmodel;
+
         TrackList MediaList;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -32,16 +35,30 @@ namespace Bermuda.ViewModels
             this.MediaList = medialist;
         }
 
-        public QuickPlayListViewModel QuickPlayListViewModel
+        public QuickPlayRadioViewModel QPRadioViewModel
         {
-            get { return quickplaylistviewmodel; }
+            get { return qpradioviewmodel; }
 
             set
             {
-                if (quickplaylistviewmodel != value)
+                if (qpradioviewmodel != value)
                 {
-                    quickplaylistviewmodel = value;
-                    RaisePropertyChanged("QuickPlayListViewModel");
+                    qpradioviewmodel = value;
+                    RaisePropertyChanged("QPRadioViewModel");
+                }
+            }
+        }
+
+        public QuickPlayAlbumViewModel QPAlbumViewModel
+        {
+            get { return qpalbumviewmodel; }
+
+            set
+            {
+                if (qpalbumviewmodel != value)
+                {
+                    qpalbumviewmodel = value;
+                    RaisePropertyChanged("QPAlbumViewModel");
                 }
             }
         }
@@ -62,14 +79,14 @@ namespace Bermuda.ViewModels
             var itemviewmodel = gv.DataContext as ListenNowItemViewModel;
             var item = itemviewmodel.item;
 
-            if (menuIndex == 0)
+            //Album Item
+            if (item.Type == "1") //Album Listing
             {
-
-                try
+                if (menuIndex == 0) // Add to queue
                 {
-                    if (item.Type == "1") //Album Listing
-                    {
 
+                    try
+                    {
                         Album album = await getAlbum(NewMain.Current.mc, item.Album.Id.MetajamCompactKey.ToString());
 
                         foreach (Track track in album.Tracks)
@@ -80,66 +97,23 @@ namespace Bermuda.ViewModels
                             Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, album.Tracks[0])));
                             Player.Play();
                         }
-
                     }
 
-                    else if (item.Type == "3") //Radio Listing
+                    catch (Exception ex)
                     {
-
-                        if (item.RadioStation.Id.Seeds[0].SeedType.ToString() == "3")
-                        {
-                            RadioFeed feed = await getArtistRadioStation(NewMain.Current.mc, item.RadioStation.Id.Seeds[0].ArtistId);
-
-                            if (feed.Data.Stations[0].Tracks != null)
-                            {
-                                foreach (Track track in feed.Data.Stations[0].Tracks)
-                                    MediaList.Add(track);
-
-                                if (Player.Source == null)
-                                {
-                                    Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
-                                    Player.Play();
-                                }
-                            }
-
-                        }
-                        else if (item.RadioStation.Id.Seeds[0].SeedType.ToString() == "5") // Genre Listing
-                        {
-                            RadioFeed feed = await getGenreRadioStation(NewMain.Current.mc, item.RadioStation.Id.Seeds[0].GenreId);
-
-                            if (feed.Data.Stations[0].Tracks != null)
-                            {
-                                foreach (Track track in feed.Data.Stations[0].Tracks)
-                                    MediaList.Add(track);
-
-                                if (Player.Source == null)
-                                {
-                                    Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
-                                    Player.Play();
-                                }
-                            }
-                        }
+                        System.Diagnostics.Debug.Write(ex);
                     }
+
+                    itemviewmodel.showCheckMark(0);
                 }
 
-                catch (Exception ex)
+                else
                 {
-                    System.Diagnostics.Debug.Write(ex);
-                }
-
-                itemviewmodel.showCheckMark(0);
-            }
-
-            else
-            {
-                try
-                {
-                    MediaList.Clear();
-                    PlayerService.Instance.previousSongIndex = 0;
-                    PlayerService.Instance.currentSongIndex = 0;
-
-                    if (item.Type == "1") //Album Listing
+                    try
                     {
+                        MediaList.Clear();
+                        PlayerService.Instance.previousSongIndex = 0;
+                        PlayerService.Instance.currentSongIndex = 0;
 
                         Album album = await getAlbum(NewMain.Current.mc, item.Album.Id.MetajamCompactKey.ToString());
 
@@ -148,46 +122,60 @@ namespace Bermuda.ViewModels
 
                         Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, album.Tracks[0])));
                         Player.Play();
-
                     }
 
-                    else if (item.Type == "3") //Radio Listing
+                    catch (Exception ex)
                     {
+                        System.Diagnostics.Debug.Write(ex);
+                    }
 
-                        if (item.RadioStation.Id.Seeds[0].SeedType.ToString() == "3")
+                    itemviewmodel.showCheckMark(1);
+                }
+            }
+
+            //Radio item
+            else
+            {
+                MediaList.Clear();
+                PlayerService.Instance.previousSongIndex = 0;
+                PlayerService.Instance.currentSongIndex = 0;
+
+                if (item.RadioStation.Id.Seeds[0].SeedType.ToString() == "3")
+                {
+                    RadioFeed feed = await getArtistRadioStation(NewMain.Current.mc, item.RadioStation.Id.Seeds[0].ArtistId);
+
+                    if (feed.Data.Stations[0].Tracks != null)
+                    {
+                        foreach (Track track in feed.Data.Stations[0].Tracks)
+                            MediaList.Add(track);
+
+                        if (Player.Source == null)
                         {
-                            RadioFeed feed = await getArtistRadioStation(NewMain.Current.mc, item.RadioStation.Id.Seeds[0].ArtistId);
-
-                            if (feed.Data.Stations[0].Tracks != null)
-                            {
-                                foreach (Track track in feed.Data.Stations[0].Tracks)
-                                    MediaList.Add(track);
-                                Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
-                                Player.Play();
-                            }
-
+                            Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
+                            Player.Play();
                         }
-                        else if (item.RadioStation.Id.Seeds[0].SeedType.ToString() == "5") // Genre Listing
-                        {
-                            RadioFeed feed = await getGenreRadioStation(NewMain.Current.mc, item.RadioStation.Id.Seeds[0].GenreId);
+                    }
 
-                            if (feed.Data.Stations[0].Tracks != null)
-                            {
-                                foreach (Track track in feed.Data.Stations[0].Tracks)
-                                    MediaList.Add(track);
-                                Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
-                                Player.Play();
-                            }
+                }
+
+                else // Genre Listing
+                {
+                    RadioFeed feed = await getGenreRadioStation(NewMain.Current.mc, item.RadioStation.Id.Seeds[0].GenreId);
+
+                    if (feed.Data.Stations[0].Tracks != null)
+                    {
+                        foreach (Track track in feed.Data.Stations[0].Tracks)
+                            MediaList.Add(track);
+
+                        if (Player.Source == null)
+                        {
+                            Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
+                            Player.Play();
                         }
                     }
                 }
 
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.Write(ex);
-                }
-
-                itemviewmodel.showCheckMark(1);
+                itemviewmodel.showCheckMark(0);
             }
         }
 
@@ -213,7 +201,7 @@ namespace Bermuda.ViewModels
                         new StationFeedStation
                         {
                             LibraryContentOnly = false,
-                            NumberOfEntries = 50,
+                            NumberOfEntries = -1,
                             RecentlyPlayed = new Track[0],
                             Seed = new StationSeed
                             {
@@ -232,17 +220,51 @@ namespace Bermuda.ViewModels
                         new StationFeedStation
                         {
                             LibraryContentOnly = false,
-                            NumberOfEntries = 50,
+                            NumberOfEntries = -1,
                             RecentlyPlayed = new Track[0],
                             Seed = new StationSeed
                             {
-                                SeedType = 6,
+                                SeedType = 5,
                                 GenreId = genreId
                             }
                         }
                     );
 
             return data;
+        }
+
+        public async void getListenNow()
+        {
+
+            try
+            {
+                ListListenNowTracksResponse listenNowResult = await NewMain.Current.mc.ListListenNowTracksAsync();
+
+                if (listenNowResult != null)
+                {
+                    foreach (var item in listenNowResult.Items)
+                    {
+                        if (item != null)
+                        {
+                            if (item.Type == "1") //Album
+                                QPAlbumViewModel.Add(new ListenNowItemViewModel(item, this));
+                            else // Radio
+                                QPRadioViewModel.Add(new ListenNowItemViewModel(item, this));
+                        }
+                    }
+                }
+
+                else
+                {
+
+                }
+            }
+
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.Write(ex);
+
+            }
         }
 
         private void RaisePropertyChanged(string propertyName)

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using GoogleMusicApi.UWP.Common;
+using System.Security.Cryptography;
 
 namespace GoogleMusicApi.UWP.Authentication
 {

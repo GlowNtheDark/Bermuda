@@ -55,7 +55,7 @@
                             <Grid>
                                 <Image Height="275" Width="275" VerticalAlignment="Center" Source="{x:Bind ListImage, Mode=OneWay}" Stretch="Fill"/>
                                 <Grid VerticalAlignment="Bottom" Height="30" Background="Black" Opacity=".7"/>
-                                <TextBlock VerticalAlignment="Bottom" Height="30" Text="{x:Bind Name}" FontSize="20" Foreground="White"/>
+                                <TextBlock VerticalAlignment="Bottom" Margin="5,0,0,0" Height="30" Text="{x:Bind Name}" FontSize="20" Foreground="White"/>
                             </Grid>
                         </SplitView.Content>
                     </SplitView>

@@ -107,7 +107,7 @@ namespace Bermuda.ViewModels
 
             int menuIndex = gv.Items.IndexOf(sp.Parent);
 
-            if (menuIndex == 0)
+            if (menuIndex == 0) //Add to queue
             {
                 foreach (Track track in TLViewModel.SongList)
                     MediaList.Add(track);
@@ -121,7 +121,7 @@ namespace Bermuda.ViewModels
                 itemviewmodel.showCheckMark(0);
             }
 
-            else if (menuIndex == 1)
+            else if (menuIndex == 1) //Clear and add to queue
             {
                 MediaList.Clear();
                 PlayerService.Instance.previousSongIndex = 0;
@@ -136,7 +136,7 @@ namespace Bermuda.ViewModels
                 itemviewmodel.showCheckMark(1);
             }
 
-            else
+            else // Delete Playlist
             {
                 MutateResponse response = await NewMain.Current.mc.DeletePlaylist(itemviewmodel.playlist);
 
@@ -145,6 +145,8 @@ namespace Bermuda.ViewModels
                     GroupViewModel.Dispose();
                     GroupViewModel = null;
                     GroupViewModel = new PlaylistGroupViewModel(dispatcher, this);
+                    await Task.Delay(1000);
+                    TLViewModel.Clear();
                 }
                 else
                 {

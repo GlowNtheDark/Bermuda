@@ -62,8 +62,23 @@ namespace GoogleMusicApi.UWP.Structure
         [JsonProperty("lastModifiedTimestamp")]
         public string LastModifiedTimestamp { get; set; }
 
+        [JsonProperty("creationTimestamp")]
+        public string CreationTimestamp { get; set; }
+
+        [JsonProperty("recentTimestamp")]
+        public string RecentTimestamp { get; set; }
+
+        [JsonProperty("deleted")]
+        public bool Deleted { get; set; }
+
         [JsonProperty("nid")]
         public string Nid { get; set; }
+
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("clientId")]
+        public string ClientId { get; set; }
 
         [JsonProperty("playCount")]
         public int PlayCount { get; set; }
@@ -91,6 +106,12 @@ namespace GoogleMusicApi.UWP.Structure
 
         [JsonProperty("trackType")]
         public int TrackType { get; set; }
+
+        [JsonProperty("totalTrackCount")]
+        public int TotalTrackCount { get; set; }
+
+        [JsonProperty("totalDiscCount")]
+        public int TotalDiskCount { get; set; }
 
         [JsonProperty("year")]
         public int Year { get; set; }

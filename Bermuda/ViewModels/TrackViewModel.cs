@@ -255,11 +255,11 @@ namespace Bermuda.ViewModels
                     new StationFeedStation
                     {
                         LibraryContentOnly = false,
-                        NumberOfEntries = 50,
+                        NumberOfEntries = -1,
                         RecentlyPlayed = new Track[0],
                         Seed = new StationSeed
                         {
-                            SeedType = 1,
+                            SeedType = 1,//1
                             TrackId = itemviewmodel.TrackId
                         }
                     }

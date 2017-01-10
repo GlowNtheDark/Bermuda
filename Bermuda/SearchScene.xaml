@@ -15,16 +15,20 @@
         </Grid.RowDefinitions>
         <AutoSuggestBox QueryIcon="Find" Grid.Row="0" Width="300" Margin="0,0,10,0" HorizontalAlignment="Right" Background="White" QuerySubmitted="{x:Bind searchviewmodel.QuerySubmitted}"/>
         <GridView Grid.Row="1" IsTabStop="False" SelectionMode="None" IsItemClickEnabled="False" Visibility="{x:Bind searchviewmodel.GridViewVisibility, Mode=OneWay}">
+            <GridView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel Orientation="Vertical"/>
+                </ItemsPanelTemplate>
+            </GridView.ItemsPanel>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-
                 <Grid Grid.Row="0" Background="Green" Width="80" HorizontalAlignment="Left">
                     <TextBlock Text="Artists" Margin="10,0,0,0" Height="25" FontSize="20"/>
                 </Grid>
-                <ListView Name="ArtistLV" Grid.Row="1" Margin="0,5,0,5" ItemsSource="{x:Bind searchviewmodel.ArLViewModel, Mode=OneWay}" ItemClick="{x:Bind searchviewmodel.ArtistItemClick}" IsItemClickEnabled="True" IsTabStop="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+                <ListView Name="ArtistLV" HorizontalAlignment="Left"  Grid.Row="1" Margin="0,5,0,5" ItemsSource="{x:Bind searchviewmodel.ArLViewModel, Mode=OneWay}" ItemClick="{x:Bind searchviewmodel.ArtistItemClick}" IsItemClickEnabled="True" IsTabStop="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsStackPanel Orientation="Horizontal"/>
@@ -32,25 +36,31 @@
                     </ListView.ItemsPanel>
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="vm:ArtistViewModel">
-                            <SplitView Name="ArtistSplitView" DisplayMode="Overlay" OpenPaneLength="175" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}">
+                            <SplitView Name="ArtistSplitView" DisplayMode="Overlay" OpenPaneLength="200" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}">
                                 <SplitView.Pane>
-                                    <GridView IsItemClickEnabled="True" Width="175" ItemClick="{x:Bind searchMenuItemClicked}" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False">
-                                        <GridViewItem Width="170">
-                                            <StackPanel Orientation="Horizontal" Width="170">
-                                                <TextBlock Margin="5,0,0,0" Text="Add to queue." FontSize="15" VerticalAlignment="Center"/>
+                                    <GridView IsItemClickEnabled="True" Width="200" ItemClick="{x:Bind searchMenuItemClicked}" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False">
+                                        <GridViewItem Width="195">
+                                            <StackPanel Orientation="Horizontal" Width="195">
+                                                <TextBlock Margin="5,0,0,0" Text="Add all to queue." FontSize="15" VerticalAlignment="Center"/>
                                                 <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleZero, Mode=OneWay}"/>
                                             </StackPanel>
                                         </GridViewItem>
-                                        <GridViewItem Width="170">
-                                            <StackPanel Orientation="Horizontal" Width="170">
-                                                <TextBlock Margin="5,0,0,0" Text="Clear queue and play." FontSize="15" VerticalAlignment="Center"/>
+                                        <GridViewItem Width="195">
+                                            <StackPanel Orientation="Horizontal" Width="195">
+                                                <TextBlock Margin="5,0,0,0" Text="Clear queue and play all." FontSize="15" VerticalAlignment="Center"/>
                                                 <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleOne, Mode=OneWay}"/>
                                             </StackPanel>
                                         </GridViewItem>
-                                        <GridViewItem Width="170">
-                                            <StackPanel Orientation="Horizontal" Width="170">
-                                                <TextBlock Margin="5,0,0,0" Text="Start Radio" FontSize="15" VerticalAlignment="Center"/>
+                                        <GridViewItem Width="195">
+                                            <StackPanel Orientation="Horizontal" Width="195">
+                                                <TextBlock Margin="5,0,0,0" Text="Start Radio." FontSize="15" VerticalAlignment="Center"/>
                                                 <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleTwo, Mode=OneWay}"/>
+                                            </StackPanel>
+                                        </GridViewItem>
+                                        <GridViewItem Width="195">
+                                            <StackPanel Orientation="Horizontal" Width="195">
+                                                <TextBlock Margin="5,0,0,0" Text="Shuffle artist." FontSize="15" VerticalAlignment="Center"/>
+                                                <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleThree, Mode=OneWay}"/>
                                             </StackPanel>
                                         </GridViewItem>
                                     </GridView>
@@ -59,7 +69,7 @@
                                     <Grid BorderBrush="Green" BorderThickness="1">
                                         <Image Height="275" Width="275" VerticalAlignment="Center" Source="{x:Bind PreviewImage}" Stretch="Fill"/>
                                         <Grid VerticalAlignment="Bottom" Height="30" Background="Black" Opacity=".7"/>
-                                        <TextBlock VerticalAlignment="Bottom" Height="30" Width="275" Text="{x:Bind Name}" FontSize="20" Foreground="White" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock VerticalAlignment="Bottom" Margin="5,0,0,0" Height="30" Width="275" Text="{x:Bind Name}" FontSize="20" Foreground="White" TextTrimming="CharacterEllipsis"/>
                                     </Grid>
                                 </SplitView.Content>
                             </SplitView>
@@ -110,7 +120,7 @@
                                         <Grid BorderBrush="Green" BorderThickness="1">
                                             <Image Height="275" Width="275" VerticalAlignment="Center" Source="{x:Bind PreviewImage}" Stretch="Fill"/>
                                             <Grid VerticalAlignment="Bottom" Height="30" Background="Black" Opacity=".7"/>
-                                            <TextBlock VerticalAlignment="Bottom" Height="30" Width="275" Text="{x:Bind Name}" FontSize="20" Foreground="White" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock VerticalAlignment="Bottom" Margin="5,0,0,0" Height="30" Width="275" Text="{x:Bind Name}" FontSize="20" Foreground="White" TextTrimming="CharacterEllipsis"/>
                                         </Grid>
                                     </SplitView.Content>
                                 </SplitView>
@@ -161,7 +171,7 @@
                                     <Grid BorderBrush="Green" BorderThickness="1">
                                         <Image Height="275" Width="275" VerticalAlignment="Center" Source="{x:Bind PreviewImage}" Stretch="Fill"/>
                                         <Grid VerticalAlignment="Bottom" Height="30" Background="Black" Opacity=".7"/>
-                                        <TextBlock VerticalAlignment="Bottom" Height="30" Width="275" Text="{x:Bind Title}" FontSize="20" Foreground="White" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock VerticalAlignment="Bottom" Margin="5,0,0,0" Height="30" Width="275" Text="{x:Bind Title}" FontSize="20" Foreground="White" TextTrimming="CharacterEllipsis"/>
                                     </Grid>
                                 </SplitView.Content>
                             </SplitView>

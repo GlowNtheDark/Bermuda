@@ -150,7 +150,9 @@
     <Compile Include="ViewModels\PlaylistGroupViewModel.cs" />
     <Compile Include="ViewModels\PlaylistItemViewModel.cs" />
     <Compile Include="ViewModels\PlaylistViewModel.cs" />
+    <Compile Include="ViewModels\QuickPlayAlbumViewModel.cs" />
     <Compile Include="ViewModels\QuickPlayListViewModel.cs" />
+    <Compile Include="ViewModels\QuickPlayRadioViewModel..cs" />
     <Compile Include="ViewModels\QuickPlayViewModel.cs" />
     <Compile Include="ViewModels\SearchViewModel.cs" />
     <Compile Include="ViewModels\StringUriConverter.cs" />

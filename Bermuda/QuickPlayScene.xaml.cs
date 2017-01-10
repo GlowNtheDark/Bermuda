@@ -65,7 +65,10 @@ namespace Bermuda
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            QPViewModel.QuickPlayListViewModel = new QuickPlayListViewModel(this.Dispatcher, QPViewModel);
+            //QPViewModel.QuickPlayListViewModel = new QuickPlayListViewModel(this.Dispatcher, QPViewModel);
+            QPViewModel.QPAlbumViewModel = new QuickPlayAlbumViewModel(this.Dispatcher, QPViewModel);
+            QPViewModel.QPRadioViewModel = new QuickPlayRadioViewModel(this.Dispatcher, QPViewModel);
+            QPViewModel.getListenNow();
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)

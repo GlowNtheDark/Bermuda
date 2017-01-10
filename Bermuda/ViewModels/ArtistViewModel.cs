@@ -65,6 +65,8 @@ namespace Bermuda.ViewModels
 
         public Visibility isvisibletwo;
 
+        public Visibility isvisiblethree;
+
         public Visibility IsVisibleZero
         {
             get { return isvisiblezero; }
@@ -107,6 +109,20 @@ namespace Bermuda.ViewModels
             }
         }
 
+        public Visibility IsVisibleThree
+        {
+            get { return isvisiblethree; }
+
+            private set
+            {
+                if (isvisiblethree != value)
+                {
+                    isvisiblethree = value;
+                    RaisePropertyChanged("IsVisibleThree");
+                }
+            }
+        }
+
         public void openCloseMenu()
         {
             MenuOpen = !MenuOpen;
@@ -128,11 +144,18 @@ namespace Bermuda.ViewModels
                 IsVisibleOne = Visibility.Collapsed;
             }
 
-            else
+            else if (index == 2)
             {
                 IsVisibleTwo = Visibility.Visible;
                 await Task.Delay(3000);
                 IsVisibleTwo = Visibility.Collapsed;
+            }
+
+            else
+            {
+                IsVisibleThree = Visibility.Visible;
+                await Task.Delay(3000);
+                IsVisibleThree = Visibility.Collapsed;
             }
 
             MenuOpen = false;
@@ -151,7 +174,7 @@ namespace Bermuda.ViewModels
                     new StationFeedStation
                     {
                         LibraryContentOnly = false,
-                        NumberOfEntries = 50,
+                        NumberOfEntries = -1,
                         RecentlyPlayed = new Track[0],
                         Seed = new StationSeed
                         {
@@ -177,6 +200,38 @@ namespace Bermuda.ViewModels
                 itemviewmodel.showCheckMark(2);
             }
 
+            else if (index == 3) //shuffle artist
+            {
+                var feed = await NewMain.Current.mc.GetStationFeed(ExplicitType.Explicit,
+                    new StationFeedStation
+                    {
+                        LibraryContentOnly = false,
+                        NumberOfEntries = -1,
+                        RecentlyPlayed = new Track[0],
+                        Seed = new StationSeed
+                        {
+                            SeedType = 7,
+                            ArtistId = itemviewmodel.ArtistID
+                        }
+                    }
+                );
+
+                if (feed.Data.Stations[0].Tracks != null)
+                {
+                    PlayerService.Instance.CurrentPlaylist.Clear();
+                    PlayerService.Instance.previousSongIndex = 0;
+                    PlayerService.Instance.currentSongIndex = 0;
+
+                    foreach (Track track in feed.Data.Stations[0].Tracks)
+                        PlayerService.Instance.CurrentPlaylist.Add(track);
+
+                    PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
+                    PlayerService.Instance.Player.Play();
+                }
+
+                itemviewmodel.showCheckMark(3);
+            }
+
             else
             { 
                 AlbumList albumlist = new AlbumList();
@@ -188,7 +243,7 @@ namespace Bermuda.ViewModels
                         albumlist.Add(result.Album);
                 }
 
-                if (index == 0) //Add to end of queue
+                if (index == 0) //Add all to end of queue
                 {
                     foreach (Album album in albumlist)
                     {
@@ -206,7 +261,7 @@ namespace Bermuda.ViewModels
                     itemviewmodel.showCheckMark(0);
                 }
 
-                else if (index == 1) //Clear queue and play
+                else if (index == 1) //Clear queue and play all
                 {
                     PlayerService.Instance.CurrentPlaylist.Clear();
                     PlayerService.Instance.previousSongIndex = 0;
@@ -244,6 +299,7 @@ namespace Bermuda.ViewModels
             IsVisibleZero = Visibility.Collapsed;
             IsVisibleOne = Visibility.Collapsed;
             IsVisibleTwo = Visibility.Collapsed;
+            IsVisibleThree = Visibility.Collapsed;
         }
 
         public static async Task<Uri> GetStreamUrl(MobileClient mc, Track track)

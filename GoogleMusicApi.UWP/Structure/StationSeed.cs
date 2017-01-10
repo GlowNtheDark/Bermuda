@@ -11,6 +11,12 @@ namespace GoogleMusicApi.UWP.Structure
         [JsonProperty("genre")]
         public Genre Genre { get; set; }
 
+        [JsonProperty("album")]
+        public Album Album { get; set; }
+
+        [JsonProperty("Track")]
+        public Track Track { get; set; }
+
         [JsonProperty("kind")]
         public string Kind { get; set; }
     }
