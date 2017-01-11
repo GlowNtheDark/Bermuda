@@ -14,7 +14,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
-            <Image Name="alertImage" Width="20" Height="25" VerticalAlignment="Center" Source="/Assets/Exclamation.png" Margin="5,5,0,0" Visibility="{x:Bind MainViewModel.AlertVisibility, Mode=OneWay}"/>
+            <Image Name="alertImage" Width="20" Height="25" VerticalAlignment="Center" Source="/Assets/Exclamation.png" Margin="5,5,0,0" Visibility="{x:Bind MessageViewModel.AlertVisibility, Mode=OneWay}"/>
             <Button x:Name="HamburgerButton" Margin="0,5,0,0" Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Left" FontFamily="Segoe MDL2 Assets" Content="&#xE700;" Width="33" Height="45" Background="Transparent" Click="HamburgerButton_Click"/>
             <TextBlock Name="pageTitle" Margin="5,0,0,0" Text="Current Page Title" FontSize="25" VerticalAlignment="Center" Visibility="Collapsed"/>
         </StackPanel>
@@ -26,19 +26,19 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <GridView Grid.Row="0" IsItemClickEnabled="True" Width="210" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False" ItemClick="GridView_ItemClick">
-                        <GridViewItem Width="205">
+                        <GridViewItem Width="205" IsEnabled="{x:Bind MainViewModel.IsEnabledQP, Mode=OneWay}">
                             <StackPanel Name="QuickPlay" Orientation="Horizontal" Width="200" HorizontalAlignment="Left">
                                 <Image Width="30" Height="30" Source="Assets/triangle.png"/>
                                 <TextBlock Name="qpText" Margin="15,0,0,0" Text="QuickPlay" FontSize="18" VerticalAlignment="Center"/>
                             </StackPanel>
                         </GridViewItem>
-                        <GridViewItem Width="205">
+                        <GridViewItem Width="205" IsEnabled="{x:Bind MainViewModel.IsEnabledSR, Mode=OneWay}">
                             <StackPanel Name="Search" Orientation="Horizontal" Width="200">
                                 <Image Source="Assets/glass.png" Width="30" Height="30"/>
                                 <TextBlock Name="schText" Margin="15,0,0,0" Text="Search" FontSize="18" VerticalAlignment="Center"/>
                             </StackPanel>
                         </GridViewItem>
-                        <GridViewItem Width="205">
+                        <GridViewItem Width="205" IsEnabled="{x:Bind MainViewModel.IsEnabledPL, Mode=OneWay}">
                             <StackPanel Name="Playlists" Orientation="Horizontal" Width="200">
                                 <Image Source="Assets/list.png" Width="30" Height="30"/>
                                 <TextBlock Name="plText" Margin="15,0,0,0" Text="Playlists" FontSize="18" VerticalAlignment="Center"/>
@@ -57,11 +57,11 @@
                             </StackPanel>
                         </GridViewItem>
                     </GridView>
-                    <ListView Width="210" IsItemClickEnabled="False" SelectionMode="None" VerticalAlignment="Bottom" Grid.Row="1" ItemsSource="{x:Bind MainViewModel.MLViewModel, Mode=OneWay}">
+                    <ListView Width="210" IsItemClickEnabled="False" Margin="0,0,0,5" SelectionMode="None" VerticalAlignment="Bottom" Grid.Row="1" ItemsSource="{x:Bind MessageViewModel.MLViewModel, Mode=OneWay}">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="vm:MessageItemViewModel">
                                 <Grid BorderBrush="Red" BorderThickness="1">
-                                    <TextBlock FontSize="15" Margin="5,0,0,0" Height="30" Width="205" Text="{x:Bind Message, Mode=OneWay}"/>
+                                    <TextBlock FontSize="12" Margin="5,5,5,5" Height="Auto" Width="Auto" Text="{x:Bind Message, Mode=OneWay}" TextWrapping="Wrap"/>
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>

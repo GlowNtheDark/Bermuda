@@ -18,33 +18,17 @@ namespace Bermuda.ViewModels
 
         MediaPlayer player;
         public bool isEnabledNP;
+        public bool isEnabledQP;
+        public bool isEnabledSR;
+        public bool isEnabledPL;
         CoreDispatcher dispatcher;
-        MessageListViewModel mlviewmodel;
+
         MessageList list;
-        Visibility alertVisibility;
 
-        public Visibility AlertVisibility
-            {
-                get { return alertVisibility; }
-
-                set
-                {
-                if (alertVisibility != value)
-                {
-                    alertVisibility = value;
-
-                    Update();
-                }
-            }
-            }
-
-        public MainMenuViewModel(MediaPlayer player, MessageList list, CoreDispatcher dispatcher)
+        public MainMenuViewModel(MediaPlayer player, CoreDispatcher dispatcher)
         {
             this.dispatcher = dispatcher;
             this.player = player;
-            this.list = list;
-
-            MLViewModel = new MessageListViewModel(list);
 
             player.SourceChanged += Player_SourceChanged;
             
@@ -52,24 +36,12 @@ namespace Bermuda.ViewModels
                 IsEnabledNP = false;
             else
                 IsEnabledNP = true;
-
-            if(MessagingService.Instance.isNewAlert)
-                AlertVisibility = Visibility.Visible;
-            else
-                AlertVisibility = Visibility.Collapsed;
         }
 
         private void Player_SourceChanged(MediaPlayer sender, object args)
         {
             if (player.Source != null)
                 IsEnabledNP = true;
-
-            list.Add("Source Changed!");
-            AlertVisibility = Visibility.Visible;
-            MessagingService.Instance.isNewAlert = true;
-
-            MLViewModel = null;
-            MLViewModel = new MessageListViewModel(list);
         }
 
         public bool IsEnabledNP
@@ -87,15 +59,45 @@ namespace Bermuda.ViewModels
             }
         }
 
-        public MessageListViewModel MLViewModel
+        public bool IsEnabledQP
         {
-            get { return mlviewmodel; }
+            get { return isEnabledQP; }
 
             set
             {
-                if (mlviewmodel != value)
+                if (isEnabledQP != value)
                 {
-                    mlviewmodel = value;
+                    isEnabledQP = value;
+
+                    Update();
+                }
+            }
+        }
+
+        public bool IsEnabledSR
+        {
+            get { return isEnabledSR; }
+
+            set
+            {
+                if (isEnabledSR != value)
+                {
+                    isEnabledSR = value;
+
+                    Update();
+                }
+            }
+        }
+
+        public bool IsEnabledPL
+        {
+            get { return isEnabledPL; }
+
+            set
+            {
+                if (isEnabledPL != value)
+                {
+                    isEnabledPL = value;
 
                     Update();
                 }
@@ -107,6 +109,9 @@ namespace Bermuda.ViewModels
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 RaisePropertyChanged("IsEnabledNP");
+                RaisePropertyChanged("IsEnabledQP");
+                RaisePropertyChanged("IsEnabledSR");
+                RaisePropertyChanged("IsEnabledPL");
                 RaisePropertyChanged("MLViewModel");
                 RaisePropertyChanged("AlertVisibility");
             });

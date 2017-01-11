@@ -143,6 +143,7 @@
     <Compile Include="ViewModels\MainMenuViewModel.cs" />
     <Compile Include="ViewModels\MessageItemViewModel.cs" />
     <Compile Include="ViewModels\MessageListViewModel.cs" />
+    <Compile Include="ViewModels\MessagingViewModel.cs" />
     <Compile Include="ViewModels\MillisecondsConverter.cs" />
     <Compile Include="ViewModels\NowPlayingViewModel.cs" />
     <Compile Include="ViewModels\PlaybackSessionViewModel.cs" />
@@ -151,7 +152,6 @@
     <Compile Include="ViewModels\PlaylistItemViewModel.cs" />
     <Compile Include="ViewModels\PlaylistViewModel.cs" />
     <Compile Include="ViewModels\QuickPlayAlbumViewModel.cs" />
-    <Compile Include="ViewModels\QuickPlayListViewModel.cs" />
     <Compile Include="ViewModels\QuickPlayRadioViewModel..cs" />
     <Compile Include="ViewModels\QuickPlayViewModel.cs" />
     <Compile Include="ViewModels\SearchViewModel.cs" />

@@ -47,7 +47,8 @@ namespace Bermuda
 
             Current = this;
 
-            MainViewModel = new MainMenuViewModel(Player, Messagelist, this.Dispatcher);
+            MainViewModel = new MainMenuViewModel(Player, this.Dispatcher);
+            MessageViewModel = new MessagingViewModel(this.Dispatcher, Messagelist); //Allows access to messaging service
 
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
             {
@@ -81,18 +82,20 @@ namespace Bermuda
 
         public MobileClient mc;
         public MainMenuViewModel MainViewModel { get; set; }
+        public MessagingViewModel MessageViewModel { get; set; }
+        public MessageListViewModel MLViewModel { get; set; }
         public string lastNetworkState;
+        private bool authorized = false;
         private string networkBackgroundTask = "Network-Awareness-Task";
         private string servicingBackgroundTask = "Servicing-Complete-Task";
 
         private void HamburgerButton_Click(object sender, RoutedEventArgs e)
         {
             MySplitView.IsPaneOpen = !MySplitView.IsPaneOpen;
-            if (MainViewModel.AlertVisibility == Visibility.Visible)
-            {
-                MainViewModel.AlertVisibility = Visibility.Collapsed;
-                MessagingService.Instance.isNewAlert = false;
-            }
+
+            if(MessageViewModel.AlertVisibility == Visibility.Visible)
+                MessageViewModel.DismissAlert();
+            
         }
 
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)
@@ -111,6 +114,7 @@ namespace Bermuda
 
                     if (await testAuthorizationLevel())
                     {
+                        EnableFrameAccess();
                         if (AppSettings.localSettings.Values["lastPage"] != null)
                             loadFrame(AppSettings.localSettings.Values["lastPage"].ToString());
                         else
@@ -119,16 +123,20 @@ namespace Bermuda
                     else
                     {
                         //Load setting page and show error about sub
+                        MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Something went wrong with your login. Reminder: You must have a Google Play Music Sub to use this app.", Messagelist));
+                        MessageViewModel.ShowAlert();
+                        DisableFrameAccess();
+                        loadFrame("Settings");
                     }
                 }
 
                 else
                 {
-                    //PassSession data = e.Parameter as PassSession;
                     mc = PassSession.session;
 
                     if (await testAuthorizationLevel())
                     {
+                        EnableFrameAccess();
                         if (AppSettings.localSettings.Values["lastPage"] != null)
                             loadFrame(AppSettings.localSettings.Values["lastPage"].ToString());
                         else
@@ -137,6 +145,10 @@ namespace Bermuda
                     else
                     {
                         //Load setting page and show error about sub
+                        MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Something went wrong with your login. Restart the app or login again. Reminder: You must have a Google Play Music Sub to use this app.", Messagelist));
+                        MessageViewModel.ShowAlert();
+                        DisableFrameAccess();
+                        loadFrame("Settings");
                     }
                 }
             }
@@ -144,6 +156,11 @@ namespace Bermuda
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.Write(ex);
+                //Load setting page and show error about sub
+                MessageViewModel.MLViewModel.Add(new MessageItemViewModel("An unknown error occured. -- " + ex, Messagelist));
+                MessageViewModel.ShowAlert();
+                DisableFrameAccess();
+                loadFrame("Settings");
             }
         }
 
@@ -219,15 +236,16 @@ namespace Bermuda
             {
                 if (status == "Internet Access")
                 {
-                    bool authTest = await testAuthorizationLevel();
+                    //bool authTest = await testAuthorizationLevel();
                     lastNetworkState = "Internet Access";
 
                     await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () =>
                     {
-
-                        
-
+                        if(authorized == true)
+                            EnableFrameAccess();
+                        MessageViewModel.MLViewModel.Clear();
+                        MessageViewModel.DismissAlert();
                     });
                 }
 
@@ -237,9 +255,11 @@ namespace Bermuda
                     await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () =>
                     {
-
-
-
+                        MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Network Connection Lost.", Messagelist));
+                        MessageViewModel.ShowAlert();
+                        MessagingService.Instance.isNewAlert = true;
+                        DisableFrameAccess();
+                        loadFrame("Settings");
                     });
                 }
             }
@@ -308,14 +328,21 @@ namespace Bermuda
                 Uri data2 = await GetStreamUrl(mc, data);
 
                 if (data2 != null)
+                {
+                    authorized = true;
                     return true;
+                }
                 else
+                {
+                    authorized = true;
                     return false;
+                }
             }
 
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.Write(ex);
+                authorized = false;
                 return false;
             }
         }
@@ -374,6 +401,20 @@ namespace Bermuda
         {
             if(e.Key == Windows.System.VirtualKey.GamepadView)
                 MySplitView.IsPaneOpen = !MySplitView.IsPaneOpen;
+        }
+
+        private void DisableFrameAccess()
+        {
+            MainViewModel.IsEnabledPL = false;
+            MainViewModel.IsEnabledQP = false;
+            MainViewModel.IsEnabledSR = false;
+        }
+
+        private void EnableFrameAccess()
+        {
+            MainViewModel.IsEnabledPL = true;
+            MainViewModel.IsEnabledQP = true;
+            MainViewModel.IsEnabledSR = true;
         }
     }
 }

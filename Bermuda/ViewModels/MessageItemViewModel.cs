@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bermuda.DataModels;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -11,9 +12,12 @@ namespace Bermuda.ViewModels
     {
         public string Message { get; private set; }
 
-        public MessageItemViewModel(String message)
+        MessageList List;
+
+        public MessageItemViewModel(String message, MessageList list)
         {
             this.Message = message;
+            this.List = list;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
