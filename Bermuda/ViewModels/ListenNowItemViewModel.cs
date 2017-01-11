@@ -16,6 +16,8 @@ namespace Bermuda.ViewModels
 
         public QuickPlayViewModel QPViewModel;
 
+        MessagingViewModel MessageViewModel;
+
         public string QuickPlayText;
 
         public bool menuOpen;
@@ -108,12 +110,13 @@ namespace Bermuda.ViewModels
             MenuOpen = false;
         }
 
-        public ListenNowItemViewModel(ListenNowItem Item, QuickPlayViewModel qpviewmodel)
+        public ListenNowItemViewModel(ListenNowItem Item, QuickPlayViewModel qpviewmodel, MessagingViewModel MessageViewModel)
         {
             try
             {
                 this.item = Item;
                 this.QPViewModel = qpviewmodel;
+                this.MessageViewModel = MessageViewModel;
 
                 if (item.Type == "1")
                     QuickPlayText = item.Album.Id.Artist + "\n" + item.Album.Id.Title;
@@ -126,6 +129,8 @@ namespace Bermuda.ViewModels
 
                 if (Item.Images != null)
                     ItemImage.UriSource = new Uri(Item.Images[0].Url);
+                else
+                    ItemImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
 
                 MenuOpen = false;
                 IsVisibleZero = Visibility.Collapsed;
@@ -134,6 +139,9 @@ namespace Bermuda.ViewModels
             catch(Exception ex)
             {
                 System.Diagnostics.Debug.Write(ex);
+
+                MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Error found with listen now item."));
+                MessageViewModel.ShowAlert();
             }
         }
 

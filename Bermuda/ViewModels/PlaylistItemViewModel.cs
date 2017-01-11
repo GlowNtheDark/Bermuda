@@ -138,7 +138,12 @@ namespace Bermuda.ViewModels
             RaisePropertyChanged("Name");
 
             ListImage = new BitmapImage();
-            ListImage.UriSource = new Uri(playlist.OwnerProfilePhotoUrl);
+
+            if(playlist.OwnerProfilePhotoUrl != null)
+                ListImage.UriSource = new Uri(playlist.OwnerProfilePhotoUrl);
+            else
+                ListImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
+
 
             MenuOpen = false;
             IsVisibleZero = Visibility.Collapsed;

@@ -38,6 +38,12 @@ namespace Bermuda
     {
         public QuickPlayViewModel QPViewModel { get; set; }
 
+        public MessagingViewModel MessageViewModel
+        {
+            get { return MessagingService.Instance.MessageViewModel; }
+            set { MessagingService.Instance.MessageViewModel = value; }
+        }
+
         MediaPlayer Player => PlayerService.Instance.Player;
 
         MediaPlaybackItem PlaybackItem
@@ -58,7 +64,7 @@ namespace Bermuda
 
             this.NavigationCacheMode = NavigationCacheMode.Disabled;
 
-            QPViewModel = new QuickPlayViewModel(Player, MediaList, this.Dispatcher);
+            QPViewModel = new QuickPlayViewModel(Player, MediaList, this.Dispatcher, MessageViewModel);
 
             PlayerService.Instance.dispatcher = this.Dispatcher;
         }
@@ -67,7 +73,7 @@ namespace Bermuda
         {
             QPViewModel.QPAlbumViewModel = new QuickPlayAlbumViewModel(this.Dispatcher, QPViewModel);
             QPViewModel.QPRadioViewModel = new QuickPlayRadioViewModel(this.Dispatcher, QPViewModel);
-            QPViewModel.getListenNow();
+            QPViewModel.getListenNow();       
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)

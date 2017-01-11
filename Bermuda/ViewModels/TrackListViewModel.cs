@@ -18,6 +18,7 @@ namespace Bermuda.ViewModels
     public class TrackListViewModel : ObservableCollection<TrackViewModel>, IDisposable
     {
         public CoreDispatcher dispatcher;
+        MessagingViewModel MessageViewModel;
         int currentItemIndex => PlayerService.Instance.currentSongIndex;
         int previousItemIndex => PlayerService.Instance.previousSongIndex;
         bool disposed;
@@ -113,73 +114,45 @@ namespace Bermuda.ViewModels
             });
         }
 
-        public TrackListViewModel(TrackList trackList, CoreDispatcher dispatcher, Playlist playlist)
+        public TrackListViewModel(TrackList trackList, CoreDispatcher dispatcher, Playlist playlist, MessagingViewModel MessageViewModel)
         {
             try
             {
                 SongList = trackList;
                 this.dispatcher = dispatcher;
-
+                this.MessageViewModel = MessageViewModel;
                 // Initialize the view model items
                 initializing = true;
 
                 foreach (var mediaItem in trackList)
-                    Add(new TrackViewModel(this, mediaItem, playlist));
+                    Add(new TrackViewModel(this, mediaItem, playlist, MessageViewModel));
 
                 initializing = false;
 
-                // The view model supports TwoWay binding so update when the playback list item changes
-                //PlaybackList.CurrentItemChanged += PlaybackList_CurrentItemChanged;
-
                 // Start where the playback list is currently at
-                CurrentItemIndex = (int)PlayerService.Instance.currentSongIndex;
+                //CurrentItemIndex = (int)PlayerService.Instance.currentSongIndex;
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.Write(ex);
+                MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Unexpected error -- " + ex));
+                MessageViewModel.ShowAlert();
             }
         }
 
-        public TrackListViewModel(TrackList trackList, CoreDispatcher dispatcher)
-        {
-            try
-            {
-                SongList = trackList;
-                this.dispatcher = dispatcher;
-
-                // Initialize the view model items
-                initializing = true;
-
-                foreach (var mediaItem in trackList)
-                    Add(new TrackViewModel(this, mediaItem));
-
-                initializing = false;
-
-                // The view model supports TwoWay binding so update when the playback list item changes
-                //PlaybackList.CurrentItemChanged += PlaybackList_CurrentItemChanged;
-
-                // Start where the playback list is currently at
-                CurrentItemIndex = (int)PlayerService.Instance.currentSongIndex;
-            }
-            catch(Exception ex)
-            {
-                System.Diagnostics.Debug.Write(ex);
-            }
-        }
-
-        public TrackListViewModel(SearchResponse response, CoreDispatcher dispatcher)
+        public TrackListViewModel(SearchResponse response, CoreDispatcher dispatcher, MessagingViewModel MessageViewModel)
         {
             try
             {
                 this.dispatcher = dispatcher;
-
+                this.MessageViewModel = MessageViewModel;
                 // Initialize the view model items
                 initializing = true;
 
                 foreach (SearchResult result in response.Entries)
                 {
                     if(result.Track != null)
-                        Add(new TrackViewModel(this, result.Track));
+                        Add(new TrackViewModel(this, result.Track, MessageViewModel));
                 }
 
                 initializing = false;
@@ -188,6 +161,34 @@ namespace Bermuda.ViewModels
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.Write(ex);
+                MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Unexpected error -- " + ex));
+                MessageViewModel.ShowAlert();
+            }
+        }
+
+        public TrackListViewModel(TrackList trackList, CoreDispatcher dispatcher, MessagingViewModel MessageViewModel)
+        {
+            try
+            {
+                SongList = trackList;
+                this.dispatcher = dispatcher;
+                this.MessageViewModel = MessageViewModel;
+                // Initialize the view model items
+                initializing = true;
+
+                foreach (var mediaItem in trackList)
+                    Add(new TrackViewModel(this, mediaItem, MessageViewModel));
+
+                initializing = false;
+
+                // Start where the playback list is currently at
+                //CurrentItemIndex = (int)PlayerService.Instance.currentSongIndex;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.Write(ex);
+                MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Unexpected error -- " + ex));
+                MessageViewModel.ShowAlert();
             }
         }
 

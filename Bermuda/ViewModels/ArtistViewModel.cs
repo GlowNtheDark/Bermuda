@@ -21,6 +21,8 @@ namespace Bermuda.ViewModels
     {
         public ArtistListViewModel ALViewModel;
 
+        MessagingViewModel MessageViewModel;
+
         public Artist artist { get; private set; }
 
         public string Name => artist.Name;
@@ -168,132 +170,183 @@ namespace Bermuda.ViewModels
             int index = gv.Items.IndexOf(sp.Parent);
             var itemviewmodel = gv.DataContext as ArtistViewModel;
 
-            if (index == 2) //start radio
+            if (itemviewmodel != null)
             {
-                var feed = await NewMain.Current.mc.GetStationFeed(ExplicitType.Explicit,
-                    new StationFeedStation
-                    {
-                        LibraryContentOnly = false,
-                        NumberOfEntries = -1,
-                        RecentlyPlayed = new Track[0],
-                        Seed = new StationSeed
+
+                if (index == 2) //start radio
+                {
+                    var feed = await NewMain.Current.mc.GetStationFeed(ExplicitType.Explicit,
+                        new StationFeedStation
                         {
-                            SeedType = 3,
-                            ArtistId = itemviewmodel.ArtistID
+                            LibraryContentOnly = false,
+                            NumberOfEntries = -1,
+                            RecentlyPlayed = new Track[0],
+                            Seed = new StationSeed
+                            {
+                                SeedType = 3,
+                                ArtistId = itemviewmodel.ArtistID
+                            }
                         }
-                    }
-                );
+                    );
 
-                if (feed.Data.Stations[0].Tracks != null)
-                {
-                    PlayerService.Instance.CurrentPlaylist.Clear();
-                    PlayerService.Instance.previousSongIndex = 0;
-                    PlayerService.Instance.currentSongIndex = 0;
-
-                    foreach (Track track in feed.Data.Stations[0].Tracks)
-                        PlayerService.Instance.CurrentPlaylist.Add(track);
-
-                    PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
-                    PlayerService.Instance.Player.Play();                 
-                }
-
-                itemviewmodel.showCheckMark(2);
-            }
-
-            else if (index == 3) //shuffle artist
-            {
-                var feed = await NewMain.Current.mc.GetStationFeed(ExplicitType.Explicit,
-                    new StationFeedStation
+                    if (feed.Data.Stations[0].Tracks != null)
                     {
-                        LibraryContentOnly = false,
-                        NumberOfEntries = -1,
-                        RecentlyPlayed = new Track[0],
-                        Seed = new StationSeed
+                        PlayerService.Instance.CurrentPlaylist.Clear();
+                        PlayerService.Instance.previousSongIndex = 0;
+                        PlayerService.Instance.currentSongIndex = 0;
+
+                        foreach (Track track in feed.Data.Stations[0].Tracks)
                         {
-                            SeedType = 7,
-                            ArtistId = itemviewmodel.ArtistID
+                            if (track != null)
+                                PlayerService.Instance.CurrentPlaylist.Add(track);
                         }
-                    }
-                );
 
-                if (feed.Data.Stations[0].Tracks != null)
-                {
-                    PlayerService.Instance.CurrentPlaylist.Clear();
-                    PlayerService.Instance.previousSongIndex = 0;
-                    PlayerService.Instance.currentSongIndex = 0;
-
-                    foreach (Track track in feed.Data.Stations[0].Tracks)
-                        PlayerService.Instance.CurrentPlaylist.Add(track);
-
-                    PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
-                    PlayerService.Instance.Player.Play();
-                }
-
-                itemviewmodel.showCheckMark(3);
-            }
-
-            else
-            { 
-                AlbumList albumlist = new AlbumList();
-                SearchResponse albumresponse = await NewMain.Current.mc.SearchAsync(itemviewmodel.Name, 3);
-
-                foreach (SearchResult result in albumresponse.Entries)
-                {
-                    if (result.Album.ArtistId[0] == itemviewmodel.ArtistID)
-                        albumlist.Add(result.Album);
-                }
-
-                if (index == 0) //Add all to end of queue
-                {
-                    foreach (Album album in albumlist)
-                    {
-                        Album temp = await NewMain.Current.mc.GetAlbumAsync(album.AlbumId);
-                        foreach (Track track in temp.Tracks)
-                            PlayerService.Instance.CurrentPlaylist.Add(track);
-                    }
-
-                    if (PlayerService.Instance.Player.Source == null)
-                    {
-                        PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
+                        PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
                         PlayerService.Instance.Player.Play();
                     }
 
-                    itemviewmodel.showCheckMark(0);
+                    itemviewmodel.showCheckMark(2);
                 }
 
-                else if (index == 1) //Clear queue and play all
+                else if (index == 3) //shuffle artist
                 {
-                    PlayerService.Instance.CurrentPlaylist.Clear();
-                    PlayerService.Instance.previousSongIndex = 0;
-                    PlayerService.Instance.currentSongIndex = 0;
+                    var feed = await NewMain.Current.mc.GetStationFeed(ExplicitType.Explicit,
+                        new StationFeedStation
+                        {
+                            LibraryContentOnly = false,
+                            NumberOfEntries = -1,
+                            RecentlyPlayed = new Track[0],
+                            Seed = new StationSeed
+                            {
+                                SeedType = 7,
+                                ArtistId = itemviewmodel.ArtistID
+                            }
+                        }
+                    );
 
-                    foreach (Album album in albumlist)
+                    if (feed.Data.Stations[0].Tracks != null)
                     {
-                        Album temp = await NewMain.Current.mc.GetAlbumAsync(album.AlbumId);
-                        foreach (Track track in temp.Tracks)
-                            PlayerService.Instance.CurrentPlaylist.Add(track);
+                        PlayerService.Instance.CurrentPlaylist.Clear();
+                        PlayerService.Instance.previousSongIndex = 0;
+                        PlayerService.Instance.currentSongIndex = 0;
+
+                        foreach (Track track in feed.Data.Stations[0].Tracks)
+                        {
+                            if (track != null)
+                                PlayerService.Instance.CurrentPlaylist.Add(track);
+                        }
+
+                        PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
+                        PlayerService.Instance.Player.Play();
                     }
 
-                    PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
-                    PlayerService.Instance.Player.Play();
-
-                    itemviewmodel.showCheckMark(1);
+                    itemviewmodel.showCheckMark(3);
                 }
+
+                else
+                {
+                    AlbumList albumlist = new AlbumList();
+                    SearchResponse albumresponse = await NewMain.Current.mc.SearchAsync(itemviewmodel.Name, 3);
+
+                    if (albumresponse.Entries != null)
+                    {
+
+                        foreach (SearchResult result in albumresponse.Entries)
+                        {
+                            if(result != null)
+                                if (result.Album.ArtistId[0] == itemviewmodel.ArtistID)
+                                    albumlist.Add(result.Album);
+                        }
+
+                        if (index == 0) //Add all to end of queue
+                        {
+                            foreach (Album album in albumlist)
+                            {
+                                if (album != null)
+                                {
+                                    Album temp = await NewMain.Current.mc.GetAlbumAsync(album.AlbumId);
+
+                                    if (temp != null)
+                                    {
+                                        foreach (Track track in temp.Tracks)
+                                        {
+                                            if(track != null)
+                                                PlayerService.Instance.CurrentPlaylist.Add(track);
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (PlayerService.Instance.Player.Source == null)
+                            {
+                                PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
+                                PlayerService.Instance.Player.Play();
+                            }
+
+                            itemviewmodel.showCheckMark(0);
+                        }
+
+                        else if (index == 1) //Clear queue and play all
+                        {
+                            PlayerService.Instance.CurrentPlaylist.Clear();
+                            PlayerService.Instance.previousSongIndex = 0;
+                            PlayerService.Instance.currentSongIndex = 0;
+
+                            foreach (Album album in albumlist)
+                            {
+                                if (album != null)
+                                {
+                                    Album temp = await NewMain.Current.mc.GetAlbumAsync(album.AlbumId);
+
+                                    if (temp != null)
+                                    {
+                                        foreach (Track track in temp.Tracks)
+                                        {
+                                            if(track != null)
+                                                PlayerService.Instance.CurrentPlaylist.Add(track);
+                                        }
+                                    }
+                                }
+                            }
+
+                            PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
+                            PlayerService.Instance.Player.Play();
+
+                            itemviewmodel.showCheckMark(1);
+                        }
+                    }
+
+                    else
+                    {
+                        MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Fetching albums came back null."));
+                        MessageViewModel.ShowAlert();
+                    }
+                }
+
+            }
+
+            else
+            {
+                MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Null result found."));
+                MessageViewModel.ShowAlert();
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ArtistViewModel(ArtistListViewModel alviewmodel, Artist artist)
+        public ArtistViewModel(ArtistListViewModel alviewmodel, Artist artist, MessagingViewModel MessageViewModel)
         {
             this.ALViewModel = alviewmodel;
             this.artist = artist;
-
+            this.MessageViewModel = MessageViewModel;
             RaisePropertyChanged("Name");
 
             PreviewImage = new BitmapImage();
+
             if (artist.ArtistArtRef != null)
                 PreviewImage.UriSource = new Uri(artist.ArtistArtRef);
+            else
+                PreviewImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
 
             MenuOpen = false;
             IsVisibleZero = Visibility.Collapsed;

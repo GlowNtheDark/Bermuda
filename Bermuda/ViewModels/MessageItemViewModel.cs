@@ -12,12 +12,9 @@ namespace Bermuda.ViewModels
     {
         public string Message { get; private set; }
 
-        MessageList List;
-
-        public MessageItemViewModel(String message, MessageList list)
+        public MessageItemViewModel(String message)
         {
             this.Message = message;
-            this.List = list;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

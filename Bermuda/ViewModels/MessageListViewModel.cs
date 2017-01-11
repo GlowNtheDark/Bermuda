@@ -16,10 +16,8 @@ namespace Bermuda.ViewModels
         public MessageListViewModel(MessageList list)
         {
             foreach (string text in list)
-                Add(new MessageItemViewModel(text, list));
+                Add(new MessageItemViewModel(text));
         }
-
-
 
         public void Dispose()
         {

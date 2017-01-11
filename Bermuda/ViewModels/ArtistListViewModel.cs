@@ -12,17 +12,16 @@ namespace Bermuda.ViewModels
     public class ArtistListViewModel : ObservableCollection<ArtistViewModel>, IDisposable
     {
         public CoreDispatcher dispatcher;
-
+        MessagingViewModel MessageViewModel;
         bool disposed;
         bool initializing;
 
-        //public AlbumList AlbumList { get; private set; }
-
-        public ArtistListViewModel(SearchResponse response, CoreDispatcher dispatcher)
+        public ArtistListViewModel(SearchResponse response, CoreDispatcher dispatcher, MessagingViewModel MessageViewModel)
         {
             try
             {
                 this.dispatcher = dispatcher;
+                this.MessageViewModel = MessageViewModel;
 
                 // Initialize the view model items
                 initializing = true;
@@ -30,7 +29,7 @@ namespace Bermuda.ViewModels
                 foreach (SearchResult result in response.Entries)
                 {
                     if(result.Artist != null)
-                        Add(new ArtistViewModel(this, result.Artist));
+                        Add(new ArtistViewModel(this, result.Artist, MessageViewModel));
                 }
 
                 initializing = false;
@@ -39,6 +38,8 @@ namespace Bermuda.ViewModels
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.Write(ex);
+                MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Unexpected error -- " + ex));
+                MessageViewModel.ShowAlert();
             }
         }
 

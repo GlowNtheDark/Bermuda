@@ -35,6 +35,12 @@ namespace Bermuda
         
         MediaPlayer Player => PlayerService.Instance.Player;
 
+        public MessagingViewModel MessageViewModel
+        {
+            get { return MessagingService.Instance.MessageViewModel; }
+            set { MessagingService.Instance.MessageViewModel = value; }
+        }
+
         MediaPlaybackItem PlaybackItem
         {
             get { return Player.Source as MediaPlaybackItem; }
@@ -54,7 +60,7 @@ namespace Bermuda
             this.NavigationCacheMode = NavigationCacheMode.Disabled;
 
             if(MediaList != null)
-                PlayerViewModel = new NowPlayingViewModel(Player, this.Dispatcher);
+                PlayerViewModel = new NowPlayingViewModel(Player, this.Dispatcher, MessageViewModel);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -62,7 +68,7 @@ namespace Bermuda
             try
             {
                 if (MediaList != null && PlaybackItem != null)
-                    PlayerViewModel.SongList = new TrackListViewModel(MediaList, this.Dispatcher);
+                    PlayerViewModel.SongList = new TrackListViewModel(MediaList, this.Dispatcher, MessageViewModel);
             }
             catch(Exception ex)
             {

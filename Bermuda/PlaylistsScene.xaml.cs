@@ -31,6 +31,12 @@ namespace Bermuda
 
         MediaPlayer Player => PlayerService.Instance.Player;
 
+        public MessagingViewModel MessageViewModel
+        {
+            get { return MessagingService.Instance.MessageViewModel; }
+            set { MessagingService.Instance.MessageViewModel = value; }
+        }
+
         TrackList MediaList
         {
             get { return PlayerService.Instance.CurrentPlaylist; }
@@ -43,14 +49,14 @@ namespace Bermuda
 
             this.NavigationCacheMode = NavigationCacheMode.Disabled;
 
-            PLViewModel = new PlaylistViewModel(Player, MediaList, this.Dispatcher);
+            PLViewModel = new PlaylistViewModel(Player, MediaList, this.Dispatcher, MessageViewModel);
 
             PlayerService.Instance.dispatcher = this.Dispatcher;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            PLViewModel.GroupViewModel = new PlaylistGroupViewModel(this.Dispatcher, PLViewModel);
+            PLViewModel.GroupViewModel = new PlaylistGroupViewModel(this.Dispatcher, PLViewModel, MessageViewModel);
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)

@@ -23,16 +23,17 @@ namespace Bermuda.ViewModels
         CoreDispatcher dispatcher;
         QuickPlayRadioViewModel qpradioviewmodel;
         QuickPlayAlbumViewModel qpalbumviewmodel;
-
+        MessagingViewModel MessageViewModel;
         TrackList MediaList;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public QuickPlayViewModel(MediaPlayer player, TrackList medialist, CoreDispatcher dispatcher)
+        public QuickPlayViewModel(MediaPlayer player, TrackList medialist, CoreDispatcher dispatcher, MessagingViewModel MessageViewModel)
         {
             this.dispatcher = dispatcher;
             this.Player = player;
             this.MediaList = medialist;
+            this.MessageViewModel = MessageViewModel;
         }
 
         public QuickPlayRadioViewModel QPRadioViewModel
@@ -79,103 +80,123 @@ namespace Bermuda.ViewModels
             var itemviewmodel = gv.DataContext as ListenNowItemViewModel;
             var item = itemviewmodel.item;
 
-            //Album Item
-            if (item.Type == "1") //Album Listing
+            if (item != null)
             {
-                if (menuIndex == 0) // Add to queue
+                //Album Item
+                if (item.Type == "1") //Album Listing
                 {
-
-                    try
+                    if (menuIndex == 0) // Add to queue
                     {
-                        Album album = await getAlbum(NewMain.Current.mc, item.Album.Id.MetajamCompactKey.ToString());
 
-                        foreach (Track track in album.Tracks)
-                            MediaList.Add(track);
-
-                        if (Player.Source == null)
+                        try
                         {
+                            Album album = await getAlbum(NewMain.Current.mc, item.Album.Id.MetajamCompactKey.ToString());
+
+                            foreach (Track track in album.Tracks)
+                            {
+                                if(track != null)
+                                    MediaList.Add(track);
+                            }
+
+                            if (Player.Source == null)
+                            {
+                                Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, album.Tracks[0])));
+                                Player.Play();
+                            }
+                        }
+
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.Write(ex);
+                            MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Unexpected error -- " + ex));
+                            MessageViewModel.ShowAlert();
+                        }
+
+                        itemviewmodel.showCheckMark(0);
+                    }
+
+                    else
+                    {
+                        try
+                        {
+                            MediaList.Clear();
+                            PlayerService.Instance.previousSongIndex = 0;
+                            PlayerService.Instance.currentSongIndex = 0;
+
+                            Album album = await getAlbum(NewMain.Current.mc, item.Album.Id.MetajamCompactKey.ToString());
+
+                            foreach (Track track in album.Tracks)
+                            {
+                                if (track != null)
+                                    MediaList.Add(track);
+                            }
+
                             Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, album.Tracks[0])));
                             Player.Play();
                         }
+
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.Write(ex);
+                            MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Unexpected error -- " + ex));
+                            MessageViewModel.ShowAlert();
+                        }
+
+                        itemviewmodel.showCheckMark(1);
+                    }
+                }
+
+                //Radio item
+                else
+                {
+                    MediaList.Clear();
+                    PlayerService.Instance.previousSongIndex = 0;
+                    PlayerService.Instance.currentSongIndex = 0;
+
+                    if (item.RadioStation.Id.Seeds[0].SeedType.ToString() == "3")
+                    {
+                        RadioFeed feed = await getArtistRadioStation(NewMain.Current.mc, item.RadioStation.Id.Seeds[0].ArtistId);
+
+                        if (feed.Data.Stations[0].Tracks != null)
+                        {
+                            foreach (Track track in feed.Data.Stations[0].Tracks)
+                            {
+                                if (track != null)
+                                    MediaList.Add(track);
+                            }
+
+
+                            Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
+                            Player.Play();                          
+                        }
+
                     }
 
-                    catch (Exception ex)
+                    else // Genre Listing
                     {
-                        System.Diagnostics.Debug.Write(ex);
+                        RadioFeed feed = await getGenreRadioStation(NewMain.Current.mc, item.RadioStation.Id.Seeds[0].GenreId);
+
+                        if (feed.Data.Stations[0].Tracks != null)
+                        {
+                            foreach (Track track in feed.Data.Stations[0].Tracks)
+                            {
+                                if (track != null)
+                                    MediaList.Add(track);
+                            }
+
+                            Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
+                            Player.Play();
+                            
+                        }
                     }
 
                     itemviewmodel.showCheckMark(0);
                 }
-
-                else
-                {
-                    try
-                    {
-                        MediaList.Clear();
-                        PlayerService.Instance.previousSongIndex = 0;
-                        PlayerService.Instance.currentSongIndex = 0;
-
-                        Album album = await getAlbum(NewMain.Current.mc, item.Album.Id.MetajamCompactKey.ToString());
-
-                        foreach (Track track in album.Tracks)
-                            MediaList.Add(track);
-
-                        Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, album.Tracks[0])));
-                        Player.Play();
-                    }
-
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Debug.Write(ex);
-                    }
-
-                    itemviewmodel.showCheckMark(1);
-                }
             }
-
-            //Radio item
             else
             {
-                MediaList.Clear();
-                PlayerService.Instance.previousSongIndex = 0;
-                PlayerService.Instance.currentSongIndex = 0;
-
-                if (item.RadioStation.Id.Seeds[0].SeedType.ToString() == "3")
-                {
-                    RadioFeed feed = await getArtistRadioStation(NewMain.Current.mc, item.RadioStation.Id.Seeds[0].ArtistId);
-
-                    if (feed.Data.Stations[0].Tracks != null)
-                    {
-                        foreach (Track track in feed.Data.Stations[0].Tracks)
-                            MediaList.Add(track);
-
-                        if (Player.Source == null)
-                        {
-                            Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
-                            Player.Play();
-                        }
-                    }
-
-                }
-
-                else // Genre Listing
-                {
-                    RadioFeed feed = await getGenreRadioStation(NewMain.Current.mc, item.RadioStation.Id.Seeds[0].GenreId);
-
-                    if (feed.Data.Stations[0].Tracks != null)
-                    {
-                        foreach (Track track in feed.Data.Stations[0].Tracks)
-                            MediaList.Add(track);
-
-                        if (Player.Source == null)
-                        {
-                            Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
-                            Player.Play();
-                        }
-                    }
-                }
-
-                itemviewmodel.showCheckMark(0);
+                MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Clicked Item was null."));
+                MessageViewModel.ShowAlert();
             }
         }
 
@@ -247,23 +268,25 @@ namespace Bermuda.ViewModels
                         if (item != null)
                         {
                             if (item.Type == "1") //Album
-                                QPAlbumViewModel.Add(new ListenNowItemViewModel(item, this));
+                                QPAlbumViewModel.Add(new ListenNowItemViewModel(item, this, this.MessageViewModel));
                             else // Radio
-                                QPRadioViewModel.Add(new ListenNowItemViewModel(item, this));
+                                QPRadioViewModel.Add(new ListenNowItemViewModel(item, this, this.MessageViewModel));
                         }
                     }
                 }
 
                 else
                 {
-
+                    MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Quickplay request failed. Null result."));
+                    MessageViewModel.ShowAlert();
                 }
             }
 
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.Write(ex);
-
+                MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Unexpected error -- " + ex));
+                MessageViewModel.ShowAlert();
             }
         }
 

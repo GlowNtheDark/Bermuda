@@ -26,18 +26,19 @@ namespace Bermuda.ViewModels
         PlaylistGroupViewModel groupviewmodel;
         TrackListViewModel tlviewmodel;
         TrackList MediaList;
-
+        MessagingViewModel MessageViewModel;
 
         bool disposed;
         bool initializing;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public PlaylistViewModel(MediaPlayer player, TrackList medialist, CoreDispatcher dispatcher)
+        public PlaylistViewModel(MediaPlayer player, TrackList medialist, CoreDispatcher dispatcher, MessagingViewModel MessageViewModel)
         {
             this.Player = player;
             this.dispatcher = dispatcher;
             this.MediaList = medialist;
+            this.MessageViewModel = MessageViewModel;
             TLViewModel = new TrackListViewModel();
         }
 
@@ -74,14 +75,22 @@ namespace Bermuda.ViewModels
             try
             {
                 ListView lv = sender as ListView;
-                int index = lv.Items.IndexOf(lv.SelectedItem);
 
-                getPlaylistTracks(groupviewmodel[index].playlist);
+                if (lv.SelectedItem != null)
+                {
+                    int index = lv.Items.IndexOf(lv.SelectedItem);
+
+                    if (groupviewmodel[index].playlist != null)
+                        getPlaylistTracks(groupviewmodel[index].playlist);
+                }
             }
 
             catch(Exception ex)
             {
                 System.Diagnostics.Debug.Write(ex);
+
+                MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Unexpected error -- " + ex));
+                MessageViewModel.ShowAlert();
             }
         }
 
@@ -110,7 +119,10 @@ namespace Bermuda.ViewModels
             if (menuIndex == 0) //Add to queue
             {
                 foreach (Track track in TLViewModel.SongList)
-                    MediaList.Add(track);
+                {
+                    if (track != null)
+                        MediaList.Add(track);
+                }
 
                 if (Player.Source == null)
                 {
@@ -128,7 +140,10 @@ namespace Bermuda.ViewModels
                 PlayerService.Instance.currentSongIndex = 0;
 
                 foreach (Track track in TLViewModel.SongList)
-                    MediaList.Add(track);
+                {
+                    if (track != null)
+                        MediaList.Add(track);
+                }
 
                 Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, TLViewModel.SongList[0])));
                 Player.Play();
@@ -144,13 +159,15 @@ namespace Bermuda.ViewModels
                 {
                     GroupViewModel.Dispose();
                     GroupViewModel = null;
-                    GroupViewModel = new PlaylistGroupViewModel(dispatcher, this);
+                    GroupViewModel = new PlaylistGroupViewModel(dispatcher, this, MessageViewModel);
                     await Task.Delay(1000);
                     TLViewModel.Clear();
                 }
                 else
                 {
                     //show some error
+                    MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Playlist couldn't be deleted."));
+                    MessageViewModel.ShowAlert();
                 }
             }
         }
@@ -161,15 +178,22 @@ namespace Bermuda.ViewModels
             TrackList list = new TrackList();
             templist = await NewMain.Current.mc.ListTracksFromPlaylist(playlist);
 
-            foreach (Track track in templist)
+            if (templist != null)
             {
-                Plentry plentry = NewMain.Current.mc.GetTrackPlaylistEntry(playlist, track);
-                
-                if(!plentry.Deleted)
-                    list.Add(plentry.Track);
-            }
+                foreach (Track track in templist)
+                {
+                    if (track != null)
+                    {
+                        Plentry plentry = NewMain.Current.mc.GetTrackPlaylistEntry(playlist, track);
 
-            TLViewModel = new TrackListViewModel(list, dispatcher, playlist);
+                        if (plentry != null)
+                            if (!plentry.Deleted)
+                                list.Add(plentry.Track);
+                    }
+                }
+
+                TLViewModel = new TrackListViewModel(list, dispatcher, playlist, MessageViewModel);
+            }
         }
 
         public static async Task<Uri> GetStreamUrl(MobileClient mc, Track track)

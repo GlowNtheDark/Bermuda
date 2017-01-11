@@ -15,13 +15,15 @@ namespace Bermuda.ViewModels
         //public PlaylistGroup PlGroup { get; private set; }
         public PlaylistViewModel PLViewModel;
         public CoreDispatcher dispatcher;
+        MessagingViewModel MessageViewModel;
         bool disposed;
         bool initializing;
 
-        public PlaylistGroupViewModel(CoreDispatcher dispatcher, PlaylistViewModel plviewmodel)
+        public PlaylistGroupViewModel(CoreDispatcher dispatcher, PlaylistViewModel plviewmodel, MessagingViewModel MessageViewModel)
         {
             this.dispatcher = dispatcher;
             this.PLViewModel = plviewmodel;
+            this.MessageViewModel = MessageViewModel;
             getPlaylists();
         }
 
@@ -29,12 +31,23 @@ namespace Bermuda.ViewModels
         {
             ResultList<Playlist> result = new ResultList<Playlist>();
 
-            result = await NewMain.Current.mc.ListPlaylistsAsync();
-
-            foreach (var playlistitem in result.Data.Items)
+            if (result != null)
             {
-                if(playlistitem.Deleted != true)
-                    Add(new PlaylistItemViewModel(playlistitem, PLViewModel));
+
+                result = await NewMain.Current.mc.ListPlaylistsAsync();
+
+                foreach (var playlistitem in result.Data.Items)
+                {
+                    if(playlistitem != null)
+                        if (playlistitem.Deleted != true)
+                            Add(new PlaylistItemViewModel(playlistitem, PLViewModel));
+                }
+            }
+
+            else
+            {
+                MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Error getting playlist tracks."));
+                MessageViewModel.ShowAlert();
             }
         }
 

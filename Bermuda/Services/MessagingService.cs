@@ -1,4 +1,5 @@
 ﻿using Bermuda.DataModels;
+using Bermuda.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace Bermuda.Services
         static MessagingService instance;
 
         public CoreDispatcher dispatcher;
+
+        public MessagingViewModel MessageViewModel { get; set; }
 
         public MessageList Messagelist { get; set; }
 
@@ -33,6 +36,12 @@ namespace Bermuda.Services
         {
             Messagelist = new MessageList();
             isNewAlert = false;
+        }
+
+        public void Initialize(CoreDispatcher dispatcher)
+        {
+            this.dispatcher = dispatcher;
+            MessageViewModel = new MessagingViewModel(dispatcher, Messagelist);
         }
     }
 }

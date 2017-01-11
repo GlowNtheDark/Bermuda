@@ -18,16 +18,20 @@ namespace Bermuda.ViewModels
         TrackListViewModel tlviewmodel;
         ArtistListViewModel arlviewmodel;
         Visibility gridViewVisibility;
+        MessagingViewModel MessageViewModel;
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public SearchViewModel(MediaPlayer player, TrackList tracklist, CoreDispatcher dispatcher)
+        public SearchViewModel(MediaPlayer player, TrackList tracklist, CoreDispatcher dispatcher, MessagingViewModel MessageViewModel)
         {
             this.Player = player;
             this.SongList = tracklist;
             this.dispatcher = dispatcher;
             GridViewVisibility = Visibility.Collapsed;
+            this.MessageViewModel = MessageViewModel;
         }
+
         public Visibility GridViewVisibility
         {
             get { return gridViewVisibility; }
@@ -107,17 +111,45 @@ namespace Bermuda.ViewModels
 
         public async void QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
+            if (ALViewModel != null)
+                ALViewModel = null;
+            if (ArLViewModel != null)
+                ArLViewModel = null;
+            if (TLViewModel != null)
+                TLViewModel = null;
+
             SearchResponse trackresponse = await NewMain.Current.mc.SearchAsync(args.QueryText, 1); //1 for Track Search
 
             SearchResponse artistresponse = await NewMain.Current.mc.SearchAsync(args.QueryText, 2); //2 for Artist Search
 
             SearchResponse albumresponse = await NewMain.Current.mc.SearchAsync(args.QueryText, 3); //3 for Album Search
 
-            ALViewModel = new AlbumListViewModel(albumresponse, dispatcher);
+            if(albumresponse.Entries != null)
+                ALViewModel = new AlbumListViewModel(albumresponse, dispatcher, MessageViewModel);
 
-            TLViewModel = new TrackListViewModel(trackresponse, dispatcher);
+            else
+            {
+                MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Part of that search came back null."));
+                MessageViewModel.ShowAlert();
+            }
 
-            ArLViewModel = new ArtistListViewModel(artistresponse, dispatcher);
+            if (trackresponse.Entries != null)
+                TLViewModel = new TrackListViewModel(trackresponse, dispatcher, MessageViewModel);
+
+            else
+            {
+                MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Part of that search came back null."));
+                MessageViewModel.ShowAlert();
+            }
+
+            if (artistresponse.Entries != null)
+                ArLViewModel = new ArtistListViewModel(artistresponse, dispatcher, MessageViewModel);
+
+            else
+            {
+                MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Part of that search came back null."));
+                MessageViewModel.ShowAlert();
+            }
 
             GridViewVisibility = Visibility.Visible;
         }

@@ -34,12 +34,7 @@ namespace Bermuda
         public static NewMain Current;
 
         MediaPlayer Player => PlayerService.Instance.Player;
-
-        MessageList Messagelist
-        {
-            get { return MessagingService.Instance.Messagelist; }
-            set { MessagingService.Instance.Messagelist = value; }
-        }
+        public MessagingViewModel MessageViewModel => MessagingService.Instance.MessageViewModel;
 
         public NewMain()
         {
@@ -47,8 +42,10 @@ namespace Bermuda
 
             Current = this;
 
+            MessagingService.Instance.Initialize(this.Dispatcher);
+
             MainViewModel = new MainMenuViewModel(Player, this.Dispatcher);
-            MessageViewModel = new MessagingViewModel(this.Dispatcher, Messagelist); //Allows access to messaging service
+            //MessageViewModel = new MessagingViewModel(this.Dispatcher, Messagelist); //Allows access to messaging service
 
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
             {
@@ -82,7 +79,7 @@ namespace Bermuda
 
         public MobileClient mc;
         public MainMenuViewModel MainViewModel { get; set; }
-        public MessagingViewModel MessageViewModel { get; set; }
+        //public MessagingViewModel MessageViewModel { get; set; }
         public MessageListViewModel MLViewModel { get; set; }
         public string lastNetworkState;
         private bool authorized = false;
@@ -123,7 +120,7 @@ namespace Bermuda
                     else
                     {
                         //Load setting page and show error about sub
-                        MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Something went wrong with your login. Reminder: You must have a Google Play Music Sub to use this app.", Messagelist));
+                        MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Something went wrong with your login. Reminder: You must have a Google Play Music Sub to use this app."));
                         MessageViewModel.ShowAlert();
                         DisableFrameAccess();
                         loadFrame("Settings");
@@ -145,7 +142,7 @@ namespace Bermuda
                     else
                     {
                         //Load setting page and show error about sub
-                        MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Something went wrong with your login. Restart the app or login again. Reminder: You must have a Google Play Music Sub to use this app.", Messagelist));
+                        MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Something went wrong with your login. Restart the app or login again. Reminder: You must have a Google Play Music Sub to use this app."));
                         MessageViewModel.ShowAlert();
                         DisableFrameAccess();
                         loadFrame("Settings");
@@ -157,7 +154,7 @@ namespace Bermuda
             {
                 System.Diagnostics.Debug.Write(ex);
                 //Load setting page and show error about sub
-                MessageViewModel.MLViewModel.Add(new MessageItemViewModel("An unknown error occured. -- " + ex, Messagelist));
+                MessageViewModel.MLViewModel.Add(new MessageItemViewModel("An unknown error occured. -- " + ex));
                 MessageViewModel.ShowAlert();
                 DisableFrameAccess();
                 loadFrame("Settings");
@@ -255,7 +252,7 @@ namespace Bermuda
                     await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () =>
                     {
-                        MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Network Connection Lost.", Messagelist));
+                        MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Network Connection Lost."));
                         MessageViewModel.ShowAlert();
                         MessagingService.Instance.isNewAlert = true;
                         DisableFrameAccess();

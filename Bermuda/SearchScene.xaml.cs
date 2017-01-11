@@ -36,6 +36,13 @@ namespace Bermuda
             set { Player.Source = value; }
         }
 
+
+        public MessagingViewModel MessageViewModel
+        {
+            get { return MessagingService.Instance.MessageViewModel; }
+            set { MessagingService.Instance.MessageViewModel = value; }
+        }
+
         TrackList MediaList
         {
             get { return PlayerService.Instance.CurrentPlaylist; }
@@ -48,7 +55,7 @@ namespace Bermuda
 
             this.NavigationCacheMode = NavigationCacheMode.Disabled;
 
-            searchviewmodel = new SearchViewModel(Player, MediaList, this.Dispatcher);
+            searchviewmodel = new SearchViewModel(Player, MediaList, this.Dispatcher, MessageViewModel);
 
             PlayerService.Instance.dispatcher = this.Dispatcher;
         }

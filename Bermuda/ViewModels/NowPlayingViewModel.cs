@@ -22,7 +22,7 @@ namespace Bermuda.ViewModels
     public class NowPlayingViewModel : INotifyPropertyChanged, IDisposable
     {
         bool disposed;
-
+        MessagingViewModel MessageViewModel;
         public MediaPlayer player;
         CoreDispatcher dispatcher;
         TrackListViewModel songList;
@@ -58,10 +58,11 @@ namespace Bermuda.ViewModels
             }
         }
 
-        public NowPlayingViewModel(MediaPlayer player, CoreDispatcher dispatcher)
+        public NowPlayingViewModel(MediaPlayer player, CoreDispatcher dispatcher, MessagingViewModel MessageViewModel)
         {
             this.player = player;
             this.dispatcher = dispatcher;
+            this.MessageViewModel = MessageViewModel;
             PlaybackSession = new PlaybackSessionViewModel(player.PlaybackSession, dispatcher);
             player.SourceChanged += Player_SourceChanged;
 
@@ -148,7 +149,7 @@ namespace Bermuda.ViewModels
 
             SongList.Dispose();
             SongList = null;
-            SongList = new TrackListViewModel(PlayerService.Instance.CurrentPlaylist, dispatcher);
+            SongList = new TrackListViewModel(PlayerService.Instance.CurrentPlaylist, dispatcher, MessageViewModel);
 
             PlayerService.Instance.currentSongIndex = 0;
             PlayerService.Instance.previousSongIndex = 0;
@@ -161,16 +162,20 @@ namespace Bermuda.ViewModels
             GridView gv = sender as GridView;
             int index = gv.Items.IndexOf(e.ClickedItem);
 
-            PlayerService.Instance.previousSongIndex = PlayerService.Instance.currentSongIndex;
+            if (index != PlayerService.Instance.currentSongIndex)
+            {
 
-            PlayerService.Instance.currentSongIndex = index;
+                PlayerService.Instance.previousSongIndex = PlayerService.Instance.currentSongIndex;
 
-            player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, SongList[PlayerService.Instance.currentSongIndex].song)));
+                PlayerService.Instance.currentSongIndex = index;
 
-            player.Play();
+                player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, SongList[PlayerService.Instance.currentSongIndex].song)));
 
-            RaisePropertyChanged("CanSkipNext");
-            RaisePropertyChanged("CanSkipPrevious");
+                player.Play();
+
+                RaisePropertyChanged("CanSkipNext");
+                RaisePropertyChanged("CanSkipPrevious");
+            }
         }
 
         public void volumeChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
