@@ -147,21 +147,21 @@ namespace Bermuda.ViewModels
             if (index == 0)
             {
                 IsVisibleZero = Visibility.Visible;
-                await Task.Delay(3000);
+                await Task.Delay(2000);
                 IsVisibleZero = Visibility.Collapsed;
             }
 
             else if (index == 1)
             {
                 IsVisibleOne = Visibility.Visible;
-                await Task.Delay(3000);
+                await Task.Delay(2000);
                 IsVisibleOne = Visibility.Collapsed;
             }
 
             else
             {
                 IsVisibleTwo = Visibility.Visible;
-                await Task.Delay(3000);
+                await Task.Delay(2000);
                 IsVisibleTwo = Visibility.Collapsed;
             }
 
@@ -295,8 +295,8 @@ namespace Bermuda.ViewModels
                             RecentlyPlayed = new Track[0],
                             Seed = new StationSeed
                             {
-                                SeedType = 1,//1
-                            TrackId = itemviewmodel.TrackId
+                                SeedType = 1,
+                                TrackId = itemviewmodel.TrackId
                             }
                         }
                     );
@@ -307,6 +307,9 @@ namespace Bermuda.ViewModels
                         PlayerService.Instance.CurrentPlaylist.Clear();
                         PlayerService.Instance.previousSongIndex = 0;
                         PlayerService.Instance.currentSongIndex = 0;
+                        PlayerService.Instance.isRadioMode = true;
+                        PlayerService.Instance.radioSeed = itemviewmodel.TrackId;
+                        PlayerService.Instance.radioType = "Track";
 
                         foreach (Track track in feed.Data.Stations[0].Tracks)
                         {

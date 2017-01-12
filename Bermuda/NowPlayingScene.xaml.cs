@@ -61,6 +61,8 @@ namespace Bermuda
 
             if(MediaList != null)
                 PlayerViewModel = new NowPlayingViewModel(Player, this.Dispatcher, MessageViewModel);
+
+            PlayerService.Instance.dispatcher = this.Dispatcher;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

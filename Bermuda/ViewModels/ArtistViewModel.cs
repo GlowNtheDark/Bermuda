@@ -135,28 +135,28 @@ namespace Bermuda.ViewModels
             if (index == 0)
             {
                 IsVisibleZero = Visibility.Visible;
-                await Task.Delay(3000);
+                await Task.Delay(2000);
                 IsVisibleZero = Visibility.Collapsed;
             }
 
             else if (index == 1)
             {
                 IsVisibleOne = Visibility.Visible;
-                await Task.Delay(3000);
+                await Task.Delay(2000);
                 IsVisibleOne = Visibility.Collapsed;
             }
 
             else if (index == 2)
             {
                 IsVisibleTwo = Visibility.Visible;
-                await Task.Delay(3000);
+                await Task.Delay(2000);
                 IsVisibleTwo = Visibility.Collapsed;
             }
 
             else
             {
                 IsVisibleThree = Visibility.Visible;
-                await Task.Delay(3000);
+                await Task.Delay(2000);
                 IsVisibleThree = Visibility.Collapsed;
             }
 
@@ -201,6 +201,9 @@ namespace Bermuda.ViewModels
                                 PlayerService.Instance.CurrentPlaylist.Add(track);
                         }
 
+                        PlayerService.Instance.isRadioMode = true;
+                        PlayerService.Instance.radioSeed = itemviewmodel.ArtistID;
+                        PlayerService.Instance.radioType = "Artist";
                         PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
                         PlayerService.Instance.Player.Play();
                     }
@@ -235,6 +238,8 @@ namespace Bermuda.ViewModels
                             if (track != null)
                                 PlayerService.Instance.CurrentPlaylist.Add(track);
                         }
+
+                        PlayerService.Instance.isRadioMode = false;
 
                         PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
                         PlayerService.Instance.Player.Play();

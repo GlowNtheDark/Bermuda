@@ -96,14 +96,14 @@ namespace Bermuda.ViewModels
             if (index == 0)
             {
                 IsVisibleZero = Visibility.Visible;
-                await Task.Delay(3000);
+                await Task.Delay(2000);
                 IsVisibleZero = Visibility.Collapsed;
             }
 
             else
             {
                 IsVisibleOne = Visibility.Visible;
-                await Task.Delay(3000);
+                await Task.Delay(2000);
                 IsVisibleOne = Visibility.Collapsed;
             }
 

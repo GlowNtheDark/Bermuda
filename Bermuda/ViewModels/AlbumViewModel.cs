@@ -121,21 +121,21 @@ namespace Bermuda.ViewModels
             if (index == 0)
             {
                 IsVisibleZero = Visibility.Visible;
-                await Task.Delay(3000);
+                await Task.Delay(2000);
                 IsVisibleZero = Visibility.Collapsed;
             }
 
             else if (index == 1)
             {
                 IsVisibleOne = Visibility.Visible;
-                await Task.Delay(3000);
+                await Task.Delay(2000);
                 IsVisibleOne = Visibility.Collapsed;
             }
 
             else
             {
                 IsVisibleTwo = Visibility.Visible;
-                await Task.Delay(3000);
+                await Task.Delay(2000);
                 IsVisibleTwo = Visibility.Collapsed;
             }
 
@@ -181,6 +181,9 @@ namespace Bermuda.ViewModels
                                 PlayerService.Instance.CurrentPlaylist.Add(track);
                         }
 
+                        PlayerService.Instance.isRadioMode = true;
+                        PlayerService.Instance.radioSeed = itemviewmodel.AlbumID;
+                        PlayerService.Instance.radioType = "Album";
                         PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
                         PlayerService.Instance.Player.Play();
 

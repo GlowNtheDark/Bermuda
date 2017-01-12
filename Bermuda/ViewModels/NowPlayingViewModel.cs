@@ -78,8 +78,19 @@ namespace Bermuda.ViewModels
             }
         }
 
-        private void Player_SourceChanged(MediaPlayer sender, object args)
+        private async void Player_SourceChanged(MediaPlayer sender, object args)
         {
+            if (PlayerService.Instance.playlistRefreshed)
+            {
+
+                await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    SongList = new TrackListViewModel(PlayerService.Instance.CurrentPlaylist, dispatcher, MessageViewModel);
+                });
+
+                PlayerService.Instance.playlistRefreshed = false;
+            }
+
             SongList.Update();
         }
 

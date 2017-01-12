@@ -153,6 +153,7 @@ namespace Bermuda.ViewModels
                     PlayerService.Instance.previousSongIndex = 0;
                     PlayerService.Instance.currentSongIndex = 0;
 
+
                     if (item.RadioStation.Id.Seeds[0].SeedType.ToString() == "3")
                     {
                         RadioFeed feed = await getArtistRadioStation(NewMain.Current.mc, item.RadioStation.Id.Seeds[0].ArtistId);
@@ -165,7 +166,9 @@ namespace Bermuda.ViewModels
                                     MediaList.Add(track);
                             }
 
-
+                            PlayerService.Instance.isRadioMode = true;
+                            PlayerService.Instance.radioSeed = item.RadioStation.Id.Seeds[0].ArtistId;
+                            PlayerService.Instance.radioType = "Artist";
                             Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
                             Player.Play();                          
                         }
@@ -184,6 +187,9 @@ namespace Bermuda.ViewModels
                                     MediaList.Add(track);
                             }
 
+                            PlayerService.Instance.isRadioMode = true;
+                            PlayerService.Instance.radioSeed = item.RadioStation.Id.Seeds[0].GenreId;
+                            PlayerService.Instance.radioType = "Genre";
                             Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, feed.Data.Stations[0].Tracks[0])));
                             Player.Play();
                             

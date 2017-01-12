@@ -2,6 +2,7 @@
 using Bermuda.ViewModels;
 using GoogleMusicApi.UWP.Common;
 using GoogleMusicApi.UWP.Structure;
+using GoogleMusicApi.UWP.Structure.Enums;
 using System;
 using System.Threading.Tasks;
 using Windows.Media;
@@ -41,6 +42,12 @@ namespace Bermuda.Services
         public int previousSongIndex { get; set; }
 
         public bool isRadioMode { get; set; }
+
+        public string radioSeed { get; set; }
+
+        public string radioType { get; set; }
+
+        public bool playlistRefreshed { get; set; }
 
         bool canSkipNext { get; set; }
 
@@ -129,6 +136,16 @@ namespace Bermuda.Services
                 Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, CurrentPlaylist[currentSongIndex])));
                 Player.Play();
             }
+
+            else if(isRadioMode)
+            {
+                await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        getRadioTracks();
+                    });
+
+                playlistRefreshed = true;
+            }
         }
 
         private async void SystemMediaTransportControls_ButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args)
@@ -152,7 +169,7 @@ namespace Bermuda.Services
                     canSkipNext = true;
                     break;
                 case SystemMediaTransportControlsButton.Previous:
-                    if (((float)Player.PlaybackSession.Position.TotalMilliseconds / CurrentPlaylist[PlayerService.Instance.currentSongIndex].DurationMillis) > .1)
+                    if (((float)Player.PlaybackSession.Position.TotalMilliseconds / CurrentPlaylist[Instance.currentSongIndex].DurationMillis) > .1)
                     {
                         Player.PlaybackSession.Position = new TimeSpan(0);
                     }
@@ -161,14 +178,14 @@ namespace Bermuda.Services
                         if (!canSkipPrevious)
                             break;
 
-                        if (PlayerService.Instance.currentSongIndex > 0)
+                        if (Instance.currentSongIndex > 0)
                         {
                         canSkipPrevious = false;
-                        PlayerService.Instance.previousSongIndex = PlayerService.Instance.currentSongIndex;
+                            Instance.previousSongIndex = Instance.currentSongIndex;
 
-                            PlayerService.Instance.currentSongIndex--;
+                            Instance.currentSongIndex--;
 
-                            Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, CurrentPlaylist[PlayerService.Instance.currentSongIndex])));
+                            Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, CurrentPlaylist[Instance.currentSongIndex])));
 
                             Player.Play();
 
@@ -181,6 +198,114 @@ namespace Bermuda.Services
             }
         }
 
+        private async void getRadioTracks()
+        {
+            RadioFeed feed;
+
+            if (radioType == "Track")
+            {
+                feed = await NewMain.Current.mc.GetStationFeed(ExplicitType.Explicit,
+                      new StationFeedStation
+                      {
+                          LibraryContentOnly = false,
+                          NumberOfEntries = -1,
+                          RecentlyPlayed = new Track[0],
+                          Seed = new StationSeed
+                          {
+                              SeedType = 1,
+                              TrackId = radioSeed
+                          }
+                      }
+                  );
+
+            }
+
+            else if(radioType == "Album")
+            {
+                feed = await NewMain.Current.mc.GetStationFeed(ExplicitType.Explicit,
+                         new StationFeedStation
+                         {
+                             LibraryContentOnly = false,
+                             NumberOfEntries = -1,
+                             RecentlyPlayed = new Track[0],
+                             Seed = new StationSeed
+                             {
+                                 SeedType = 4,
+                                  AlbumId = radioSeed
+                             }
+                         }
+                     );
+            }
+
+            else if (radioType == "Artist")
+            {
+                feed = await NewMain.Current.mc.GetStationFeed(ExplicitType.Explicit,
+                         new StationFeedStation
+                         {
+                             LibraryContentOnly = false,
+                             NumberOfEntries = -1,
+                             RecentlyPlayed = new Track[0],
+                             Seed = new StationSeed
+                             {
+                                 SeedType = 3,
+                                 ArtistId = radioSeed
+                             }
+                         }
+                     );
+            }
+
+            else if(radioType == "Genre")
+            {
+                feed = await NewMain.Current.mc.GetStationFeed(ExplicitType.Explicit,
+                         new StationFeedStation
+                         {
+                             LibraryContentOnly = false,
+                             NumberOfEntries = -1,
+                             RecentlyPlayed = new Track[0],
+                             Seed = new StationSeed
+                             {
+                                 SeedType = 3,
+                                 ArtistId = radioSeed
+                             }
+                         }
+                     );
+            }
+
+            else
+            {
+                feed = await NewMain.Current.mc.GetStationFeed(ExplicitType.Explicit,
+                         new StationFeedStation
+                         {
+                             LibraryContentOnly = false,
+                             NumberOfEntries = -1,
+                             RecentlyPlayed = new Track[0],
+                             Seed = new StationSeed
+                             {
+                                 SeedType = 7,
+                                 ArtistId = radioSeed
+                             }
+                         }
+                     );
+            }
+
+            if (feed.Data.Stations[0].Tracks != null)
+            {
+
+                CurrentPlaylist.Clear();
+                previousSongIndex = 0;
+                currentSongIndex = 0;
+
+                foreach (Track track in feed.Data.Stations[0].Tracks)
+                {
+                    if ((track != null) && (track.Nid != radioSeed))
+                        CurrentPlaylist.Add(track);
+                }
+
+                Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, CurrentPlaylist[0])));
+                Player.Play();
+            }
+        }
+
         public static async Task<Uri> GetStreamUrl(MobileClient mc, Track track)
         {
             Uri data;
@@ -189,6 +314,5 @@ namespace Bermuda.Services
 
             return data;
         }
-
     }
 }
