@@ -231,6 +231,7 @@ namespace Bermuda.ViewModels
                 {
                     PlayerService.Instance.CurrentPlaylist.Clear();
                     PlayerService.Instance.CurrentPlaylist.Add(itemviewmodel.song);
+                    PlayerService.Instance.isRadioMode = false;
                     PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
                     PlayerService.Instance.Player.Play();
                 }
@@ -238,6 +239,8 @@ namespace Bermuda.ViewModels
                 else if (index == 1) //Add to end of queue
                 {
                     PlayerService.Instance.CurrentPlaylist.Add(itemviewmodel.song);
+
+                    PlayerService.Instance.isRadioMode = false;
 
                     if (PlayerService.Instance.Player.Source == null)
                     {
@@ -330,7 +333,7 @@ namespace Bermuda.ViewModels
                     if (index == 0) //Add to end of queue
                     {
                         PlayerService.Instance.CurrentPlaylist.Add(itemviewmodel.song);
-
+                        PlayerService.Instance.isRadioMode = false;
                         if (PlayerService.Instance.Player.Source == null)
                         {
                             PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
@@ -345,6 +348,7 @@ namespace Bermuda.ViewModels
                         PlayerService.Instance.CurrentPlaylist.Clear();
                         PlayerService.Instance.previousSongIndex = 0;
                         PlayerService.Instance.currentSongIndex = 0;
+                        PlayerService.Instance.isRadioMode = false;
                         PlayerService.Instance.CurrentPlaylist.Add(itemviewmodel.song);
                         PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
                         PlayerService.Instance.Player.Play();

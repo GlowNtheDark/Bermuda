@@ -210,7 +210,7 @@ namespace Bermuda.ViewModels
                             PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
                             PlayerService.Instance.Player.Play();
                         }
-
+                        PlayerService.Instance.isRadioMode = false;
                         itemviewmodel.showCheckMark(0);
                     }
 
@@ -225,7 +225,7 @@ namespace Bermuda.ViewModels
                             if(track != null)
                                 PlayerService.Instance.CurrentPlaylist.Add(track);
                         }
-
+                        PlayerService.Instance.isRadioMode = false;
                         PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
                         PlayerService.Instance.Player.Play();
 

@@ -130,6 +130,7 @@ namespace Bermuda.ViewModels
                     Player.Play();
                 }
 
+                PlayerService.Instance.isRadioMode = false;
                 itemviewmodel.showCheckMark(0);
             }
 
@@ -145,6 +146,7 @@ namespace Bermuda.ViewModels
                         MediaList.Add(track);
                 }
 
+                PlayerService.Instance.isRadioMode = false;
                 Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, TLViewModel.SongList[0])));
                 Player.Play();
 

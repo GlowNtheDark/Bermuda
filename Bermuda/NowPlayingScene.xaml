@@ -11,6 +11,7 @@
 
     <Page.Resources>
         <vm:StringUriConverter x:Key="StringUriConverter"/>
+        <vm:MillisecondsConverter x:Key="MillisecondsConverter"/>
         <vm:PlaybackStateToButtonIconConverter x:Key="PlaybackStateToButtonIconConverter"/>
         <BitmapImage x:Key="playPauseImage" UriSource="{x:Bind PlayerViewModel.PlaybackSession.PlaybackState, Mode=OneWay, Converter={StaticResource PlaybackStateToButtonIconConverter}}"/>
         
@@ -842,6 +843,19 @@
                 <RowDefinition Height="57"/>
             </Grid.RowDefinitions>
             <Image x:Name="albumArtImage"  Height="Auto" Width="Auto" Margin="0,0,1,0" Grid.Column="0" Grid.Row="0" Stretch="Fill" Source="{x:Bind PlayerViewModel.SongList.CurrentItem.PreviewImage, Mode=OneWay}"/>
+            <Grid Grid.Column="0" Grid.Row="0" VerticalAlignment="Bottom">
+                <Grid Height="Auto" Width="Auto" Background="Black" Opacity=".7"/>
+                <StackPanel Orientation="Vertical" Height="Auto" Width="Auto" Margin="5,0,0,0">
+                    <TextBlock FontSize="20" Text="{x:Bind PlayerViewModel.SongList.CurrentItem.Title, Mode=OneWay}"/>
+                    <TextBlock FontSize="17" Text="{x:Bind PlayerViewModel.SongList.CurrentItem.Album, Mode=OneWay}"/>
+                    <TextBlock FontSize="17" Text="{x:Bind PlayerViewModel.SongList.CurrentItem.Artist, Mode=OneWay}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontSize="17" Text="{x:Bind PlayerViewModel.PlaybackSession.Position, Mode=OneWay, Converter={StaticResource MillisecondsConverter}}"/>
+                        <TextBlock Text=" / " FontSize="17"/>
+                        <TextBlock FontSize="17" Text="{x:Bind PlayerViewModel.SongList.CurrentItem.CurrentSongDuration, Mode=OneWay, Converter={StaticResource MillisecondsConverter}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
             <Grid Grid.Row="1" BorderBrush="Green" BorderThickness="1">
                 <StackPanel x:Name="stackPanel1" Orientation="Horizontal" HorizontalAlignment="Center" Height="55" Margin="263,0,262,0" VerticalAlignment="Bottom" Width="160" Visibility="Visible">
                     <Button x:Name="previousButton" Style="{StaticResource customPrevButton}" Width="50" Margin="2,0,0,5" HorizontalAlignment="Left" Height="50" Foreground="White" Click="{x:Bind PlayerViewModel.skipPrevious}" Visibility="Visible"/>

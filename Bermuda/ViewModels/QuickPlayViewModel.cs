@@ -103,6 +103,8 @@ namespace Bermuda.ViewModels
                                 Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, album.Tracks[0])));
                                 Player.Play();
                             }
+
+                            PlayerService.Instance.isRadioMode = false;
                         }
 
                         catch (Exception ex)
@@ -131,6 +133,7 @@ namespace Bermuda.ViewModels
                                     MediaList.Add(track);
                             }
 
+                            PlayerService.Instance.isRadioMode = false;
                             Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, album.Tracks[0])));
                             Player.Play();
                         }

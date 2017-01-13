@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bermuda.ViewModels;
+using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -10,11 +11,15 @@ namespace Bermuda
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SettingsScene : Page
+    public partial class SettingsScene : Page
     {
+        SettingsViewModel settingsviewmodel { get; set; }
+
         public SettingsScene()
         {
             this.InitializeComponent();
+
+            settingsviewmodel = new SettingsViewModel();
         }
 
         private void logoutButton_Click(object sender, RoutedEventArgs e)
@@ -58,14 +63,10 @@ namespace Bermuda
             }
         }
 
-        private void clearLists()
-        {
-
-        }
-
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             signedInAsTextBlock.Text = NewMain.Current.mc.Session.UserDetails.Email.ToString();
+            settingsviewmodel.selectedIndex = 0;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
