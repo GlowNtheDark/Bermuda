@@ -13,15 +13,19 @@ namespace Bermuda.ViewModels
     {
         public ColorListViewModel()
         {
-            Add(new ColorItemViewModel(new SolidColorBrush(Colors.Blue)));
-            Add(new ColorItemViewModel(new SolidColorBrush(Colors.Green)));
-            Add(new ColorItemViewModel(new SolidColorBrush(Colors.Orange)));
-            Add(new ColorItemViewModel(new SolidColorBrush(Colors.Pink)));
-            Add(new ColorItemViewModel(new SolidColorBrush(Colors.Purple)));
             Add(new ColorItemViewModel(new SolidColorBrush(Colors.Red)));
-            Add(new ColorItemViewModel(new SolidColorBrush(Colors.White)));
+            Add(new ColorItemViewModel(new SolidColorBrush(Colors.Tomato)));
+            Add(new ColorItemViewModel(new SolidColorBrush(Colors.Orange)));
             Add(new ColorItemViewModel(new SolidColorBrush(Colors.Yellow)));
-
+            Add(new ColorItemViewModel(new SolidColorBrush(Colors.Chartreuse)));
+            Add(new ColorItemViewModel(new SolidColorBrush(Colors.Green)));
+            Add(new ColorItemViewModel(new SolidColorBrush(Colors.Turquoise)));
+            Add(new ColorItemViewModel(new SolidColorBrush(Colors.Blue)));
+            Add(new ColorItemViewModel(new SolidColorBrush(Colors.Purple)));
+            Add(new ColorItemViewModel(new SolidColorBrush(Colors.Indigo)));
+            Add(new ColorItemViewModel(new SolidColorBrush(Colors.Magenta)));
+            Add(new ColorItemViewModel(new SolidColorBrush(Colors.Pink)));            
+            Add(new ColorItemViewModel(new SolidColorBrush(Colors.White)));
         }
 
         public void Dispose()

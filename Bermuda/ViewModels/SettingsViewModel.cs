@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
@@ -19,6 +20,13 @@ namespace Bermuda.ViewModels
         public SettingsViewModel()
         {
             colorlistviewmodel = new ColorListViewModel();
+        }
+
+        public void accentChanged(object sender, object e)
+        {
+            ComboBox cb = sender as ComboBox;
+            int index = cb.SelectedIndex;
+            AppSettings.localSettings.Values["accentColor"] = index.ToString();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

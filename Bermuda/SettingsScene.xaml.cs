@@ -1,7 +1,9 @@
 ﻿using Bermuda.ViewModels;
 using System;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -66,7 +68,13 @@ namespace Bermuda
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             signedInAsTextBlock.Text = NewMain.Current.mc.Session.UserDetails.Email.ToString();
-            settingsviewmodel.selectedIndex = 0;
+            string storedColor = AppSettings.localSettings.Values["accentColor"].ToString();
+            int accentIndex = int.Parse(storedColor);
+
+            //ColorItemViewModel item = new ColorItemViewModel(new SolidColorBrush(Color.FromArgb(byte.Parse(bytearray[3]), byte.Parse(bytearray[0]), byte.Parse(bytearray[1]), byte.Parse(bytearray[2]))));
+
+            accentComboBox.SelectedIndex = accentIndex;
+
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
