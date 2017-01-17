@@ -163,7 +163,15 @@ namespace Bermuda.ViewModels
 
         public void Dispose()
         {
-
+            ALViewModel.Dispose();
+            ALViewModel = null;
+            ArLViewModel.Dispose();
+            ArLViewModel = null;
+            TLViewModel.Dispose();
+            TLViewModel = null;
+            SongList = null;
+            MessageViewModel = null;
+            colorlistviewmodel = null;
         }
     }
 }

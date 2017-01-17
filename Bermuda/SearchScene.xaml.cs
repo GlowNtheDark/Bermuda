@@ -68,6 +68,7 @@ namespace Bermuda
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
             searchviewmodel = null;
+            searchviewmodel.Dispose();
             GC.Collect();
             AppSettings.localSettings.Values["lastPage"] = "Search";
         }

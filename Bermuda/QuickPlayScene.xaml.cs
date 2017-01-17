@@ -79,6 +79,7 @@ namespace Bermuda
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
+            QPViewModel.Dispose();
             QPViewModel = null;
             GC.Collect();
             AppSettings.localSettings.Values["lastPage"] = "QuickPlay";

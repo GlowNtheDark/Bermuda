@@ -200,7 +200,10 @@ namespace Bermuda.ViewModels
 
         public void Dispose()
         {
-
+            MessageViewModel = null;
+            colorlistviewmodel = null;
+            SongList = null;
+            disposed = true;
         }
     }
 }

@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Bermuda.ViewModels
 {
-    public class SettingsViewModel : INotifyPropertyChanged
+    public class SettingsViewModel : INotifyPropertyChanged, IDisposable
     {
         public ColorListViewModel colorlistviewmodel;
 
@@ -40,7 +40,7 @@ namespace Bermuda.ViewModels
 
         public void Dispose()
         {
-
+            colorlistviewmodel = null;
         }
     }
 }

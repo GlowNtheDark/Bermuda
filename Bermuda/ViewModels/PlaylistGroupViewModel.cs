@@ -18,7 +18,6 @@ namespace Bermuda.ViewModels
         MessagingViewModel MessageViewModel;
         ColorListViewModel colorlistviewmodel;
         bool disposed;
-        bool initializing;
 
         public PlaylistGroupViewModel(CoreDispatcher dispatcher, PlaylistViewModel plviewmodel, MessagingViewModel MessageViewModel, ColorListViewModel colorlistviewmodel)
         {
@@ -55,7 +54,9 @@ namespace Bermuda.ViewModels
 
         public void Dispose()
         {
-
+            MessageViewModel = null;
+            colorlistviewmodel = null;
+            disposed = true;
         }
     }
 }

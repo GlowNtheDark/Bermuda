@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Bermuda.ViewModels
 {
-    public class PlaylistViewModel : INotifyPropertyChanged
+    public class PlaylistViewModel : INotifyPropertyChanged, IDisposable
     {
         CoreDispatcher dispatcher;
         MediaPlayer Player;
@@ -30,7 +30,6 @@ namespace Bermuda.ViewModels
         ColorListViewModel colorlistviewmodel;
 
         bool disposed;
-        bool initializing;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -216,7 +215,11 @@ namespace Bermuda.ViewModels
 
         public void Dispose()
         {
-
+            GroupViewModel.Dispose();
+            GroupViewModel = null;
+            TLViewModel.Dispose();
+            TLViewModel = null;
+            disposed = true;
         }
 
     }

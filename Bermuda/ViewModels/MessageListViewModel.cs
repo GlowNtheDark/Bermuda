@@ -10,18 +10,13 @@ using Windows.UI.Xaml;
 
 namespace Bermuda.ViewModels
 {
-    public class MessageListViewModel : ObservableCollection<MessageItemViewModel>, IDisposable
+    public class MessageListViewModel : ObservableCollection<MessageItemViewModel>
     {
 
         public MessageListViewModel(MessageList list)
         {
             foreach (string text in list)
                 Add(new MessageItemViewModel(text));
-        }
-
-        public void Dispose()
-        {
-
         }
     }
 }

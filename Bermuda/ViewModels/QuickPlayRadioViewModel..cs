@@ -23,7 +23,7 @@ namespace Bermuda.ViewModels
 
         public void Dispose()
         {
-
+            QPViewModel = null;
         }
     }
 }

@@ -66,6 +66,7 @@ namespace Bermuda
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
             PLViewModel = null;
+            CLViewModel = null;
             GC.Collect();
             AppSettings.localSettings.Values["lastPage"] = "Playlists";
         }

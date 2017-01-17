@@ -7,7 +7,7 @@
     xmlns:sr="using:Bermuda.Services"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" KeyDown="Page_KeyDown">
+    mc:Ignorable="d" KeyDown="Page_KeyDown" Unloaded="Page_Unloaded">
 
     <Grid>
         <Grid.RowDefinitions>

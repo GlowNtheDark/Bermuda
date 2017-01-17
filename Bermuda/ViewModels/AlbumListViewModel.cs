@@ -48,7 +48,9 @@ namespace Bermuda.ViewModels
 
         public void Dispose()
         {
-
+            colorlistviewmodel = null;
+            MessageViewModel = null;
+            disposed = true;
         }
     }
 }

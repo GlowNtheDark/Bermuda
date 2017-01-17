@@ -308,7 +308,13 @@ namespace Bermuda.ViewModels
 
         public void Dispose()
         {
-
+            MediaList = null;
+            MessageViewModel = null;
+            QPRadioViewModel.Dispose();
+            QPAlbumViewModel.Dispose();
+            QPRadioViewModel = null;
+            QPAlbumViewModel = null;
+            colorlistviewmodel = null;
         }
     }
 }

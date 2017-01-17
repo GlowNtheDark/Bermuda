@@ -45,7 +45,6 @@ namespace Bermuda
             MessagingService.Instance.Initialize(this.Dispatcher);
 
             MainViewModel = new MainMenuViewModel(Player, this.Dispatcher);
-            //MessageViewModel = new MessagingViewModel(this.Dispatcher, Messagelist); //Allows access to messaging service
 
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
             {
@@ -79,8 +78,6 @@ namespace Bermuda
 
         public MobileClient mc;
         public MainMenuViewModel MainViewModel { get; set; }
-        //public MessagingViewModel MessageViewModel { get; set; }
-        public MessageListViewModel MLViewModel { get; set; }
         public string lastNetworkState;
         private bool authorized = false;
         private string networkBackgroundTask = "Network-Awareness-Task";
@@ -412,6 +409,13 @@ namespace Bermuda
             MainViewModel.IsEnabledPL = true;
             MainViewModel.IsEnabledQP = true;
             MainViewModel.IsEnabledSR = true;
+        }
+
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            MainViewModel.Dispose();
+            MessageViewModel.Dispose();
+            GC.Collect();
         }
     }
 }

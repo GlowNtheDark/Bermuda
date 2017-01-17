@@ -89,6 +89,7 @@ namespace Bermuda
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
+            settingsviewmodel.Dispose();
             GC.Collect();
             AppSettings.localSettings.Values["lastPage"] = "Settings";
         }

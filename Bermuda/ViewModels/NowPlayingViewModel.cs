@@ -260,12 +260,16 @@ namespace Bermuda.ViewModels
             if (SongList != null)
             {
                 SongList.Dispose();
-                SongList = null; // Setter triggers vector unsubscribe logic
+                SongList = null;
             }
 
             player.SourceChanged -= Player_SourceChanged;
 
             PlaybackSession.Dispose();
+
+            colorlistviewmodel = null;
+
+            disposed = true;
         }
     }
 }

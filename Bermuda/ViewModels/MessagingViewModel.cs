@@ -11,7 +11,7 @@ using Windows.UI.Xaml;
 
 namespace Bermuda.ViewModels
 {
-    public class MessagingViewModel : INotifyPropertyChanged
+    public class MessagingViewModel : INotifyPropertyChanged, IDisposable
     {
         MessageListViewModel mlviewmodel;
         MessageList mList;
@@ -91,5 +91,9 @@ namespace Bermuda.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        public void Dispose()
+        {
+            MLViewModel = null;
+        }
     }
 }

@@ -12,7 +12,7 @@ using Windows.UI.Xaml;
 
 namespace Bermuda.ViewModels
 {
-    public class MainMenuViewModel : INotifyPropertyChanged
+    public class MainMenuViewModel : INotifyPropertyChanged, IDisposable
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -22,8 +22,6 @@ namespace Bermuda.ViewModels
         public bool isEnabledSR;
         public bool isEnabledPL;
         CoreDispatcher dispatcher;
-
-        MessageList list;
 
         public MainMenuViewModel(MediaPlayer player, CoreDispatcher dispatcher)
         {
@@ -120,6 +118,11 @@ namespace Bermuda.ViewModels
         private void RaisePropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void Dispose()
+        {
+            player.SourceChanged -= Player_SourceChanged;
         }
     }
 }
