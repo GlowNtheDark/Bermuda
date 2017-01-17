@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Bermuda.ViewModels
@@ -21,6 +22,22 @@ namespace Bermuda.ViewModels
         public string Name => playlist.Name;
 
         public bool menuOpen;
+
+        public SolidColorBrush borderBrush;
+
+        public SolidColorBrush BorderBrush
+        {
+            get { return borderBrush; }
+
+            private set
+            {
+                if (borderBrush != value)
+                {
+                    borderBrush = value;
+                    RaisePropertyChanged("BorderBrush");
+                }
+            }
+        }
 
         public Visibility isvisiblezero;
 
@@ -131,10 +148,11 @@ namespace Bermuda.ViewModels
             MenuOpen = !MenuOpen;
         }
 
-        public PlaylistItemViewModel(Playlist playlist, PlaylistViewModel plviewmodel)
+        public PlaylistItemViewModel(Playlist playlist, PlaylistViewModel plviewmodel, SolidColorBrush brush)
         {
             this.playlist = playlist;
             this.PLViewModel = plviewmodel;
+            this.BorderBrush = brush;
             RaisePropertyChanged("Name");
 
             ListImage = new BitmapImage();

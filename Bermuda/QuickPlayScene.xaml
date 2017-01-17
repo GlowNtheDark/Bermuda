@@ -22,7 +22,7 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:ListenNowItemViewModel">
-                    <Grid Margin="0,0,25,0" BorderBrush="Green" BorderThickness="1">
+                        <Grid Margin="0,0,25,0" BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="1">
                         <SplitView DisplayMode="Overlay" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}" OpenPaneLength="250">
                             <SplitView.Pane>
                                 <GridView IsItemClickEnabled="True" Width="250" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False" ItemClick="{x:Bind QPViewModel.GridView_ItemClick}">
@@ -60,7 +60,7 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:ListenNowItemViewModel">
-                    <Grid Margin="0,0,25,0" BorderBrush="Green" BorderThickness="1">
+                    <Grid Margin="0,0,25,0" BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="1">
                         <SplitView DisplayMode="Overlay" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}" OpenPaneLength="250">
                             <SplitView.Pane>
                                 <GridView IsItemClickEnabled="True" Width="250" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False" ItemClick="{x:Bind QPViewModel.GridView_ItemClick}">

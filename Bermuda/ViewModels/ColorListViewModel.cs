@@ -11,6 +11,8 @@ namespace Bermuda.ViewModels
 {
     public class ColorListViewModel : ObservableCollection<ColorItemViewModel>, IDisposable
     {
+        public int index { get; set; }
+
         public ColorListViewModel()
         {
             Add(new ColorItemViewModel(new SolidColorBrush(Colors.Red)));
@@ -26,6 +28,16 @@ namespace Bermuda.ViewModels
             Add(new ColorItemViewModel(new SolidColorBrush(Colors.Magenta)));
             Add(new ColorItemViewModel(new SolidColorBrush(Colors.Pink)));            
             Add(new ColorItemViewModel(new SolidColorBrush(Colors.White)));
+
+            
+            if (AppSettings.localSettings.Values["accentColor"] != null)
+            {
+                string storedColor = AppSettings.localSettings.Values["accentColor"].ToString();
+                index = int.Parse(storedColor);
+            }
+
+            else
+                index = 12;
         }
 
         public void Dispose()

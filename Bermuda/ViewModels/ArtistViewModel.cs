@@ -13,6 +13,7 @@ using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Bermuda.ViewModels
@@ -28,6 +29,22 @@ namespace Bermuda.ViewModels
         public string Name => artist.Name;
 
         public string ArtistID => artist.ArtistId;
+
+        public SolidColorBrush borderBrush;
+
+        public SolidColorBrush BorderBrush
+        {
+            get { return borderBrush; }
+
+            private set
+            {
+                if (borderBrush != value)
+                {
+                    borderBrush = value;
+                    RaisePropertyChanged("BorderBrush");
+                }
+            }
+        }
 
         BitmapImage previewImage;
 
@@ -339,11 +356,12 @@ namespace Bermuda.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ArtistViewModel(ArtistListViewModel alviewmodel, Artist artist, MessagingViewModel MessageViewModel)
+        public ArtistViewModel(ArtistListViewModel alviewmodel, Artist artist, MessagingViewModel MessageViewModel, SolidColorBrush brush)
         {
             this.ALViewModel = alviewmodel;
             this.artist = artist;
             this.MessageViewModel = MessageViewModel;
+            this.BorderBrush = brush;
             RaisePropertyChanged("Name");
 
             PreviewImage = new BitmapImage();

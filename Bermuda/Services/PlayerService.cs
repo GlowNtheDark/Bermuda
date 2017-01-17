@@ -49,6 +49,10 @@ namespace Bermuda.Services
 
         public bool playlistRefreshed { get; set; }
 
+        ColorListViewModel CLViewModel { get; set; }
+
+        SolidColorBrush ThemeColor { get; set; }
+
         bool canSkipNext { get; set; }
 
         bool canSkipPrevious { get; set; }
@@ -61,6 +65,7 @@ namespace Bermuda.Services
         {
             Player = new MediaPlayer();
             CurrentPlaylist = new TrackList();
+            CLViewModel = new ColorListViewModel();
             Player.AutoPlay = false;
             Player.Volume = .5;
             Player.CommandManager.IsEnabled = false;
@@ -76,6 +81,7 @@ namespace Bermuda.Services
             Player.MediaEnded += Player_MediaEnded;
             Player.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
             Player.SourceChanged += Player_SourceChanged;
+            ThemeColor = CLViewModel[CLViewModel.index].Color;
         }
 
         private void Player_MediaOpened(MediaPlayer sender, object args)
@@ -115,7 +121,7 @@ namespace Bermuda.Services
                 await dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                 {
                     //Marshalled from a different thread. Need to update colors in the background.
-                    CurrentPlaylist[currentSongIndex].tileColor = new SolidColorBrush(Colors.Green);
+                    CurrentPlaylist[currentSongIndex].tileColor = ThemeColor;
                     if(previousSongIndex != currentSongIndex)
                         CurrentPlaylist[previousSongIndex].tileColor = new SolidColorBrush(Colors.Transparent);
                 });
@@ -304,6 +310,14 @@ namespace Bermuda.Services
                 Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, CurrentPlaylist[0])));
                 Player.Play();
             }
+        }
+
+        public void updateTheme()
+        {
+            CLViewModel = null;
+            CLViewModel = new ColorListViewModel();
+            ThemeColor = CLViewModel[CLViewModel.index].Color;
+            CurrentPlaylist[currentSongIndex].tileColor = ThemeColor;
         }
 
         public static async Task<Uri> GetStreamUrl(MobileClient mc, Track track)

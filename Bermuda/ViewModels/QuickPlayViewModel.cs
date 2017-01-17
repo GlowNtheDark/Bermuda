@@ -25,6 +25,7 @@ namespace Bermuda.ViewModels
         QuickPlayAlbumViewModel qpalbumviewmodel;
         MessagingViewModel MessageViewModel;
         TrackList MediaList;
+        public ColorListViewModel colorlistviewmodel;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -34,6 +35,7 @@ namespace Bermuda.ViewModels
             this.Player = player;
             this.MediaList = medialist;
             this.MessageViewModel = MessageViewModel;
+            colorlistviewmodel = new ColorListViewModel();
         }
 
         public QuickPlayRadioViewModel QPRadioViewModel
@@ -277,9 +279,9 @@ namespace Bermuda.ViewModels
                         if (item != null)
                         {
                             if (item.Type == "1") //Album
-                                QPAlbumViewModel.Add(new ListenNowItemViewModel(item, this, this.MessageViewModel));
+                                QPAlbumViewModel.Add(new ListenNowItemViewModel(item, this, this.MessageViewModel, colorlistviewmodel[colorlistviewmodel.index].Color));
                             else // Radio
-                                QPRadioViewModel.Add(new ListenNowItemViewModel(item, this, this.MessageViewModel));
+                                QPRadioViewModel.Add(new ListenNowItemViewModel(item, this, this.MessageViewModel, colorlistviewmodel[colorlistviewmodel.index].Color));
                         }
                     }
                 }

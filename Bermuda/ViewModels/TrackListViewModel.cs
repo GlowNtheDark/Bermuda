@@ -23,6 +23,7 @@ namespace Bermuda.ViewModels
         int previousItemIndex => PlayerService.Instance.previousSongIndex;
         bool disposed;
         bool initializing;
+        ColorListViewModel colorlistviewmodel;
 
         public TrackList SongList { get; private set; }
 
@@ -114,18 +115,19 @@ namespace Bermuda.ViewModels
             });
         }
 
-        public TrackListViewModel(TrackList trackList, CoreDispatcher dispatcher, Playlist playlist, MessagingViewModel MessageViewModel)
+        public TrackListViewModel(TrackList trackList, CoreDispatcher dispatcher, Playlist playlist, MessagingViewModel MessageViewModel, ColorListViewModel colorlistviewmodel)
         {
             try
             {
                 SongList = trackList;
                 this.dispatcher = dispatcher;
                 this.MessageViewModel = MessageViewModel;
+                this.colorlistviewmodel = colorlistviewmodel;
                 // Initialize the view model items
                 initializing = true;
 
                 foreach (var mediaItem in trackList)
-                    Add(new TrackViewModel(this, mediaItem, playlist, MessageViewModel));
+                    Add(new TrackViewModel(this, mediaItem, playlist, MessageViewModel, colorlistviewmodel[colorlistviewmodel.index].Color));
 
                 initializing = false;
 
@@ -140,19 +142,20 @@ namespace Bermuda.ViewModels
             }
         }
 
-        public TrackListViewModel(SearchResponse response, CoreDispatcher dispatcher, MessagingViewModel MessageViewModel)
+        public TrackListViewModel(SearchResponse response, CoreDispatcher dispatcher, MessagingViewModel MessageViewModel, ColorListViewModel colorlistviewmodel)
         {
             try
             {
                 this.dispatcher = dispatcher;
                 this.MessageViewModel = MessageViewModel;
+                this.colorlistviewmodel = colorlistviewmodel;
                 // Initialize the view model items
                 initializing = true;
 
                 foreach (SearchResult result in response.Entries)
                 {
                     if(result.Track != null)
-                        Add(new TrackViewModel(this, result.Track, MessageViewModel));
+                        Add(new TrackViewModel(this, result.Track, MessageViewModel, colorlistviewmodel[colorlistviewmodel.index].Color));
                 }
 
                 initializing = false;
@@ -166,23 +169,21 @@ namespace Bermuda.ViewModels
             }
         }
 
-        public TrackListViewModel(TrackList trackList, CoreDispatcher dispatcher, MessagingViewModel MessageViewModel)
+        public TrackListViewModel(TrackList trackList, CoreDispatcher dispatcher, MessagingViewModel MessageViewModel, ColorListViewModel colorlistviewmodel)
         {
             try
             {
                 SongList = trackList;
                 this.dispatcher = dispatcher;
                 this.MessageViewModel = MessageViewModel;
+                this.colorlistviewmodel = colorlistviewmodel;
                 // Initialize the view model items
                 initializing = true;
 
                 foreach (var mediaItem in trackList)
-                    Add(new TrackViewModel(this, mediaItem, MessageViewModel));
+                    Add(new TrackViewModel(this, mediaItem, MessageViewModel, colorlistviewmodel[colorlistviewmodel.index].Color));
 
                 initializing = false;
-
-                // Start where the playback list is currently at
-                //CurrentItemIndex = (int)PlayerService.Instance.currentSongIndex;
             }
             catch (Exception ex)
             {

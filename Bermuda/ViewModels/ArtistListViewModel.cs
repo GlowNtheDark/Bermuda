@@ -15,21 +15,22 @@ namespace Bermuda.ViewModels
         MessagingViewModel MessageViewModel;
         bool disposed;
         bool initializing;
+        ColorListViewModel colorlistviewmodel;
 
-        public ArtistListViewModel(SearchResponse response, CoreDispatcher dispatcher, MessagingViewModel MessageViewModel)
+        public ArtistListViewModel(SearchResponse response, CoreDispatcher dispatcher, MessagingViewModel MessageViewModel, ColorListViewModel colorlistviewmodel)
         {
             try
             {
                 this.dispatcher = dispatcher;
                 this.MessageViewModel = MessageViewModel;
-
+                this.colorlistviewmodel = colorlistviewmodel;
                 // Initialize the view model items
                 initializing = true;
 
                 foreach (SearchResult result in response.Entries)
                 {
                     if(result.Artist != null)
-                        Add(new ArtistViewModel(this, result.Artist, MessageViewModel));
+                        Add(new ArtistViewModel(this, result.Artist, MessageViewModel, colorlistviewmodel[colorlistviewmodel.index].Color));
                 }
 
                 initializing = false;

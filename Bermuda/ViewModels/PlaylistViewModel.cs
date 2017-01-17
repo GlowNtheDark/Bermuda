@@ -27,18 +27,20 @@ namespace Bermuda.ViewModels
         TrackListViewModel tlviewmodel;
         TrackList MediaList;
         MessagingViewModel MessageViewModel;
+        ColorListViewModel colorlistviewmodel;
 
         bool disposed;
         bool initializing;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public PlaylistViewModel(MediaPlayer player, TrackList medialist, CoreDispatcher dispatcher, MessagingViewModel MessageViewModel)
+        public PlaylistViewModel(MediaPlayer player, TrackList medialist, CoreDispatcher dispatcher, MessagingViewModel MessageViewModel, ColorListViewModel colorlistviewmodel)
         {
             this.Player = player;
             this.dispatcher = dispatcher;
             this.MediaList = medialist;
             this.MessageViewModel = MessageViewModel;
+            this.colorlistviewmodel = colorlistviewmodel;
             TLViewModel = new TrackListViewModel();
         }
 
@@ -161,7 +163,7 @@ namespace Bermuda.ViewModels
                 {
                     GroupViewModel.Dispose();
                     GroupViewModel = null;
-                    GroupViewModel = new PlaylistGroupViewModel(dispatcher, this, MessageViewModel);
+                    GroupViewModel = new PlaylistGroupViewModel(dispatcher, this, MessageViewModel, colorlistviewmodel);
                     await Task.Delay(1000);
                     TLViewModel.Clear();
                 }
@@ -194,7 +196,7 @@ namespace Bermuda.ViewModels
                     }
                 }
 
-                TLViewModel = new TrackListViewModel(list, dispatcher, playlist, MessageViewModel);
+                TLViewModel = new TrackListViewModel(list, dispatcher, playlist, MessageViewModel, colorlistviewmodel);
             }
         }
 

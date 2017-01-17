@@ -16,14 +16,16 @@ namespace Bermuda.ViewModels
         public PlaylistViewModel PLViewModel;
         public CoreDispatcher dispatcher;
         MessagingViewModel MessageViewModel;
+        ColorListViewModel colorlistviewmodel;
         bool disposed;
         bool initializing;
 
-        public PlaylistGroupViewModel(CoreDispatcher dispatcher, PlaylistViewModel plviewmodel, MessagingViewModel MessageViewModel)
+        public PlaylistGroupViewModel(CoreDispatcher dispatcher, PlaylistViewModel plviewmodel, MessagingViewModel MessageViewModel, ColorListViewModel colorlistviewmodel)
         {
             this.dispatcher = dispatcher;
             this.PLViewModel = plviewmodel;
             this.MessageViewModel = MessageViewModel;
+            this.colorlistviewmodel = colorlistviewmodel;
             getPlaylists();
         }
 
@@ -40,7 +42,7 @@ namespace Bermuda.ViewModels
                 {
                     if(playlistitem != null)
                         if (playlistitem.Deleted != true)
-                            Add(new PlaylistItemViewModel(playlistitem, PLViewModel));
+                            Add(new PlaylistItemViewModel(playlistitem, PLViewModel, colorlistviewmodel[colorlistviewmodel.index].Color));
                 }
             }
 

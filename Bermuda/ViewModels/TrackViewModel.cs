@@ -41,6 +41,22 @@ namespace Bermuda.ViewModels
 
         public double currentSongDuration;
 
+        public SolidColorBrush borderBrush;
+
+        public SolidColorBrush BorderBrush
+        {
+            get { return borderBrush; }
+
+            private set
+            {
+                if (borderBrush != value)
+                {
+                    borderBrush = value;
+                    RaisePropertyChanged("BorderBrush");
+                }
+            }
+        }
+
         public bool menuOpen;
 
         BitmapImage previewImage;
@@ -190,11 +206,35 @@ namespace Bermuda.ViewModels
             IsVisibleTwo = Visibility.Collapsed;
         }
 
-        public TrackViewModel(TrackListViewModel trackViewModel, Track song, Playlist playlist, MessagingViewModel MessageViewModel)
+        public TrackViewModel(TrackListViewModel trackViewModel, Track song, MessagingViewModel MessageViewModel, SolidColorBrush brush)
         {
             this.listViewModel = trackViewModel;
             this.song = song;
             this.MessageViewModel = MessageViewModel;
+            this.BorderBrush = brush;
+            RaisePropertyChanged("Title");
+
+            PreviewImage = new BitmapImage();
+
+            if (song.AlbumArtReference != null)
+                PreviewImage.UriSource = new Uri(song.AlbumArtReference[0].Url);
+            else
+                PreviewImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
+
+            CurrentSongDuration = song.DurationMillis;
+
+            MenuOpen = false;
+            IsVisibleZero = Visibility.Collapsed;
+            IsVisibleOne = Visibility.Collapsed;
+            IsVisibleTwo = Visibility.Collapsed;
+        }
+
+        public TrackViewModel(TrackListViewModel trackViewModel, Track song, Playlist playlist, MessagingViewModel MessageViewModel, SolidColorBrush brush)
+        {
+            this.listViewModel = trackViewModel;
+            this.song = song;
+            this.MessageViewModel = MessageViewModel;
+            this.BorderBrush = brush;
             RaisePropertyChanged("Title");
 
             // This app caches all images by loading the BitmapImage

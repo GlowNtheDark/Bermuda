@@ -1,4 +1,5 @@
 ﻿using Bermuda.DataModels;
+using Bermuda.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,6 +28,7 @@ namespace Bermuda.ViewModels
             ComboBox cb = sender as ComboBox;
             int index = cb.SelectedIndex;
             AppSettings.localSettings.Values["accentColor"] = index.ToString();
+            PlayerService.Instance.updateTheme();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -29,6 +29,8 @@ namespace Bermuda
     {
         public PlaylistViewModel PLViewModel { get; set; }
 
+        public ColorListViewModel CLViewModel { get; set; }
+
         MediaPlayer Player => PlayerService.Instance.Player;
 
         public MessagingViewModel MessageViewModel
@@ -49,14 +51,16 @@ namespace Bermuda
 
             this.NavigationCacheMode = NavigationCacheMode.Disabled;
 
-            PLViewModel = new PlaylistViewModel(Player, MediaList, this.Dispatcher, MessageViewModel);
+            CLViewModel = new ColorListViewModel();
+
+            PLViewModel = new PlaylistViewModel(Player, MediaList, this.Dispatcher, MessageViewModel, CLViewModel);
 
             PlayerService.Instance.dispatcher = this.Dispatcher;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            PLViewModel.GroupViewModel = new PlaylistGroupViewModel(this.Dispatcher, PLViewModel, MessageViewModel);
+            PLViewModel.GroupViewModel = new PlaylistGroupViewModel(this.Dispatcher, PLViewModel, MessageViewModel, CLViewModel);
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)

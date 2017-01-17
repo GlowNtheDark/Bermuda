@@ -32,6 +32,8 @@ namespace Bermuda
     {
 
         public NowPlayingViewModel PlayerViewModel { get; set; }
+
+        public ColorListViewModel CLViewModel { get; set; }
         
         MediaPlayer Player => PlayerService.Instance.Player;
 
@@ -59,10 +61,13 @@ namespace Bermuda
 
             this.NavigationCacheMode = NavigationCacheMode.Disabled;
 
-            if(MediaList != null)
-                PlayerViewModel = new NowPlayingViewModel(Player, this.Dispatcher, MessageViewModel);
+            CLViewModel = new ColorListViewModel();
+
+            if (MediaList != null)
+                PlayerViewModel = new NowPlayingViewModel(Player, this.Dispatcher, MessageViewModel, CLViewModel);
 
             PlayerService.Instance.dispatcher = this.Dispatcher;
+
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -70,7 +75,7 @@ namespace Bermuda
             try
             {
                 if (MediaList != null && PlaybackItem != null)
-                    PlayerViewModel.SongList = new TrackListViewModel(MediaList, this.Dispatcher, MessageViewModel);
+                    PlayerViewModel.SongList = new TrackListViewModel(MediaList, this.Dispatcher, MessageViewModel, CLViewModel);
             }
             catch(Exception ex)
             {

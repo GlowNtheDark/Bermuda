@@ -29,8 +29,25 @@ namespace Bermuda.ViewModels
         bool canSkipNext;
         bool canSkipPrevious;
         public PlaybackSessionViewModel PlaybackSession { get; private set; }
+        ColorListViewModel colorlistviewmodel;      
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public SolidColorBrush borderBrush;
+
+        public SolidColorBrush BorderBrush
+        {
+            get { return borderBrush; }
+
+            private set
+            {
+                if (borderBrush != value)
+                {
+                    borderBrush = value;
+                    RaisePropertyChanged("BorderBrush");
+                }
+            }
+        }
 
         public bool CanSkipNext
         {
@@ -58,11 +75,12 @@ namespace Bermuda.ViewModels
             }
         }
 
-        public NowPlayingViewModel(MediaPlayer player, CoreDispatcher dispatcher, MessagingViewModel MessageViewModel)
+        public NowPlayingViewModel(MediaPlayer player, CoreDispatcher dispatcher, MessagingViewModel MessageViewModel, ColorListViewModel colorlistviewmodel)
         {
             this.player = player;
             this.dispatcher = dispatcher;
             this.MessageViewModel = MessageViewModel;
+            this.colorlistviewmodel = colorlistviewmodel;
             PlaybackSession = new PlaybackSessionViewModel(player.PlaybackSession, dispatcher);
             player.SourceChanged += Player_SourceChanged;
 
@@ -76,6 +94,8 @@ namespace Bermuda.ViewModels
                 CanSkipNext = true;
                 CanSkipPrevious = true;
             }
+
+            BorderBrush = colorlistviewmodel[colorlistviewmodel.index].Color;
         }
 
         private async void Player_SourceChanged(MediaPlayer sender, object args)
@@ -85,7 +105,7 @@ namespace Bermuda.ViewModels
 
                 await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    SongList = new TrackListViewModel(PlayerService.Instance.CurrentPlaylist, dispatcher, MessageViewModel);
+                    SongList = new TrackListViewModel(PlayerService.Instance.CurrentPlaylist, dispatcher, MessageViewModel, colorlistviewmodel);
                 });
 
                 PlayerService.Instance.playlistRefreshed = false;
@@ -160,7 +180,7 @@ namespace Bermuda.ViewModels
 
             SongList.Dispose();
             SongList = null;
-            SongList = new TrackListViewModel(PlayerService.Instance.CurrentPlaylist, dispatcher, MessageViewModel);
+            SongList = new TrackListViewModel(PlayerService.Instance.CurrentPlaylist, dispatcher, MessageViewModel, colorlistviewmodel);
 
             PlayerService.Instance.currentSongIndex = 0;
             PlayerService.Instance.previousSongIndex = 0;

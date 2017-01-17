@@ -14,7 +14,7 @@
         <vm:MillisecondsConverter x:Key="MillisecondsConverter"/>
         <vm:PlaybackStateToButtonIconConverter x:Key="PlaybackStateToButtonIconConverter"/>
         <BitmapImage x:Key="playPauseImage" UriSource="{x:Bind PlayerViewModel.PlaybackSession.PlaybackState, Mode=OneWay, Converter={StaticResource PlaybackStateToButtonIconConverter}}"/>
-        
+        <SolidColorBrush x:Key="thumbColor" Color="{x:Bind PlayerViewModel.BorderBrush.Color, Mode=OneWay}"/>
         <Style x:Key="customSlider" TargetType="Slider">
             <Setter Property="Background" Value="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" />
             <Setter Property="BorderThickness" Value="{ThemeResource SliderBorderThemeThickness}" />
@@ -34,7 +34,7 @@
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="Thumb">
-                                                <Border Background="#FF00FF0C"
+                                                <Border Background="{StaticResource thumbColor}"
                       BorderBrush="{TemplateBinding BorderBrush}"
                       BorderThickness="{TemplateBinding BorderThickness}"
                       CornerRadius="4" />
@@ -814,11 +814,11 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="275"/>
         </Grid.ColumnDefinitions>
-        <ProgressBar x:Name="trackPlayProgressBar" Width="Auto" Height="Auto" Value="{x:Bind PlayerViewModel.PlaybackSession.Position, Mode=OneWay}" Foreground="#FF00FF0C" Maximum="{x:Bind PlayerViewModel.SongList.CurrentItem.CurrentSongDuration, Mode=OneWay}"/>
-        <GridView ItemsSource="{x:Bind PlayerViewModel.SongList, Mode=OneWay}" BorderBrush="Green" BorderThickness="1" IsItemClickEnabled="true" Margin="3,0,0,0" Name="currentPlaylistGridView" IsTabStop="False" Width="Auto" Height="Auto" Grid.Column="1" Grid.Row="1" ItemClick = "{x:Bind PlayerViewModel.ItemClicked}">
+        <ProgressBar x:Name="trackPlayProgressBar" Width="Auto" Height="Auto" Value="{x:Bind PlayerViewModel.PlaybackSession.Position, Mode=OneWay}" Foreground="{x:Bind PlayerViewModel.BorderBrush, Mode=OneWay}" Maximum="{x:Bind PlayerViewModel.SongList.CurrentItem.CurrentSongDuration, Mode=OneWay}"/>
+        <GridView ItemsSource="{x:Bind PlayerViewModel.SongList, Mode=OneWay}" BorderBrush="{x:Bind PlayerViewModel.BorderBrush, Mode=OneWay}" BorderThickness="1" IsItemClickEnabled="true" Margin="3,0,0,0" Name="currentPlaylistGridView" IsTabStop="False" Width="Auto" Height="Auto" Grid.Column="1" Grid.Row="1" ItemClick = "{x:Bind PlayerViewModel.ItemClicked}">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="vm:TrackViewModel">
-                    <Grid BorderBrush="Green" BorderThickness=".2" Margin="0,1,0,0" Background="{x:Bind tileColor, Mode=OneWay}">
+                    <Grid BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness=".2" Margin="0,1,0,0" Background="{x:Bind tileColor, Mode=OneWay}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="100"/>
                         </Grid.RowDefinitions>
@@ -856,14 +856,14 @@
                     </StackPanel>
                 </StackPanel>
             </Grid>
-            <Grid Grid.Row="1" BorderBrush="Green" BorderThickness="1">
+            <Grid Grid.Row="1" BorderBrush="{x:Bind PlayerViewModel.BorderBrush, Mode=OneWay}" BorderThickness="1">
                 <StackPanel x:Name="stackPanel1" Orientation="Horizontal" HorizontalAlignment="Center" Height="55" Margin="263,0,262,0" VerticalAlignment="Bottom" Width="160" Visibility="Visible">
                     <Button x:Name="previousButton" Style="{StaticResource customPrevButton}" Width="50" Margin="2,0,0,5" HorizontalAlignment="Left" Height="50" Foreground="White" Click="{x:Bind PlayerViewModel.skipPrevious}" Visibility="Visible"/>
                     <Button x:Name="playButton" Style="{StaticResource customPlayButton}" Width="50" HorizontalAlignment="Center" Height="50" Margin="0,0,0,5" Foreground="White" Click="{x:Bind PlayerViewModel.togglePlayPause}" Visibility="Visible"/>
                     <Button x:Name="nextButton" Style="{StaticResource customNextButton}" Width="50" Margin="0,0,0,5" HorizontalAlignment="Right" Height="50" Foreground="White" Click="{x:Bind PlayerViewModel.skipNext}" Visibility="Visible"/>
                 </StackPanel>
                 <Button x:Name="shuffleButton" Style="{StaticResource customShuffleButton}" Width="50" Margin="5,1,0,6" HorizontalAlignment="Left" Height="50" Foreground="White" Click="{x:Bind PlayerViewModel.Shuffle}" Visibility="Visible"/>
-                <Slider Visibility="Visible" Style="{StaticResource customSlider}" Foreground="#FF00FF0C" Value="{x:Bind PlayerViewModel.player.Volume}" Name="volumeSlider" Width="140" Height="50" Margin="0,0,10,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" SmallChange="0.1" Maximum="1" ValueChanged="{x:Bind PlayerViewModel.volumeChanged}" LargeChange="0.1" StepFrequency="0.1" IsThumbToolTipEnabled="False"/>
+                <Slider Visibility="Visible" Style="{StaticResource customSlider}" Foreground="{x:Bind PlayerViewModel.BorderBrush, Mode=OneWay}" Value="{x:Bind PlayerViewModel.player.Volume}" Name="volumeSlider" Width="140" Height="50" Margin="0,0,10,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" SmallChange="0.1" Maximum="1" ValueChanged="{x:Bind PlayerViewModel.volumeChanged}" LargeChange="0.1" StepFrequency="0.1" IsThumbToolTipEnabled="False"/>
             </Grid>
         </Grid>
     </Grid>

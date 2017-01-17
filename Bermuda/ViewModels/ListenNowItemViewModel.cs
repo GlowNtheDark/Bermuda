@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Bermuda.ViewModels
@@ -27,6 +28,22 @@ namespace Bermuda.ViewModels
         public Visibility isvisibleone;
 
         public BitmapImage itemImage;
+
+        public SolidColorBrush borderBrush;
+
+        public SolidColorBrush BorderBrush
+        {
+            get { return borderBrush; }
+
+            private set
+            {
+                if (borderBrush != value)
+                {
+                    borderBrush = value;
+                    RaisePropertyChanged("BorderBrush");
+                }
+            }
+        }
 
         public Visibility IsVisibleZero
         {
@@ -110,7 +127,7 @@ namespace Bermuda.ViewModels
             MenuOpen = false;
         }
 
-        public ListenNowItemViewModel(ListenNowItem Item, QuickPlayViewModel qpviewmodel, MessagingViewModel MessageViewModel)
+        public ListenNowItemViewModel(ListenNowItem Item, QuickPlayViewModel qpviewmodel, MessagingViewModel MessageViewModel, SolidColorBrush brush)
         {
             try
             {
@@ -135,6 +152,8 @@ namespace Bermuda.ViewModels
                 MenuOpen = false;
                 IsVisibleZero = Visibility.Collapsed;
                 IsVisibleOne = Visibility.Collapsed;
+
+                this.BorderBrush = brush;
             }
             catch(Exception ex)
             {

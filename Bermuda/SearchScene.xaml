@@ -25,8 +25,8 @@
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Grid Grid.Row="0" Background="Green" Width="80" HorizontalAlignment="Left">
-                    <TextBlock Text="Artists" Margin="10,0,0,0" Height="25" FontSize="20"/>
+                <Grid Grid.Row="0" Width="Auto" BorderBrush="White" BorderThickness="1" HorizontalAlignment="Left" Padding="5,0,5,5">
+                    <TextBlock Text="Artists" Height="25" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </Grid>
                 <ListView Name="ArtistLV" HorizontalAlignment="Left"  Grid.Row="1" Margin="0,5,0,5" ItemsSource="{x:Bind searchviewmodel.ArLViewModel, Mode=OneWay}" ItemClick="{x:Bind searchviewmodel.ArtistItemClick}" IsItemClickEnabled="True" IsTabStop="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
                     <ListView.ItemsPanel>
@@ -66,7 +66,7 @@
                                     </GridView>
                                 </SplitView.Pane>
                                 <SplitView.Content>
-                                    <Grid BorderBrush="Green" BorderThickness="1">
+                                    <Grid BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="1">
                                         <Image Height="275" Width="275" VerticalAlignment="Center" Source="{x:Bind PreviewImage}" Stretch="Fill"/>
                                         <Grid VerticalAlignment="Bottom" Height="30" Background="Black" Opacity=".7"/>
                                         <TextBlock VerticalAlignment="Bottom" Margin="5,0,0,0" Height="30" Width="275" Text="{x:Bind Name}" FontSize="20" Foreground="White" TextTrimming="CharacterEllipsis"/>
@@ -82,8 +82,8 @@
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <Grid Grid.Row="0" Background="Green" Width="80" HorizontalAlignment="Left">
-                        <TextBlock Text="Albums" Margin="10,0,0,0" Height="25" FontSize="20"/>
+                <Grid Grid.Row="0" Width="Auto" BorderBrush="White" BorderThickness="1" HorizontalAlignment="Left" Padding="5,0,5,5">
+                    <TextBlock Text="Albums" Height="25" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Grid>
                     <ListView Name="AlbumLV" Grid.Row="1" Margin="0,5,0,5" ItemsSource="{x:Bind searchviewmodel.ALViewModel, Mode=OneWay}" ItemClick="{x:Bind searchviewmodel.AlbumItemClick}" IsItemClickEnabled="True" IsTabStop="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
                         <ListView.ItemsPanel>
@@ -117,7 +117,7 @@
                                     </GridView>
                                     </SplitView.Pane>
                                     <SplitView.Content>
-                                        <Grid BorderBrush="Green" BorderThickness="1">
+                                    <Grid BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="1">
                                             <Image Height="275" Width="275" VerticalAlignment="Center" Source="{x:Bind PreviewImage}" Stretch="Fill"/>
                                             <Grid VerticalAlignment="Bottom" Height="30" Background="Black" Opacity=".7"/>
                                         <TextBlock VerticalAlignment="Bottom" Margin="5,0,0,0" Height="30" Width="275" Text="{x:Bind Name}" FontSize="20" Foreground="White" TextTrimming="CharacterEllipsis"/>
@@ -133,8 +133,8 @@
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Grid Grid.Row="0" Background="Green" Width="80" HorizontalAlignment="Left">
-                    <TextBlock Text="Tracks" Margin="10,0,0,0" Height="25" FontSize="20" Grid.Row="5"/>
+                <Grid Grid.Row="0" Width="Auto" BorderBrush="White" BorderThickness="1" HorizontalAlignment="Left" Padding="5,0,5,5">
+                    <TextBlock Text="Tracks" Height="25" FontSize="20" Grid.Row="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </Grid>
                 <ListView Name="TrackLV" Grid.Row="1" Margin="0,5,0,5" ItemsSource="{x:Bind searchviewmodel.TLViewModel, Mode=OneWay}" ItemClick="{x:Bind searchviewmodel.TrackItemClick}" IsItemClickEnabled="True" IsTabStop="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
                     <ListView.ItemsPanel>
@@ -168,7 +168,7 @@
                                     </GridView>
                                 </SplitView.Pane>
                                 <SplitView.Content>
-                                    <Grid BorderBrush="Green" BorderThickness="1">
+                                    <Grid BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="1">
                                         <Image Height="275" Width="275" VerticalAlignment="Center" Source="{x:Bind PreviewImage}" Stretch="Fill"/>
                                         <Grid VerticalAlignment="Bottom" Height="30" Background="Black" Opacity=".7"/>
                                         <TextBlock VerticalAlignment="Bottom" Margin="5,0,0,0" Height="30" Width="275" Text="{x:Bind Title}" FontSize="20" Foreground="White" TextTrimming="CharacterEllipsis"/>

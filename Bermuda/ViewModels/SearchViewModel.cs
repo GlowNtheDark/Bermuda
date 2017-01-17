@@ -19,6 +19,7 @@ namespace Bermuda.ViewModels
         ArtistListViewModel arlviewmodel;
         Visibility gridViewVisibility;
         MessagingViewModel MessageViewModel;
+        public ColorListViewModel colorlistviewmodel;
 
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -30,6 +31,7 @@ namespace Bermuda.ViewModels
             this.dispatcher = dispatcher;
             GridViewVisibility = Visibility.Collapsed;
             this.MessageViewModel = MessageViewModel;
+            colorlistviewmodel = new ColorListViewModel();
         }
 
         public Visibility GridViewVisibility
@@ -125,7 +127,7 @@ namespace Bermuda.ViewModels
             SearchResponse albumresponse = await NewMain.Current.mc.SearchAsync(args.QueryText, 3); //3 for Album Search
 
             if(albumresponse.Entries != null)
-                ALViewModel = new AlbumListViewModel(albumresponse, dispatcher, MessageViewModel);
+                ALViewModel = new AlbumListViewModel(albumresponse, dispatcher, MessageViewModel, colorlistviewmodel);
 
             else
             {
@@ -134,7 +136,7 @@ namespace Bermuda.ViewModels
             }
 
             if (trackresponse.Entries != null)
-                TLViewModel = new TrackListViewModel(trackresponse, dispatcher, MessageViewModel);
+                TLViewModel = new TrackListViewModel(trackresponse, dispatcher, MessageViewModel, colorlistviewmodel);
 
             else
             {
@@ -143,7 +145,7 @@ namespace Bermuda.ViewModels
             }
 
             if (artistresponse.Entries != null)
-                ArLViewModel = new ArtistListViewModel(artistresponse, dispatcher, MessageViewModel);
+                ArLViewModel = new ArtistListViewModel(artistresponse, dispatcher, MessageViewModel, colorlistviewmodel);
 
             else
             {

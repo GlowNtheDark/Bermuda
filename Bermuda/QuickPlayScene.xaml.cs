@@ -38,6 +38,7 @@ namespace Bermuda
     {
         public QuickPlayViewModel QPViewModel { get; set; }
 
+
         public MessagingViewModel MessageViewModel
         {
             get { return MessagingService.Instance.MessageViewModel; }

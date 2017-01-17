@@ -67,11 +67,21 @@ namespace Bermuda
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            signedInAsTextBlock.Text = NewMain.Current.mc.Session.UserDetails.Email.ToString();
-            string storedColor = AppSettings.localSettings.Values["accentColor"].ToString();
-            int accentIndex = int.Parse(storedColor);
+            int accentIndex;
+            string storedColor;
 
-            //ColorItemViewModel item = new ColorItemViewModel(new SolidColorBrush(Color.FromArgb(byte.Parse(bytearray[3]), byte.Parse(bytearray[0]), byte.Parse(bytearray[1]), byte.Parse(bytearray[2]))));
+            signedInAsTextBlock.Text = NewMain.Current.mc.Session.UserDetails.Email.ToString();
+
+            if (AppSettings.localSettings.Values["accentColor"] != null)
+            {
+                storedColor = AppSettings.localSettings.Values["accentColor"].ToString();
+                accentIndex = int.Parse(storedColor);
+            }
+
+            else
+                accentIndex = 12;
+           
+            
 
             accentComboBox.SelectedIndex = accentIndex;
 
