@@ -200,6 +200,7 @@
     <Content Include="Assets\PlayButton.png" />
     <Content Include="Assets\plus.png" />
     <Content Include="Assets\ShuffleButton.png" />
+    <Content Include="Assets\Splash1600x1200.png" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\SplashScreen.scale-125.png" />
     <Content Include="Assets\SplashScreen.scale-150.png" />

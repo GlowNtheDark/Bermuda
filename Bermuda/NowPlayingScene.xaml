@@ -844,7 +844,7 @@
             </Grid.RowDefinitions>
             <Image x:Name="albumArtImage"  Height="Auto" Width="Auto" Margin="0,0,1,0" Grid.Column="0" Grid.Row="0" Stretch="Fill" Source="{x:Bind PlayerViewModel.SongList.CurrentItem.PreviewImage, Mode=OneWay}"/>
             <Grid Grid.Column="0" Grid.Row="0" VerticalAlignment="Bottom">
-                <Grid Height="Auto" Width="Auto" Background="Black" Opacity=".7"/>
+                <Grid Height="Auto" Width="Auto" Background="Black" Opacity=".8"/>
                 <StackPanel Orientation="Vertical" Height="Auto" Width="Auto" Margin="5,0,0,0">
                     <TextBlock FontSize="20" Text="{x:Bind PlayerViewModel.SongList.CurrentItem.Title, Mode=OneWay}"/>
                     <TextBlock FontSize="17" Text="{x:Bind PlayerViewModel.SongList.CurrentItem.Album, Mode=OneWay}"/>
