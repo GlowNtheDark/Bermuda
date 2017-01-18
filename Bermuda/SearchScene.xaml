@@ -14,13 +14,14 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <AutoSuggestBox QueryIcon="Find" Grid.Row="0" Width="300" Margin="0,0,10,0" HorizontalAlignment="Right" Background="White" QuerySubmitted="{x:Bind searchviewmodel.QuerySubmitted}"/>
-        <GridView Grid.Row="1" IsTabStop="False" SelectionMode="None" IsItemClickEnabled="False" Visibility="{x:Bind searchviewmodel.GridViewVisibility, Mode=OneWay}">
+        <GridView Margin="5,0,0,0" Grid.Row="1" IsTabStop="False" SelectionMode="None" IsItemClickEnabled="False" Visibility="{x:Bind searchviewmodel.GridViewVisibility, Mode=OneWay}">
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsStackPanel Orientation="Vertical"/>
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
-            <Grid>
+            <GridViewItem IsTabStop="False" HorizontalAlignment="Left">
+                <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="*"/>
@@ -66,7 +67,7 @@
                                     </GridView>
                                 </SplitView.Pane>
                                 <SplitView.Content>
-                                    <Grid BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="1">
+                                    <Grid BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="1" Height="Auto" Width="Auto">
                                         <Image Height="275" Width="275" VerticalAlignment="Center" Source="{x:Bind PreviewImage}" Stretch="Fill"/>
                                         <Grid VerticalAlignment="Bottom" Height="30" Background="Black" Opacity=".7"/>
                                         <TextBlock VerticalAlignment="Bottom" Margin="5,0,0,0" Height="30" Width="275" Text="{x:Bind Name}" FontSize="20" Foreground="White" TextTrimming="CharacterEllipsis"/>
@@ -77,7 +78,9 @@
                     </ListView.ItemTemplate>
                 </ListView>
             </Grid>
-            <Grid>
+            </GridViewItem>
+            <GridViewItem IsTabStop="False" HorizontalAlignment="Left">
+                <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
@@ -128,7 +131,9 @@
                         </ListView.ItemTemplate>
                     </ListView>
                 </Grid>
-            <Grid>
+            </GridViewItem>
+            <GridViewItem IsTabStop="False" HorizontalAlignment="Left">
+                <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="*"/>
@@ -179,7 +184,7 @@
                     </ListView.ItemTemplate>
                 </ListView>
             </Grid>
-
+            </GridViewItem>
         </GridView>
     </Grid>
 </Page>

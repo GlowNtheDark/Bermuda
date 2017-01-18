@@ -14,7 +14,8 @@
     </Page.Resources>
     <Grid>
         <GridView IsTabStop="False" SelectionMode="None" IsItemClickEnabled="False">
-            <ListView Name="QuickPlayAlbumView" Width="Auto" Height="Auto" ItemsSource="{x:Bind QPViewModel.QPAlbumViewModel, Mode=OneWay}" Margin="5,10,0,0" IsTabStop="False" SelectionMode="None" ItemClick="{x:Bind QPViewModel.ItemClick}" IsItemClickEnabled="True" ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.VerticalScrollMode="Disabled"  ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+            <GridViewItem IsTabStop="False">
+                <ListView Name="QuickPlayAlbumView" Width="Auto" Height="Auto" ItemsSource="{x:Bind QPViewModel.QPAlbumViewModel, Mode=OneWay}" Margin="5,10,0,0" IsTabStop="False" SelectionMode="None" ItemClick="{x:Bind QPViewModel.ItemClick}" IsItemClickEnabled="True" ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.VerticalScrollMode="Disabled"  ScrollViewer.HorizontalScrollBarVisibility="Hidden">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsStackPanel Orientation="Horizontal"/>
@@ -22,7 +23,7 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:ListenNowItemViewModel">
-                        <Grid Margin="0,0,25,0" BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="1">
+                        <Grid Margin="0,0,0,0" BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="1">
                         <SplitView DisplayMode="Overlay" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}" OpenPaneLength="200">
                             <SplitView.Pane>
                                 <GridView IsItemClickEnabled="True" Width="185" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False" ItemClick="{x:Bind QPViewModel.GridView_ItemClick}">
@@ -44,7 +45,7 @@
                                 <Grid>
                                     <Image Height="275" Width="275" VerticalAlignment="Center" Stretch="Fill" Source="{x:Bind ItemImage}"/>
                                     <Grid VerticalAlignment="Bottom" Height="70" Background="Black" Opacity=".80"/>
-                                    <TextBlock VerticalAlignment="Bottom" Height="70" Width="275" Text="{x:Bind QuickPlayText}" FontSize="20" TextAlignment="Left" Foreground="White" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Margin="5,0,0,0" VerticalAlignment="Bottom" Height="70" Width="275" Text="{x:Bind QuickPlayText}" FontSize="20" TextAlignment="Left" Foreground="White" TextTrimming="CharacterEllipsis"/>
                                 </Grid>
                             </SplitView.Content>
                         </SplitView>
@@ -52,7 +53,9 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-            <ListView Name="QuickPlayRadioView" Width="Auto" Height="Auto" ItemsSource="{x:Bind QPViewModel.QPRadioViewModel, Mode=OneWay}" Margin="5,10,0,0" IsTabStop="False" SelectionMode="None" ItemClick="{x:Bind QPViewModel.ItemClick}" IsItemClickEnabled="True" ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.VerticalScrollMode="Disabled"  ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+            </GridViewItem>
+            <GridViewItem IsTabStop="False">
+                <ListView Name="QuickPlayRadioView" Width="Auto" Height="Auto" ItemsSource="{x:Bind QPViewModel.QPRadioViewModel, Mode=OneWay}" Margin="5,10,0,0" IsTabStop="False" SelectionMode="None" ItemClick="{x:Bind QPViewModel.ItemClick}" IsItemClickEnabled="True" ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.VerticalScrollMode="Disabled"  ScrollViewer.HorizontalScrollBarVisibility="Hidden">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsStackPanel Orientation="Horizontal"/>
@@ -60,7 +63,7 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:ListenNowItemViewModel">
-                    <Grid Margin="0,0,25,0" BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="1">
+                    <Grid Margin="0,0,0,0" BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="1">
                         <SplitView DisplayMode="Overlay" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}" OpenPaneLength="200">
                             <SplitView.Pane>
                                 <GridView IsItemClickEnabled="True" Width="185" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False" ItemClick="{x:Bind QPViewModel.GridView_ItemClick}">
@@ -76,7 +79,7 @@
                                 <Grid>
                                     <Image Height="275" Width="275" VerticalAlignment="Center" Stretch="Fill" Source="{x:Bind ItemImage}"/>
                                     <Grid VerticalAlignment="Bottom" Height="70" Background="Black" Opacity=".80"/>
-                                    <TextBlock VerticalAlignment="Bottom" Height="70" Width="275" Text="{x:Bind QuickPlayText}" FontSize="20" TextAlignment="Left" Foreground="White" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Margin="5,0,0,0" VerticalAlignment="Bottom" Height="70" Width="275" Text="{x:Bind QuickPlayText}" FontSize="20" TextAlignment="Left" Foreground="White" TextTrimming="CharacterEllipsis"/>
                                 </Grid>
                             </SplitView.Content>
                         </SplitView>
@@ -84,6 +87,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+            </GridViewItem>
         </GridView>
     </Grid>
 </Page>
