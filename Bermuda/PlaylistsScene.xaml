@@ -14,13 +14,13 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="320"/>
+            <RowDefinition Height="225"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <ListView Name="PlaylistListView" Grid.Row="0" ItemsSource="{ x:Bind PLViewModel.GroupViewModel, Mode=OneWay}" IsItemClickEnabled="True" SelectionChanged="{x:Bind PLViewModel.playlistSelectionChanged}" Grid.Column="0" Width="Auto" Height="325" Margin="5,10,0,0" IsTabStop="False" SelectionMode="Single" ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.VerticalScrollMode="Disabled"  ScrollViewer.HorizontalScrollBarVisibility="Hidden" ItemClick="{x:Bind PLViewModel.playlistClicked}">
+        <ListView Name="PlaylistListView" Grid.Row="0" ItemsSource="{ x:Bind PLViewModel.GroupViewModel, Mode=OneWay}" IsItemClickEnabled="True" SelectionChanged="{x:Bind PLViewModel.playlistSelectionChanged}" Grid.Column="0" Width="Auto" Height="Auto" Margin="5,10,0,5" IsTabStop="False" SelectionMode="Single" ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.VerticalScrollMode="Disabled"  ScrollViewer.HorizontalScrollBarVisibility="Hidden" ItemClick="{x:Bind PLViewModel.playlistClicked}">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsStackPanel Orientation="Horizontal"/>
@@ -53,7 +53,7 @@
                         </SplitView.Pane>
                         <SplitView.Content>
                             <Grid BorderBrush="{x:Bind BorderBrush,Mode=OneWay}" BorderThickness="1">
-                                <Image Height="275" Width="275" VerticalAlignment="Center" Source="{x:Bind ListImage, Mode=OneWay}" Stretch="Fill"/>
+                                <Image Height="200" Width="200" VerticalAlignment="Center" Source="{x:Bind ListImage, Mode=OneWay}" Stretch="Fill"/>
                                 <Grid VerticalAlignment="Bottom" Height="30" Background="Black" Opacity=".7"/>
                                 <TextBlock VerticalAlignment="Bottom" Margin="5,0,0,0" Height="30" Text="{x:Bind Name}" FontSize="20" Foreground="White"/>
                             </Grid>

@@ -17,6 +17,7 @@ using Bermuda.ViewModels;
 using Bermuda.Services;
 using Bermuda.DataModels;
 using Windows.Media.Playback;
+using System.Threading.Tasks;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -61,6 +62,8 @@ namespace Bermuda
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             PLViewModel.GroupViewModel = new PlaylistGroupViewModel(this.Dispatcher, PLViewModel, MessageViewModel, CLViewModel);
+
+            Task.Delay(2000);
 
             if(PlaylistListView.Items.Any())
                 PlaylistListView.SelectedIndex = 0;

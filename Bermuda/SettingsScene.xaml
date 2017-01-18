@@ -96,14 +96,10 @@
             </Setter>
         </Style>
     </Page.Resources>
+
     <Grid>
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Height="50" Margin="10,20,186,0">
-            <TextBlock Name="currentlySignedInTextBlock" HorizontalAlignment="Left" Margin="0,10,0,0" Text="Currently signed in as:" VerticalAlignment="Top" Height="30" Width="200" FontSize="20" Foreground="White"/>
-            <TextBlock Name="signedInAsTextBlock" HorizontalAlignment="Left" Margin="10,10,0,0" Text="username" VerticalAlignment="Top" Height="30" FontSize="20" Foreground="White" Visibility="Visible"/>
-            <Button Style="{StaticResource customButton}" Name="logoutButton" Content="Logout" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Top"  Margin="130,10,0,0" Click="logoutButton_Click"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Height="Auto" Width="Auto" Margin="10,100,0,0">
-            <TextBlock Margin="0,0,30,0" FontSize="20" Text="Accent Color: "/>
+        <StackPanel Orientation="Horizontal" Height="50" Width="Auto" Margin="10,10,0,480">
+            <TextBlock Margin="0,0,30,0" FontSize="20" Text="Accent Color:"/>
             <ComboBox Name="accentComboBox" Width="275" Height="30" SelectionChanged="{x:Bind settingsviewmodel.accentChanged, Mode=OneWay}" ItemsSource="{x:Bind settingsviewmodel.colorlistviewmodel, Mode=OneWay}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate x:DataType="vm:ColorItemViewModel">
@@ -111,6 +107,11 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Height="50" Margin="15,133,181,0">
+            <TextBlock Name="currentlySignedInTextBlock" HorizontalAlignment="Left" Margin="0,10,0,0" Text="Currently signed in as:" VerticalAlignment="Top" Height="30" Width="200" FontSize="20" Foreground="White"/>
+            <TextBlock Name="signedInAsTextBlock" HorizontalAlignment="Left" Margin="10,10,0,0" Text="username" VerticalAlignment="Top" Height="30" FontSize="20" Foreground="White" Visibility="Visible"/>
+            <Button Style="{StaticResource customButton}" Name="logoutButton" Content="Logout" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Top"  Margin="130,10,0,0" Click="logoutButton_Click"/>
         </StackPanel>
         <TextBlock FontSize="10" Margin="0,0,0,10" Foreground="White" Text="Client developed by LazyDev7. Credit for the wonderful API used in this app goes to Lachlan van der Velden. No affiliation with Google. Google Play is a trademark of Google Inc." HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
     </Grid>
