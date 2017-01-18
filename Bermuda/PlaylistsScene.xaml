@@ -20,7 +20,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <ListView Name="PlaylistListView" Grid.Row="0" ItemsSource="{ x:Bind PLViewModel.GroupViewModel, Mode=OneWay}" IsItemClickEnabled="True" SelectionChanged="{x:Bind PLViewModel.playlistSelectionChanged}" Grid.Column="0" Width="Auto" Height="Auto" Margin="5,10,0,5" IsTabStop="False" SelectionMode="Single" ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.VerticalScrollMode="Disabled"  ScrollViewer.HorizontalScrollBarVisibility="Hidden" ItemClick="{x:Bind PLViewModel.playlistClicked}">
+        <ListView Name="PlaylistListView" Grid.Row="0" GotFocus="PlaylistListView_GotFocus"  ItemsSource="{ x:Bind PLViewModel.GroupViewModel, Mode=OneWay}" IsItemClickEnabled="True" SelectionChanged="{x:Bind PLViewModel.playlistSelectionChanged}" Grid.Column="0" Width="Auto" Height="Auto" Margin="5,10,0,5" IsTabStop="False" SelectionMode="Single" ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.VerticalScrollMode="Disabled"  ScrollViewer.HorizontalScrollBarVisibility="Hidden" ItemClick="{x:Bind PLViewModel.playlistClicked}">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsStackPanel Orientation="Horizontal"/>
@@ -70,7 +70,7 @@
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:TrackViewModel">
-                    <SplitView Name="ResultSplitView" Margin="0,0,0,10" OpenPaneLength="150" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}" PanePlacement="Right" DisplayMode="Overlay">
+                    <SplitView Name="ResultSplitView" Margin="0,0,0,10" OpenPaneLength="160" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}" PanePlacement="Right" DisplayMode="Overlay">
                         <SplitView.Pane>
                             <GridView Width="Auto" Height="70" IsItemClickEnabled="True" ItemClick="{x:Bind menuItemClicked}" ScrollViewer.IsHorizontalRailEnabled="False" IsTabStop="False" ScrollViewer.IsVerticalRailEnabled="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled">
                                 <GridView.ItemsPanel>
@@ -78,17 +78,17 @@
                                         <ItemsStackPanel Orientation="Horizontal"/>
                                     </ItemsPanelTemplate>
                                 </GridView.ItemsPanel>
-                                <GridViewItem>
+                                <GridViewItem Margin="5,10,0,0">
                                     <StackPanel Orientation="Horizontal" Width="25" Height="55">
                                         <Image Margin="0,0,0,0" Height="25" Width="25" Source="Assets/play.png"/>
                                     </StackPanel>
                                 </GridViewItem>
-                                <GridViewItem>
+                                <GridViewItem Margin="0,10,0,0">
                                     <StackPanel Orientation="Horizontal" Width="25" Height="55">
                                         <Image Margin="0,0,0,0" Height="25" Width="25" Source="Assets/plus.png"/>
                                     </StackPanel>
                                 </GridViewItem>
-                                <GridViewItem>
+                                <GridViewItem Margin="0,10,0,0">
                                     <StackPanel Orientation="Horizontal" Width="25" Height="55">
                                         <Image Margin="0,0,0,0" Height="25" Width="25" Source="Assets/cancel.png"/>
                                     </StackPanel>
@@ -107,7 +107,7 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Image Height="50" Width="75" Grid.Column="0" HorizontalAlignment="Left" Margin="0,0,30,0" Stretch="Fill" Source="{x:Bind PreviewImage, Mode=OneWay}"/>
+                                <Image Height="60" Width="75" Grid.Column="0" HorizontalAlignment="Left" Margin="5,0,30,0" Stretch="Fill" Source="{x:Bind PreviewImage, Mode=OneWay}"/>
                                 <TextBlock Text="{x:Bind Title}" Margin="0,0,30,0" Grid.Column="1" Height="30" Width="Auto" FontSize="20"/>
                                 <TextBlock Text="{x:Bind Album}" Margin="0,0,30,0" Grid.Column="2" Height="30" Width="Auto" FontSize="20"/>
                                 <TextBlock Text="{x:Bind Artist}" Margin="0,0,30,0" Grid.Column="3" Height="30" Width="Auto" FontSize="20"/>

@@ -62,11 +62,6 @@ namespace Bermuda
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             PLViewModel.GroupViewModel = new PlaylistGroupViewModel(this.Dispatcher, PLViewModel, MessageViewModel, CLViewModel);
-
-            Task.Delay(2000);
-
-            if(PlaylistListView.Items.Any())
-                PlaylistListView.SelectedIndex = 0;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
@@ -77,5 +72,10 @@ namespace Bermuda
             AppSettings.localSettings.Values["lastPage"] = "Playlists";
         }
 
+        private void PlaylistListView_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (PlaylistListView.Items.Any() && PlaylistListView.SelectedIndex == -1)
+                PlaylistListView.SelectedIndex = 0;
+        }
     }
 }
