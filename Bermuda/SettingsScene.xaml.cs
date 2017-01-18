@@ -79,9 +79,7 @@ namespace Bermuda
             }
 
             else
-                accentIndex = 12;
-           
-            
+                accentIndex = 12;      
 
             accentComboBox.SelectedIndex = accentIndex;
 

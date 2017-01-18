@@ -227,8 +227,8 @@ namespace Bermuda
 
             System.Diagnostics.Debug.WriteLine("Entered background.");
 
-            Window.Current.Content = null;
-            GC.Collect();
+            //Window.Current.Content = null;
+            //GC.Collect();
         }
 
         private void MemoryManager_AppMemoryUsageLimitChanging(object sender, AppMemoryUsageLimitChangingEventArgs e)

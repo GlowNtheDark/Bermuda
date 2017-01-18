@@ -317,7 +317,8 @@ namespace Bermuda.Services
             CLViewModel = null;
             CLViewModel = new ColorListViewModel();
             ThemeColor = CLViewModel[CLViewModel.index].Color;
-            CurrentPlaylist[currentSongIndex].tileColor = ThemeColor;
+            if (CurrentPlaylist.Count > 0)
+                CurrentPlaylist[currentSongIndex].tileColor = ThemeColor;
         }
 
         public static async Task<Uri> GetStreamUrl(MobileClient mc, Track track)

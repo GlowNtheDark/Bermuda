@@ -61,6 +61,9 @@ namespace Bermuda
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             PLViewModel.GroupViewModel = new PlaylistGroupViewModel(this.Dispatcher, PLViewModel, MessageViewModel, CLViewModel);
+
+            if(PlaylistListView.Items.Any())
+                PlaylistListView.SelectedIndex = 0;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)

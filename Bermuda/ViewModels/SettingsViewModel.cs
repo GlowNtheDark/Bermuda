@@ -25,10 +25,27 @@ namespace Bermuda.ViewModels
 
         public void accentChanged(object sender, object e)
         {
-            ComboBox cb = sender as ComboBox;
-            int index = cb.SelectedIndex;
-            AppSettings.localSettings.Values["accentColor"] = index.ToString();
-            PlayerService.Instance.updateTheme();
+            if (AppSettings.localSettings.Values["accentColor"] != null)
+            {
+                int index = 12;
+
+                ComboBox cb = sender as ComboBox;
+
+                if (cb.SelectedIndex > -1)
+                    index = cb.SelectedIndex;
+
+                AppSettings.localSettings.Values["accentColor"] = index.ToString();
+                PlayerService.Instance.updateTheme();
+            }
+
+            else
+            {
+                int index = 12;
+
+                AppSettings.localSettings.Values["accentColor"] = index.ToString();
+                PlayerService.Instance.updateTheme();
+            }
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
