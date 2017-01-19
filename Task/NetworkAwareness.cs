@@ -124,7 +124,6 @@ namespace Tasks
             }
         }
     
-
         public void OnCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
         {
             _cancelRequested = true;

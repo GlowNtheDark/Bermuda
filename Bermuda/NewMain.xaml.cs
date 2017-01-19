@@ -171,14 +171,13 @@ namespace Bermuda
 
                 BackgroundTaskRegistration task = builder.Register();
                 task.Completed += new BackgroundTaskCompletedEventHandler(networkAwarenessOnCompleted);
+                
             }
 
             catch (Exception e)
             {
                 System.Diagnostics.Debug.WriteLine(e);
             }
-
-
         }
 
         private async void createServicingTask(string taskName)

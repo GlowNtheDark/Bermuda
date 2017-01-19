@@ -22,6 +22,7 @@ using GoogleMusicApi.UWP.Common;
 using Windows.Foundation.Metadata;
 using Windows.UI.ViewManagement;
 using Windows.UI;
+using Windows.ApplicationModel.Background;
 
 namespace Bermuda
 {
@@ -37,12 +38,8 @@ namespace Bermuda
         public App()
         {
             this.InitializeComponent();
-#if WINDOWS_UWP
-            string family = AnalyticsInfo.VersionInfo.DeviceFamily;
-            if (family == "Windows.Xbox")
-            { 
-                this.RequiresPointerMode = Windows.UI.Xaml.ApplicationRequiresPointerMode.WhenRequested;
-            }
+#if !Debug
+                this.RequiresPointerMode = Windows.UI.Xaml.ApplicationRequiresPointerMode.WhenRequested;           
 #endif
             this.Suspending += OnSuspending;
             this.EnteredBackground += App_EnteredBackground;
@@ -86,8 +83,8 @@ namespace Bermuda
 
             try
             {
-                var credentialList = vault.FindAllByResource(resourceName);
-
+                //var credentialList = vault.FindAllByResource(resourceName);
+                var credentialList = vault.RetrieveAll();
 
                 if (credentialList.Count > 0)
                 {
@@ -107,7 +104,7 @@ namespace Bermuda
                 }
             }
 
-            catch
+            catch(Exception e)
             {
                 return credential;
             }
@@ -130,15 +127,10 @@ namespace Bermuda
 #endif
             Frame rootFrame = Window.Current.Content as Frame;
 
-#if WINDOWS_UWP
-            string family = AnalyticsInfo.VersionInfo.DeviceFamily;
-            if (family == "Windows.Xbox")
-            {
-                Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
-                //bool result = Windows.UI.ViewManagement.ApplicationViewScaling.TrySetDisableLayoutScaling(true);
-            }
-#endif
+#if !DEBUG
 
+            Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);           
+#endif
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
             if (rootFrame == null)
@@ -217,6 +209,15 @@ namespace Bermuda
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
+
+            /*foreach (var task in BackgroundTaskRegistration.AllTasks)
+            {
+                if (task.Value.Name == taskName)
+                {
+                    task.Value.
+                    task.Value.Unregister(true);
+                }
+            }*/
             AppSettings.localSettings.Values["lastPage"] = "QuickPlay";
             deferral.Complete();
         }

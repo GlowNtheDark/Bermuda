@@ -84,6 +84,15 @@ namespace Bermuda.Services
             ThemeColor = CLViewModel[CLViewModel.index].Color;
         }
 
+        public void ResetService()
+        {
+            Player.Pause();
+            CurrentPlaylist = null;
+            CLViewModel = null;
+            currentSongIndex = 0;
+            previousSongIndex = 0;
+        }
+
         private void Player_MediaOpened(MediaPlayer sender, object args)
         {
             canSkipNext = true;

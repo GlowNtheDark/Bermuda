@@ -68,13 +68,21 @@ namespace Bermuda.ViewModels
             if(result.Label == "Yes")
             {
                 var vault = new Windows.Security.Credentials.PasswordVault();
+                try
+                {
+                    Windows.Security.Credentials.PasswordCredential credential = GetCredentialFromLocker();
 
-                Windows.Security.Credentials.PasswordCredential credential = GetCredentialFromLocker();
+                    if (credential != null)
+                        vault.Remove(new Windows.Security.Credentials.PasswordCredential("Bermuda", credential.UserName, credential.Password));
+                }
 
-                if (credential != null)
-                    vault.Remove(new Windows.Security.Credentials.PasswordCredential("Bermuda", credential.UserName, credential.Password));
+                catch
+                {
+                    //password was not stored. do nothing.
+                }
 
                 NewMain.Current.mc = null;
+                PlayerService.Instance.ResetService();
                 NewMain.Current.loadLoginFrame();
             }
 
