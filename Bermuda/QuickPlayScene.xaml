@@ -26,7 +26,7 @@
                         <Grid Margin="0,0,0,0" BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="1">
                         <SplitView DisplayMode="Overlay" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}" OpenPaneLength="200">
                             <SplitView.Pane>
-                                <GridView IsItemClickEnabled="True" Width="185" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False" ItemClick="{x:Bind QPViewModel.GridView_ItemClick}">
+                                 <GridView IsItemClickEnabled="True" Width="185" Margin="0,3,0,0" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False" ItemClick="{x:Bind QPViewModel.GridView_ItemClick}">
                                     <GridViewItem Width="182">
                                         <StackPanel Name="Add to queue." Orientation="Horizontal" Width="182">
                                             <TextBlock Margin="15,0,0,0" Text="Add to queue." FontSize="15" VerticalAlignment="Center"/>
@@ -66,7 +66,7 @@
                     <Grid Margin="0,0,0,0" BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="1">
                         <SplitView DisplayMode="Overlay" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}" OpenPaneLength="200">
                             <SplitView.Pane>
-                                <GridView IsItemClickEnabled="True" Width="185" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False" ItemClick="{x:Bind QPViewModel.GridView_ItemClick}">
+                                    <GridView IsItemClickEnabled="True" Margin="0,3,0,0" Width="185" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False" ItemClick="{x:Bind QPViewModel.GridView_ItemClick}">
                                         <GridViewItem Width="182">
                                             <StackPanel Name="Add to queue." Orientation="Horizontal" Width="182">
                                                 <TextBlock Margin="15,0,0,0" Text="Start Radio" FontSize="18" VerticalAlignment="Center"/>

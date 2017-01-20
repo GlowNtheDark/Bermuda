@@ -157,6 +157,8 @@
     <Compile Include="ViewModels\QuickPlayAlbumViewModel.cs" />
     <Compile Include="ViewModels\QuickPlayRadioViewModel..cs" />
     <Compile Include="ViewModels\QuickPlayViewModel.cs" />
+    <Compile Include="ViewModels\QuiltItemViewModel.cs" />
+    <Compile Include="ViewModels\QuiltListViewModel.cs" />
     <Compile Include="ViewModels\SearchViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\StringUriConverter.cs" />

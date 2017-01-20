@@ -1,4 +1,5 @@
-﻿using GoogleMusicApi.UWP.Structure;
+﻿using Bermuda.DataModels;
+using GoogleMusicApi.UWP.Structure;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,6 +19,8 @@ namespace Bermuda.ViewModels
         public Playlist playlist { get; private set; }
 
         public PlaylistViewModel PLViewModel;
+
+        public QuiltListViewModel albumsquilt;
 
         public string Name => playlist.Name;
 
@@ -113,18 +116,16 @@ namespace Bermuda.ViewModels
             MenuOpen = false;
         }
 
-        BitmapImage listImage;
-
-        public BitmapImage ListImage
+        public QuiltListViewModel AlbumsQuilt
         {
-            get { return listImage; }
+            get { return albumsquilt; }
 
             private set
             {
-                if (listImage != value)
+                if (albumsquilt != value)
                 {
-                    listImage = value;
-                    RaisePropertyChanged("ListImage");
+                    albumsquilt = value;
+                    RaisePropertyChanged("AlbumsQuilt");
                 }
             }
         }
@@ -154,19 +155,59 @@ namespace Bermuda.ViewModels
             this.PLViewModel = plviewmodel;
             this.BorderBrush = brush;
             RaisePropertyChanged("Name");
-
-            ListImage = new BitmapImage();
-
-            if(playlist.OwnerProfilePhotoUrl != null)
-                ListImage.UriSource = new Uri(playlist.OwnerProfilePhotoUrl);
-            else
-                ListImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
-
+            AlbumsQuilt = new QuiltListViewModel();
+            createQuiltAsync(playlist);
 
             MenuOpen = false;
             IsVisibleZero = Visibility.Collapsed;
             IsVisibleOne = Visibility.Collapsed;
             IsVisibleTwo = Visibility.Collapsed;
+        }
+
+        public async void createQuiltAsync( Playlist playlist)
+        {
+            bool whatever = await createQuilt(playlist);
+        }
+
+        public async Task<bool> createQuilt(Playlist playlist)
+        {
+            Random rand = new Random();
+
+            List<Track> templist = new List<Track>();
+
+            templist = await NewMain.Current.mc.ListTracksFromPlaylist(playlist);
+
+            if (templist.Count > 0)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    string url = templist[rand.Next(0, templist.Count)].AlbumArtReference[0].Url;
+                    BitmapImage TempImage = new BitmapImage();
+
+                    if (url != null)
+                        TempImage.UriSource = new Uri(url);
+                    else
+                        TempImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
+
+                    AlbumsQuilt.Add(new QuiltItemViewModel(TempImage));
+                    RaisePropertyChanged("AlbumsQuilt");
+                }
+            }
+
+            else
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    BitmapImage TempImage = new BitmapImage();
+                    TempImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
+
+                    AlbumsQuilt.Add(new QuiltItemViewModel(TempImage));
+                    RaisePropertyChanged("AlbumsQuilt");
+                }
+
+            }
+
+            return true;
         }
 
         private void RaisePropertyChanged(string propertyName)

@@ -216,18 +216,35 @@ namespace Bermuda.ViewModels
 
                     if (index == 0) //Add to end of queue
                     {
-                        foreach (Track track in album.Tracks)
-                        {
-                            if(track != null)
-                                PlayerService.Instance.CurrentPlaylist.Add(track);
-                        }
 
                         if (PlayerService.Instance.Player.Source == null)
                         {
+                            foreach (Track track in album.Tracks)
+                            {
+                                if (track != null)
+                                    PlayerService.Instance.CurrentPlaylist.Add(track);
+                            }
+
                             PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
                             PlayerService.Instance.Player.Play();
                         }
-                        PlayerService.Instance.isRadioMode = false;
+                        else if (PlayerService.Instance.isRadioMode)
+                        {
+                            PlayerService.Instance.CurrentPlaylist.Clear();
+                            PlayerService.Instance.previousSongIndex = 0;
+                            PlayerService.Instance.currentSongIndex = 0;
+                            PlayerService.Instance.isRadioMode = false;
+
+                            foreach (Track track in album.Tracks)
+                            {
+                                if (track != null)
+                                    PlayerService.Instance.CurrentPlaylist.Add(track);
+                            }
+
+                            PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
+                            PlayerService.Instance.Player.Play();
+                        }
+
                         itemviewmodel.showCheckMark(0);
                     }
 

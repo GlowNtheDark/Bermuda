@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Bermuda"
     xmlns:vm="using:Bermuda.ViewModels"
+    xmlns:st="using:GoogleMusicApi.UWP.Structure"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" Loaded="Page_Loaded" Unloaded="Page_Unloaded">
@@ -28,9 +29,9 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:PlaylistItemViewModel">
-                    <SplitView Name="ItemSplitView" Margin="5,0,15,0" DisplayMode="Overlay" OpenPaneLength="175" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}">
+                    <SplitView Name="ItemSplitView" Margin="5,0,5,0" Width="Auto" Height="Auto" DisplayMode="Overlay" OpenPaneLength="175" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}">
                         <SplitView.Pane>
-                            <GridView IsItemClickEnabled="True" Width="175" ItemClick="{x:Bind PLViewModel.playlistItemMenuClicked}" ScrollViewer.IsHorizontalRailEnabled="False" IsTabStop="False" ScrollViewer.IsVerticalRailEnabled="False">
+                            <GridView IsItemClickEnabled="True" Width="175"  Margin="0,3,0,0" ItemClick="{x:Bind PLViewModel.playlistItemMenuClicked}" ScrollViewer.IsHorizontalRailEnabled="False" IsTabStop="False" ScrollViewer.IsVerticalRailEnabled="False">
                                 <GridViewItem Width="174">
                                     <StackPanel Orientation="Horizontal" Width="170">
                                         <TextBlock Margin="5,0,0,0" Text="Add to queue." FontSize="15" VerticalAlignment="Center"/>
@@ -52,8 +53,19 @@
                             </GridView>
                         </SplitView.Pane>
                         <SplitView.Content>
-                            <Grid BorderBrush="{x:Bind BorderBrush,Mode=OneWay}" BorderThickness="1">
-                                <Image Height="200" Width="200" VerticalAlignment="Center" Source="{x:Bind ListImage, Mode=OneWay}" Stretch="Fill"/>
+                            <Grid BorderBrush="{x:Bind BorderBrush,Mode=OneWay}" Background="Black" BorderThickness="1" Height="Auto" Width="Auto">
+                                <GridView Width="208" Height="200" ItemsSource="{x:Bind AlbumsQuilt, Mode=OneWay}" IsTabStop="False" SelectionMode="None" IsItemClickEnabled="False" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.IsVerticalRailEnabled="False" ScrollViewer.IsHorizontalRailEnabled="False">
+                                    <GridView.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <ItemsWrapGrid Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </GridView.ItemsPanel>
+                                    <GridView.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:QuiltItemViewModel">
+                                            <Image Height="100" Width="100" Source="{x:Bind Image}" Stretch="Fill"/>
+                                        </DataTemplate>
+                                    </GridView.ItemTemplate>
+                                </GridView>                              
                                 <Grid VerticalAlignment="Bottom" Height="30" Background="Black" Opacity=".7"/>
                                 <TextBlock VerticalAlignment="Bottom" Margin="5,0,0,0" Height="30" Text="{x:Bind Name}" FontSize="20" Foreground="White"/>
                             </Grid>

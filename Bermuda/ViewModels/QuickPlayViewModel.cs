@@ -94,19 +94,34 @@ namespace Bermuda.ViewModels
                         {
                             Album album = await getAlbum(NewMain.Current.mc, item.Album.Id.MetajamCompactKey.ToString());
 
-                            foreach (Track track in album.Tracks)
-                            {
-                                if(track != null)
-                                    MediaList.Add(track);
-                            }
-
                             if (Player.Source == null)
                             {
+                                foreach (Track track in album.Tracks)
+                                {
+                                    if (track != null)
+                                        MediaList.Add(track);
+                                }
+
                                 Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, album.Tracks[0])));
                                 Player.Play();
                             }
 
-                            PlayerService.Instance.isRadioMode = false;
+                            else if (PlayerService.Instance.isRadioMode)
+                            {
+                                PlayerService.Instance.CurrentPlaylist.Clear();
+                                PlayerService.Instance.previousSongIndex = 0;
+                                PlayerService.Instance.currentSongIndex = 0;
+                                PlayerService.Instance.isRadioMode = false;
+
+                                foreach (Track track in album.Tracks)
+                                {
+                                    if (track != null)
+                                        MediaList.Add(track);
+                                }
+
+                                PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
+                                PlayerService.Instance.Player.Play();
+                            }
                         }
 
                         catch (Exception ex)

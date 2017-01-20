@@ -282,29 +282,58 @@ namespace Bermuda.ViewModels
 
                         if (index == 0) //Add all to end of queue
                         {
-                            foreach (Album album in albumlist)
-                            {
-                                if (album != null)
-                                {
-                                    Album temp = await NewMain.Current.mc.GetAlbumAsync(album.AlbumId);
-
-                                    if (temp != null)
-                                    {
-                                        foreach (Track track in temp.Tracks)
-                                        {
-                                            if(track != null)
-                                                PlayerService.Instance.CurrentPlaylist.Add(track);
-                                        }
-                                    }
-                                }
-                            }
 
                             if (PlayerService.Instance.Player.Source == null)
                             {
+                                foreach (Album album in albumlist)
+                                {
+                                    if (album != null)
+                                    {
+                                        Album temp = await NewMain.Current.mc.GetAlbumAsync(album.AlbumId);
+
+                                        if (temp != null)
+                                        {
+                                            foreach (Track track in temp.Tracks)
+                                            {
+                                                if (track != null)
+                                                    PlayerService.Instance.CurrentPlaylist.Add(track);
+                                            }
+                                        }
+                                    }
+                                }
                                 PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
                                 PlayerService.Instance.Player.Play();
                             }
-                            PlayerService.Instance.isRadioMode = false;
+
+                            else if(PlayerService.Instance.isRadioMode)
+                            {
+                                PlayerService.Instance.CurrentPlaylist.Clear();
+                                PlayerService.Instance.previousSongIndex = 0;
+                                PlayerService.Instance.currentSongIndex = 0;
+                                PlayerService.Instance.isRadioMode = false;
+
+                                foreach (Album album in albumlist)
+                                {
+                                    if (album != null)
+                                    {
+                                        Album temp = await NewMain.Current.mc.GetAlbumAsync(album.AlbumId);
+
+                                        if (temp != null)
+                                        {
+                                            foreach (Track track in temp.Tracks)
+                                            {
+                                                if (track != null)
+                                                    PlayerService.Instance.CurrentPlaylist.Add(track);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
+                                PlayerService.Instance.Player.Play();
+                            }
+
+                            
                             itemviewmodel.showCheckMark(0);
                         }
 
