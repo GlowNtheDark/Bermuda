@@ -87,7 +87,7 @@ namespace Bermuda.Services
         public void ResetService()
         {
             Player.Pause();
-            CurrentPlaylist = null;
+            CurrentPlaylist.Clear();
             CLViewModel = null;
             currentSongIndex = 0;
             previousSongIndex = 0;
@@ -326,7 +326,8 @@ namespace Bermuda.Services
             CLViewModel = null;
             CLViewModel = new ColorListViewModel();
             ThemeColor = CLViewModel[CLViewModel.index].Color;
-            if (CurrentPlaylist.Count > 0)
+            if (CurrentPlaylist != null)
+                if(CurrentPlaylist.Count > 0)
                 CurrentPlaylist[currentSongIndex].tileColor = ThemeColor;
         }
 

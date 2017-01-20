@@ -56,10 +56,17 @@ namespace Bermuda
 
             if (testNetworkConnection())
             {
-                string username = unameTextBox.Text;
-                string password = passwordBox.Password;
+                try
+                {
+                    string username = unameTextBox.Text;
+                    string password = passwordBox.Password;
 
-                Login(username, password);
+                    Login(username, password);
+                }
+                catch(Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex);
+                }
             }
 
             else

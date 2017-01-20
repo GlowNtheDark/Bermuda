@@ -267,7 +267,7 @@
             <Button.Flyout>
                 <Flyout Placement="Top" FlyoutPresenterStyle="{StaticResource customFlyout}">
                     <Grid HorizontalAlignment="Right" Height="350" Width="150" Background="#FF413D3D">
-                        <TextBlock Foreground="White" Text="The account you sign in with must have a valid music subscription for the app to work. 2-Factor Authentication is not currently supported. A work around is to make us of an app password to sign in to Bermuda." TextWrapping="WrapWholeWords" Margin="5,5,0,0"/>
+                        <TextBlock Foreground="White" Text="The account you sign in with must have a valid music subscription for the app to work. 2-Factor Authentication is not currently supported. A work around is to make use of an app password to sign in to Bermuda." TextWrapping="WrapWholeWords" Margin="5,5,0,0"/>
                     </Grid>
                 </Flyout>
             </Button.Flyout>

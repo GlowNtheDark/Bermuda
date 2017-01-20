@@ -16,7 +16,7 @@
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
             <Image Name="alertImage" Width="20" Height="25" Margin="10,5,0,0" VerticalAlignment="Center" Source="/Assets/Exclamation.png" Visibility="{x:Bind MessageViewModel.AlertVisibility, Mode=OneWay}"/>
-            <Button x:Name="HamburgerButton" Margin="10,0,0,0" Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Left" FontFamily="Segoe MDL2 Assets" Content="&#xE700;" Width="45" Height="50"  FontSize="35" Background="Transparent" Click="HamburgerButton_Click"/>
+            <Button x:Name="HamburgerButton" Margin="10,5,0,0" Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Left" FontFamily="Segoe MDL2 Assets" Content="&#xE700;" Width="45" Height="40"  FontSize="30" Background="Transparent" Click="HamburgerButton_Click"/>
             <TextBlock Name="pageTitle" Margin="10,0,0,0" Text="Current Page Title" FontSize="30" VerticalAlignment="Center" Visibility="Collapsed"/>
         </StackPanel>
         <SplitView x:Name="MySplitView" Margin="0,5,0,0" IsTabStop="False" Grid.Row="1" DisplayMode="Overlay" IsPaneOpen="False" OpenPaneLength="210" CompactPaneLength="37">
