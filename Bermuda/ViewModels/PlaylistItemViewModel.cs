@@ -20,7 +20,65 @@ namespace Bermuda.ViewModels
 
         public PlaylistViewModel PLViewModel;
 
-        public QuiltListViewModel albumsquilt;
+        public BitmapImage tile1;
+
+        public BitmapImage Tile1
+        {
+            get { return tile1; }
+            set
+            {
+                if (tile1 != value)
+                {
+                    tile1 = value;
+                    RaisePropertyChanged("Tile1");
+                }
+            }
+        }
+
+        public BitmapImage tile2;
+
+        public BitmapImage Tile2
+        {
+            get { return tile2; }
+            set
+            {
+                if (tile2 != value)
+                {
+                    tile2 = value;
+                    RaisePropertyChanged("Tile2");
+                }
+            }
+        }
+
+        public BitmapImage tile3;
+
+        public BitmapImage Tile3
+        {
+            get { return tile3; }
+            set
+            {
+                if (tile3 != value)
+                {
+                    tile3 = value;
+                    RaisePropertyChanged("Tile3");
+                }
+            }
+        }
+
+        public BitmapImage tile4;
+
+        public BitmapImage Tile4
+        {
+            get { return tile4; }
+            set
+            {
+                if (tile4 != value)
+                {
+                    tile4 = value;
+                    RaisePropertyChanged("Tile4");
+                }
+            }
+        }
 
         public string Name => playlist.Name;
 
@@ -116,20 +174,6 @@ namespace Bermuda.ViewModels
             MenuOpen = false;
         }
 
-        public QuiltListViewModel AlbumsQuilt
-        {
-            get { return albumsquilt; }
-
-            private set
-            {
-                if (albumsquilt != value)
-                {
-                    albumsquilt = value;
-                    RaisePropertyChanged("AlbumsQuilt");
-                }
-            }
-        }
-
         public bool MenuOpen
         {
             get { return menuOpen; }
@@ -155,7 +199,7 @@ namespace Bermuda.ViewModels
             this.PLViewModel = plviewmodel;
             this.BorderBrush = brush;
             RaisePropertyChanged("Name");
-            AlbumsQuilt = new QuiltListViewModel();
+
             createQuiltAsync(playlist);
 
             MenuOpen = false;
@@ -179,31 +223,70 @@ namespace Bermuda.ViewModels
 
             if (templist.Count > 0)
             {
-                for (int i = 0; i < 4; i++)
-                {
-                    string url = templist[rand.Next(0, templist.Count)].AlbumArtReference[0].Url;
-                    BitmapImage TempImage = new BitmapImage();
+                string url = templist[rand.Next(0, templist.Count)].AlbumArtReference[0].Url;
+                BitmapImage TempImage = new BitmapImage();
 
-                    if (url != null)
-                        TempImage.UriSource = new Uri(url);
-                    else
-                        TempImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
+                if (url != null)
+                    TempImage.UriSource = new Uri(url);
+                else
+                    TempImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
 
-                    AlbumsQuilt.Add(new QuiltItemViewModel(TempImage));
-                    RaisePropertyChanged("AlbumsQuilt");
-                }
+                Tile1 = TempImage;
+                RaisePropertyChanged("Tile1");
+
+                url = templist[rand.Next(0, templist.Count)].AlbumArtReference[0].Url;
+                TempImage = new BitmapImage();
+
+                if (url != null)
+                    TempImage.UriSource = new Uri(url);
+                else
+                    TempImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
+
+                Tile2 = TempImage;
+                RaisePropertyChanged("Tile2");
+
+                url = templist[rand.Next(0, templist.Count)].AlbumArtReference[0].Url;
+                TempImage = new BitmapImage();
+
+                if (url != null)
+                    TempImage.UriSource = new Uri(url);
+                else
+                    TempImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
+
+                Tile3 = TempImage;
+                RaisePropertyChanged("Tile3");
+
+                url = templist[rand.Next(0, templist.Count)].AlbumArtReference[0].Url;
+                TempImage = new BitmapImage();
+
+                if (url != null)
+                    TempImage.UriSource = new Uri(url);
+                else
+                    TempImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
+
+                Tile4 = TempImage;
+                RaisePropertyChanged("Tile4");
             }
 
             else
             {
-                for (int i = 0; i < 4; i++)
-                {
-                    BitmapImage TempImage = new BitmapImage();
-                    TempImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
+                BitmapImage TempImage = new BitmapImage();
 
-                    AlbumsQuilt.Add(new QuiltItemViewModel(TempImage));
-                    RaisePropertyChanged("AlbumsQuilt");
-                }
+                TempImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
+
+                Tile1 = TempImage;
+                RaisePropertyChanged("Tile1");
+
+                Tile2 = TempImage;
+                RaisePropertyChanged("Tile2");
+
+
+                Tile3 = TempImage;
+                RaisePropertyChanged("Tile3");
+
+
+                Tile4 = TempImage;
+                RaisePropertyChanged("Tile4");
 
             }
 
