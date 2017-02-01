@@ -272,7 +272,6 @@ namespace Bermuda.ViewModels
 
                     if (albumresponse.Entries != null)
                     {
-
                         foreach (SearchResult result in albumresponse.Entries)
                         {
                             if(result != null)
@@ -282,30 +281,7 @@ namespace Bermuda.ViewModels
 
                         if (index == 0) //Add all to end of queue
                         {
-
-                            if (PlayerService.Instance.Player.Source == null)
-                            {
-                                foreach (Album album in albumlist)
-                                {
-                                    if (album != null)
-                                    {
-                                        Album temp = await NewMain.Current.mc.GetAlbumAsync(album.AlbumId);
-
-                                        if (temp != null)
-                                        {
-                                            foreach (Track track in temp.Tracks)
-                                            {
-                                                if (track != null)
-                                                    PlayerService.Instance.CurrentPlaylist.Add(track);
-                                            }
-                                        }
-                                    }
-                                }
-                                PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
-                                PlayerService.Instance.Player.Play();
-                            }
-
-                            else if(PlayerService.Instance.isRadioMode)
+                            if(PlayerService.Instance.isRadioMode)
                             {
                                 PlayerService.Instance.CurrentPlaylist.Clear();
                                 PlayerService.Instance.previousSongIndex = 0;
@@ -333,6 +309,31 @@ namespace Bermuda.ViewModels
                                 PlayerService.Instance.Player.Play();
                             }
 
+                            else
+                            {
+                                foreach (Album album in albumlist)
+                                {
+                                    if (album != null)
+                                    {
+                                        Album temp = await NewMain.Current.mc.GetAlbumAsync(album.AlbumId);
+
+                                        if (temp != null)
+                                        {
+                                            foreach (Track track in temp.Tracks)
+                                            {
+                                                if (track != null)
+                                                    PlayerService.Instance.CurrentPlaylist.Add(track);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (PlayerService.Instance.Player.Source == null)
+                                {
+                                    PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
+                                    PlayerService.Instance.Player.Play();
+                                }
+                            }
                             
                             itemviewmodel.showCheckMark(0);
                         }

@@ -120,17 +120,7 @@ namespace Bermuda.ViewModels
             if (menuIndex == 0) //Add to queue
             {
 
-                if (Player.Source == null)
-                {
-                    foreach (Track track in TLViewModel.SongList)
-                    {
-                        if (track != null)
-                            MediaList.Add(track);
-                    }
-                    Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, TLViewModel.SongList[0])));
-                    Player.Play();
-                }
-                else if (PlayerService.Instance.isRadioMode)
+                if (PlayerService.Instance.isRadioMode)
                 {
                     PlayerService.Instance.CurrentPlaylist.Clear();
                     PlayerService.Instance.previousSongIndex = 0;
@@ -145,6 +135,21 @@ namespace Bermuda.ViewModels
 
                     PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
                     PlayerService.Instance.Player.Play();
+                }
+
+                else
+                {
+                    foreach (Track track in TLViewModel.SongList)
+                    {
+                        if (track != null)
+                            MediaList.Add(track);
+                    }
+
+                    if (Player.Source == null)
+                    {
+                        Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, TLViewModel.SongList[0])));
+                        Player.Play();
+                    }
                 }
 
                 PlayerService.Instance.isRadioMode = false;

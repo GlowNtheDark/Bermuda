@@ -221,73 +221,77 @@ namespace Bermuda.ViewModels
 
             templist = await NewMain.Current.mc.ListTracksFromPlaylist(playlist);
 
-            if (templist.Count > 0)
+            if (templist != null)
             {
-                string url = templist[rand.Next(0, templist.Count)].AlbumArtReference[0].Url;
-                BitmapImage TempImage = new BitmapImage();
 
-                if (url != null)
-                    TempImage.UriSource = new Uri(url);
+                if (templist.Count > 0)
+                {
+                    string url = templist[rand.Next(0, templist.Count)].AlbumArtReference[0].Url;
+                    BitmapImage TempImage = new BitmapImage();
+
+                    if (url != null)
+                        TempImage.UriSource = new Uri(url);
+                    else
+                        TempImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
+
+                    Tile1 = TempImage;
+                    RaisePropertyChanged("Tile1");
+
+                    url = templist[rand.Next(0, templist.Count)].AlbumArtReference[0].Url;
+                    TempImage = new BitmapImage();
+
+                    if (url != null)
+                        TempImage.UriSource = new Uri(url);
+                    else
+                        TempImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
+
+                    Tile2 = TempImage;
+                    RaisePropertyChanged("Tile2");
+
+                    url = templist[rand.Next(0, templist.Count)].AlbumArtReference[0].Url;
+                    TempImage = new BitmapImage();
+
+                    if (url != null)
+                        TempImage.UriSource = new Uri(url);
+                    else
+                        TempImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
+
+                    Tile3 = TempImage;
+                    RaisePropertyChanged("Tile3");
+
+                    url = templist[rand.Next(0, templist.Count)].AlbumArtReference[0].Url;
+                    TempImage = new BitmapImage();
+
+                    if (url != null)
+                        TempImage.UriSource = new Uri(url);
+                    else
+                        TempImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
+
+                    Tile4 = TempImage;
+                    RaisePropertyChanged("Tile4");
+                }
+
                 else
+                {
+                    BitmapImage TempImage = new BitmapImage();
+
                     TempImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
 
-                Tile1 = TempImage;
-                RaisePropertyChanged("Tile1");
+                    Tile1 = TempImage;
+                    RaisePropertyChanged("Tile1");
 
-                url = templist[rand.Next(0, templist.Count)].AlbumArtReference[0].Url;
-                TempImage = new BitmapImage();
-
-                if (url != null)
-                    TempImage.UriSource = new Uri(url);
-                else
-                    TempImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
-
-                Tile2 = TempImage;
-                RaisePropertyChanged("Tile2");
-
-                url = templist[rand.Next(0, templist.Count)].AlbumArtReference[0].Url;
-                TempImage = new BitmapImage();
-
-                if (url != null)
-                    TempImage.UriSource = new Uri(url);
-                else
-                    TempImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
-
-                Tile3 = TempImage;
-                RaisePropertyChanged("Tile3");
-
-                url = templist[rand.Next(0, templist.Count)].AlbumArtReference[0].Url;
-                TempImage = new BitmapImage();
-
-                if (url != null)
-                    TempImage.UriSource = new Uri(url);
-                else
-                    TempImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
-
-                Tile4 = TempImage;
-                RaisePropertyChanged("Tile4");
-            }
-
-            else
-            {
-                BitmapImage TempImage = new BitmapImage();
-
-                TempImage.UriSource = new Uri("ms-appx:///Assets/no_image.png", UriKind.Absolute);
-
-                Tile1 = TempImage;
-                RaisePropertyChanged("Tile1");
-
-                Tile2 = TempImage;
-                RaisePropertyChanged("Tile2");
+                    Tile2 = TempImage;
+                    RaisePropertyChanged("Tile2");
 
 
-                Tile3 = TempImage;
-                RaisePropertyChanged("Tile3");
+                    Tile3 = TempImage;
+                    RaisePropertyChanged("Tile3");
 
 
-                Tile4 = TempImage;
-                RaisePropertyChanged("Tile4");
+                    Tile4 = TempImage;
+                    RaisePropertyChanged("Tile4");
 
+                }
             }
 
             return true;

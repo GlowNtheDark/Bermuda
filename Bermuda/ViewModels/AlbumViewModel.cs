@@ -216,19 +216,7 @@ namespace Bermuda.ViewModels
 
                     if (index == 0) //Add to end of queue
                     {
-
-                        if (PlayerService.Instance.Player.Source == null)
-                        {
-                            foreach (Track track in album.Tracks)
-                            {
-                                if (track != null)
-                                    PlayerService.Instance.CurrentPlaylist.Add(track);
-                            }
-
-                            PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
-                            PlayerService.Instance.Player.Play();
-                        }
-                        else if (PlayerService.Instance.isRadioMode)
+                        if (PlayerService.Instance.isRadioMode)
                         {
                             PlayerService.Instance.CurrentPlaylist.Clear();
                             PlayerService.Instance.previousSongIndex = 0;
@@ -243,6 +231,21 @@ namespace Bermuda.ViewModels
 
                             PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
                             PlayerService.Instance.Player.Play();
+                        }
+
+                        else
+                        {
+                            foreach (Track track in album.Tracks)
+                            {
+                                if (track != null)
+                                    PlayerService.Instance.CurrentPlaylist.Add(track);
+                            }
+
+                            if (PlayerService.Instance.Player.Source == null)
+                            {
+                                PlayerService.Instance.Player.Source = new MediaPlaybackItem(MediaSource.CreateFromUri(await GetStreamUrl(NewMain.Current.mc, PlayerService.Instance.CurrentPlaylist[0])));
+                                PlayerService.Instance.Player.Play();
+                            }
                         }
 
                         itemviewmodel.showCheckMark(0);

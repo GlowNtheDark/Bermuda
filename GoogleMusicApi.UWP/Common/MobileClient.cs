@@ -351,8 +351,13 @@ namespace GoogleMusicApi.UWP.Common
                 });
                 _plentry = data;
             }
+
             _lastUpdatedPlentry = Time.GetCurrentTimestamp();
-            return _plentry.Data.Items.Where(x => x.PlaylistId == playlist.Id).Select(x=> x.Track).ToList();
+
+            if (_plentry != null)
+                return _plentry.Data.Items.Where(x => x.PlaylistId == playlist.Id).Select(x => x.Track).ToList();
+            else
+                return null;
         }
 
         #endregion List Requests

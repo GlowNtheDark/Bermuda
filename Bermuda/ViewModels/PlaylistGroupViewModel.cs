@@ -32,14 +32,14 @@ namespace Bermuda.ViewModels
         {
             ResultList<Playlist> result = new ResultList<Playlist>();
 
+            result = await NewMain.Current.mc.ListPlaylistsAsync();
+
             if (result != null)
             {
 
-                result = await NewMain.Current.mc.ListPlaylistsAsync();
-
                 foreach (var playlistitem in result.Data.Items)
                 {
-                    if(playlistitem != null)
+                    if (playlistitem != null)
                         if (playlistitem.Deleted != true)
                             Add(new PlaylistItemViewModel(playlistitem, PLViewModel, colorlistviewmodel[colorlistviewmodel.index].Color));
                 }
