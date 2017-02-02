@@ -383,6 +383,8 @@ namespace Bermuda
                 mainFrame.Navigate(srScene);
             }
 
+            MySplitView.IsPaneOpen = false;
+
         }
 
         public void loadLoginFrame()
@@ -392,7 +394,7 @@ namespace Bermuda
 
         private void Page_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
-            if(e.Key == Windows.System.VirtualKey.GamepadView)
+            if(e.Key == Windows.System.VirtualKey.GamepadMenu)
                 MySplitView.IsPaneOpen = !MySplitView.IsPaneOpen;
         }
 

@@ -113,7 +113,7 @@
             <TextBlock Name="signedInAsTextBlock" HorizontalAlignment="Left" Margin="10,10,0,0" Text="{x:Bind settingsviewmodel.loggedInUser, Mode=OneWay}" VerticalAlignment="Top" Height="30" FontSize="20" Foreground="White" Visibility="Visible"/>
             <Button Style="{StaticResource customButton}" Name="logoutButton" Content="Logout" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Top"  Margin="130,10,0,0" Click="{x:Bind settingsviewmodel.logoutButton_Click, Mode=OneWay}"/>
         </StackPanel>
-        <TextBlock FontSize="10" Margin="0,0,0,10" Foreground="White" Text="Client developed by NoLife77. Credit for the wonderful API used in this app goes to Lachlan van der Velden. No affiliation with Google. Google Play is a trademark of Google Inc." HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
-        <TextBlock FontSize="12" Margin="0,0,0,30" Foreground="White" Text="Interested in feedback, support, or updates? Follow on Twitter! @BermudaMusicApp" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+        <TextBlock FontSize="10" Margin="5,0,0,10" Foreground="White" Text="Client developed by NoLife77. Credit for the wonderful API used in this app goes to Lachlan van der Velden. No affiliation with Google. Google Play is a trademark of Google Inc." HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+        <TextBlock FontSize="12" Margin="5,0,0,30" Foreground="White" Text="Interested in feedback, support, or updates? Follow on Twitter! @BermudaMusicApp" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
     </Grid>
 </Page>

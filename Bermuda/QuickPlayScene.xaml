@@ -16,77 +16,77 @@
         <GridView IsTabStop="False" SelectionMode="None" IsItemClickEnabled="False">
             <GridViewItem IsTabStop="False">
                 <ListView Name="QuickPlayAlbumView" Width="Auto" Height="Auto" ItemsSource="{x:Bind QPViewModel.QPAlbumViewModel, Mode=OneWay}" Margin="5,10,0,0" IsTabStop="False" SelectionMode="None" ItemClick="{x:Bind QPViewModel.ItemClick}" IsItemClickEnabled="True" ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.VerticalScrollMode="Disabled"  ScrollViewer.HorizontalScrollBarVisibility="Hidden">
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <ItemsStackPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="vm:ListenNowItemViewModel">
-                        <Grid Margin="0,0,0,0" BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="1">
-                        <SplitView DisplayMode="Overlay" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}" OpenPaneLength="200">
-                            <SplitView.Pane>
-                                 <GridView IsItemClickEnabled="True" Width="185" Margin="0,3,0,0" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False" ItemClick="{x:Bind QPViewModel.GridView_ItemClick}">
-                                    <GridViewItem Width="182">
-                                        <StackPanel Name="Add to queue." Orientation="Horizontal" Width="182">
-                                            <TextBlock Margin="15,0,0,0" Text="Add to queue." FontSize="15" VerticalAlignment="Center"/>
-                                            <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleZero, Mode=OneWay}"/>
-                                        </StackPanel>
-                                    </GridViewItem>
-                                    <GridViewItem Width="182">
-                                        <StackPanel Orientation="Horizontal" Width="182">
-                                            <TextBlock Margin="15,0,0,0" Text="Clear queue and play." FontSize="15" VerticalAlignment="Center"/>
-                                            <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleOne, Mode=OneWay}"/>
-                                        </StackPanel>
-                                    </GridViewItem>
-                                </GridView>
-                            </SplitView.Pane>
-                            <SplitView.Content>
-                                <Grid>
-                                    <Image Height="275" Width="275" VerticalAlignment="Center" Stretch="Fill" Source="{x:Bind ItemImage}"/>
-                                    <Grid VerticalAlignment="Bottom" Height="70" Background="Black" Opacity=".80"/>
-                                    <TextBlock Margin="5,0,0,0" VerticalAlignment="Bottom" Height="70" Width="275" Text="{x:Bind QuickPlayText}" FontSize="20" TextAlignment="Left" Foreground="White" TextTrimming="CharacterEllipsis"/>
-                                </Grid>
-                            </SplitView.Content>
-                        </SplitView>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ListenNowItemViewModel">
+                            <Grid Margin="0,0,0,0" BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="1">
+                                <SplitView DisplayMode="Overlay" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}" OpenPaneLength="200">
+                                    <SplitView.Pane>
+                                        <GridView IsItemClickEnabled="True" Width="185" Margin="0,3,0,0" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False" ItemClick="{x:Bind QPViewModel.GridView_ItemClick}">
+                                            <GridViewItem Width="182">
+                                                <StackPanel Name="Add to queue." Orientation="Horizontal" Width="182">
+                                                    <TextBlock Margin="15,0,0,0" Text="Add to queue." FontSize="15" VerticalAlignment="Center"/>
+                                                    <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleZero, Mode=OneWay}"/>
+                                                </StackPanel>
+                                            </GridViewItem>
+                                            <GridViewItem Width="182">
+                                                <StackPanel Orientation="Horizontal" Width="182">
+                                                    <TextBlock Margin="15,0,0,0" Text="Clear queue and play." FontSize="15" VerticalAlignment="Center"/>
+                                                    <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleOne, Mode=OneWay}"/>
+                                                </StackPanel>
+                                            </GridViewItem>
+                                        </GridView>
+                                    </SplitView.Pane>
+                                    <SplitView.Content>
+                                        <Grid>
+                                            <Image Height="250" Width="250" VerticalAlignment="Center" Stretch="Fill" Source="{x:Bind ItemImage}"/>
+                                            <Grid VerticalAlignment="Bottom" Height="70" Background="Black" Opacity=".80"/>
+                                            <TextBlock Margin="5,0,0,0" VerticalAlignment="Bottom" Height="60" Width="250" Text="{x:Bind QuickPlayText}" FontSize="20" TextAlignment="Left" Foreground="White" TextTrimming="CharacterEllipsis"/>
+                                        </Grid>
+                                    </SplitView.Content>
+                                </SplitView>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </GridViewItem>
             <GridViewItem IsTabStop="False">
                 <ListView Name="QuickPlayRadioView" Width="Auto" Height="Auto" ItemsSource="{x:Bind QPViewModel.QPRadioViewModel, Mode=OneWay}" Margin="5,10,0,0" IsTabStop="False" SelectionMode="None" ItemClick="{x:Bind QPViewModel.ItemClick}" IsItemClickEnabled="True" ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.VerticalScrollMode="Disabled"  ScrollViewer.HorizontalScrollBarVisibility="Hidden">
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <ItemsStackPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="vm:ListenNowItemViewModel">
-                    <Grid Margin="0,0,0,0" BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="1">
-                        <SplitView DisplayMode="Overlay" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}" OpenPaneLength="200">
-                            <SplitView.Pane>
-                                    <GridView IsItemClickEnabled="True" Margin="0,3,0,0" Width="185" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False" ItemClick="{x:Bind QPViewModel.GridView_ItemClick}">
-                                        <GridViewItem Width="182">
-                                            <StackPanel Name="Add to queue." Orientation="Horizontal" Width="182">
-                                                <TextBlock Margin="15,0,0,0" Text="Start Radio" FontSize="18" VerticalAlignment="Center"/>
-                                                <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleZero, Mode=OneWay}"/>
-                                            </StackPanel>
-                                        </GridViewItem>
-                                    </GridView>
-                            </SplitView.Pane>
-                            <SplitView.Content>
-                                <Grid>
-                                    <Image Height="275" Width="275" VerticalAlignment="Center" Stretch="Fill" Source="{x:Bind ItemImage}"/>
-                                    <Grid VerticalAlignment="Bottom" Height="70" Background="Black" Opacity=".80"/>
-                                    <TextBlock Margin="5,0,0,0" VerticalAlignment="Bottom" Height="70" Width="275" Text="{x:Bind QuickPlayText}" FontSize="20" TextAlignment="Left" Foreground="White" TextTrimming="CharacterEllipsis"/>
-                                </Grid>
-                            </SplitView.Content>
-                        </SplitView>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ListenNowItemViewModel">
+                            <Grid Margin="0,0,0,0" BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="1">
+                                <SplitView DisplayMode="Overlay" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}" OpenPaneLength="200">
+                                    <SplitView.Pane>
+                                        <GridView IsItemClickEnabled="True" Margin="0,3,0,0" Width="185" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False" ItemClick="{x:Bind QPViewModel.GridView_ItemClick}">
+                                            <GridViewItem Width="182">
+                                                <StackPanel Name="Add to queue." Orientation="Horizontal" Width="182">
+                                                    <TextBlock Margin="15,0,0,0" Text="Start Radio" FontSize="18" VerticalAlignment="Center"/>
+                                                    <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleZero, Mode=OneWay}"/>
+                                                </StackPanel>
+                                            </GridViewItem>
+                                        </GridView>
+                                    </SplitView.Pane>
+                                    <SplitView.Content>
+                                        <Grid>
+                                            <Image Height="250" Width="250" VerticalAlignment="Center" Stretch="Fill" Source="{x:Bind ItemImage}"/>
+                                            <Grid VerticalAlignment="Bottom" Height="70" Background="Black" Opacity=".80"/>
+                                            <TextBlock Margin="5,0,0,0" VerticalAlignment="Bottom" Height="60" Width="250" Text="{x:Bind QuickPlayText}" FontSize="20" TextAlignment="Left" Foreground="White" TextTrimming="CharacterEllipsis"/>
+                                        </Grid>
+                                    </SplitView.Content>
+                                </SplitView>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </GridViewItem>
         </GridView>
     </Grid>

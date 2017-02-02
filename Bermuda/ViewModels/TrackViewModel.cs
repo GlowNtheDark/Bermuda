@@ -237,13 +237,6 @@ namespace Bermuda.ViewModels
             this.BorderBrush = brush;
             RaisePropertyChanged("Title");
 
-            // This app caches all images by loading the BitmapImage
-            // when the item is created, but production apps would
-            // use a more resource friendly paging mechanism or
-            // just use PreviewImageUri directly.
-            //
-            // The reason we cache here is to avoid audio gaps 
-            // between tracks on transitions when changing artwork.
             PreviewImage = new BitmapImage();
 
             if(song.AlbumArtReference != null)

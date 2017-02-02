@@ -22,62 +22,62 @@
             </GridView.ItemsPanel>
             <GridViewItem IsTabStop="False" HorizontalAlignment="Left">
                 <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid Grid.Row="0" Width="Auto" BorderBrush="White" BorderThickness="1" HorizontalAlignment="Left" Padding="5,0,5,5">
-                    <TextBlock Text="Artists" Height="25" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0" Width="Auto" BorderBrush="White" BorderThickness="1" HorizontalAlignment="Left" Padding="5,0,5,5">
+                        <TextBlock Text="Artists" Height="25" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Grid>
+                    <ListView Name="ArtistLV" HorizontalAlignment="Left"  Grid.Row="1" Margin="0,5,0,5" ItemsSource="{x:Bind searchviewmodel.ArLViewModel, Mode=OneWay}" ItemClick="{x:Bind searchviewmodel.ArtistItemClick}" IsItemClickEnabled="True" IsTabStop="False" ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsStackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="vm:ArtistViewModel">
+                                <SplitView Name="ArtistSplitView" DisplayMode="Overlay" OpenPaneLength="200" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}">
+                                    <SplitView.Pane>
+                                        <GridView IsItemClickEnabled="True" Width="200" ItemClick="{x:Bind searchMenuItemClicked}" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False">
+                                            <GridViewItem Width="195">
+                                                <StackPanel Orientation="Horizontal" Width="195">
+                                                    <TextBlock Margin="5,0,0,0" Text="Add all to queue." FontSize="15" VerticalAlignment="Center"/>
+                                                    <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleZero, Mode=OneWay}"/>
+                                                </StackPanel>
+                                            </GridViewItem>
+                                            <GridViewItem Width="195">
+                                                <StackPanel Orientation="Horizontal" Width="195">
+                                                    <TextBlock Margin="5,0,0,0" Text="Clear queue and play all." FontSize="15" VerticalAlignment="Center"/>
+                                                    <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleOne, Mode=OneWay}"/>
+                                                </StackPanel>
+                                            </GridViewItem>
+                                            <GridViewItem Width="195">
+                                                <StackPanel Orientation="Horizontal" Width="195">
+                                                    <TextBlock Margin="5,0,0,0" Text="Start Radio." FontSize="15" VerticalAlignment="Center"/>
+                                                    <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleTwo, Mode=OneWay}"/>
+                                                </StackPanel>
+                                            </GridViewItem>
+                                            <GridViewItem Width="195">
+                                                <StackPanel Orientation="Horizontal" Width="195">
+                                                    <TextBlock Margin="5,0,0,0" Text="Shuffle artist." FontSize="15" VerticalAlignment="Center"/>
+                                                    <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleThree, Mode=OneWay}"/>
+                                                </StackPanel>
+                                            </GridViewItem>
+                                        </GridView>
+                                    </SplitView.Pane>
+                                    <SplitView.Content>
+                                        <Grid BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="1" Height="Auto" Width="Auto">
+                                            <Image Height="250" Width="250" VerticalAlignment="Center" Source="{x:Bind PreviewImage}" Stretch="Fill"/>
+                                            <Grid VerticalAlignment="Bottom" Height="30" Background="Black" Opacity=".7"/>
+                                            <TextBlock VerticalAlignment="Bottom" Margin="5,0,0,0" Height="30" Width="250" Text="{x:Bind Name}" FontSize="20" Foreground="White" TextTrimming="CharacterEllipsis"/>
+                                        </Grid>
+                                    </SplitView.Content>
+                                </SplitView>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </Grid>
-                <ListView Name="ArtistLV" HorizontalAlignment="Left"  Grid.Row="1" Margin="0,5,0,5" ItemsSource="{x:Bind searchviewmodel.ArLViewModel, Mode=OneWay}" ItemClick="{x:Bind searchviewmodel.ArtistItemClick}" IsItemClickEnabled="True" IsTabStop="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <ItemsStackPanel Orientation="Horizontal"/>
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="vm:ArtistViewModel">
-                            <SplitView Name="ArtistSplitView" DisplayMode="Overlay" OpenPaneLength="200" IsPaneOpen="{x:Bind MenuOpen, Mode=OneWay}">
-                                <SplitView.Pane>
-                                    <GridView IsItemClickEnabled="True" Width="200" ItemClick="{x:Bind searchMenuItemClicked}" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False">
-                                        <GridViewItem Width="195">
-                                            <StackPanel Orientation="Horizontal" Width="195">
-                                                <TextBlock Margin="5,0,0,0" Text="Add all to queue." FontSize="15" VerticalAlignment="Center"/>
-                                                <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleZero, Mode=OneWay}"/>
-                                            </StackPanel>
-                                        </GridViewItem>
-                                        <GridViewItem Width="195">
-                                            <StackPanel Orientation="Horizontal" Width="195">
-                                                <TextBlock Margin="5,0,0,0" Text="Clear queue and play all." FontSize="15" VerticalAlignment="Center"/>
-                                                <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleOne, Mode=OneWay}"/>
-                                            </StackPanel>
-                                        </GridViewItem>
-                                        <GridViewItem Width="195">
-                                            <StackPanel Orientation="Horizontal" Width="195">
-                                                <TextBlock Margin="5,0,0,0" Text="Start Radio." FontSize="15" VerticalAlignment="Center"/>
-                                                <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleTwo, Mode=OneWay}"/>
-                                            </StackPanel>
-                                        </GridViewItem>
-                                        <GridViewItem Width="195">
-                                            <StackPanel Orientation="Horizontal" Width="195">
-                                                <TextBlock Margin="5,0,0,0" Text="Shuffle artist." FontSize="15" VerticalAlignment="Center"/>
-                                                <Image Width="15" Height="15" Source="Assets/check.png" Visibility="{x:Bind IsVisibleThree, Mode=OneWay}"/>
-                                            </StackPanel>
-                                        </GridViewItem>
-                                    </GridView>
-                                </SplitView.Pane>
-                                <SplitView.Content>
-                                    <Grid BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="1" Height="Auto" Width="Auto">
-                                        <Image Height="275" Width="275" VerticalAlignment="Center" Source="{x:Bind PreviewImage}" Stretch="Fill"/>
-                                        <Grid VerticalAlignment="Bottom" Height="30" Background="Black" Opacity=".7"/>
-                                        <TextBlock VerticalAlignment="Bottom" Margin="5,0,0,0" Height="30" Width="275" Text="{x:Bind Name}" FontSize="20" Foreground="White" TextTrimming="CharacterEllipsis"/>
-                                    </Grid>
-                                </SplitView.Content>
-                            </SplitView>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </Grid>
             </GridViewItem>
             <GridViewItem IsTabStop="False" HorizontalAlignment="Left">
                 <Grid>
@@ -85,10 +85,10 @@
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                <Grid Grid.Row="0" Width="Auto" BorderBrush="White" BorderThickness="1" HorizontalAlignment="Left" Padding="5,0,5,5">
-                    <TextBlock Text="Albums" Height="25" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Grid Grid.Row="0" Width="Auto" BorderBrush="White" BorderThickness="1" HorizontalAlignment="Left" Padding="5,0,5,5">
+                        <TextBlock Text="Albums" Height="25" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Grid>
-                    <ListView Name="AlbumLV" Grid.Row="1" Margin="0,5,0,5" ItemsSource="{x:Bind searchviewmodel.ALViewModel, Mode=OneWay}" ItemClick="{x:Bind searchviewmodel.AlbumItemClick}" IsItemClickEnabled="True" IsTabStop="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+                    <ListView Name="AlbumLV" Grid.Row="1" Margin="0,5,0,5" ItemsSource="{x:Bind searchviewmodel.ALViewModel, Mode=OneWay}" ItemClick="{x:Bind searchviewmodel.AlbumItemClick}" IsItemClickEnabled="True" IsTabStop="False" ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <ItemsStackPanel Orientation="Horizontal"/>
@@ -121,9 +121,9 @@
                                     </SplitView.Pane>
                                     <SplitView.Content>
                                     <Grid BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="1">
-                                            <Image Height="275" Width="275" VerticalAlignment="Center" Source="{x:Bind PreviewImage}" Stretch="Fill"/>
+                                            <Image Height="250" Width="250" VerticalAlignment="Center" Source="{x:Bind PreviewImage}" Stretch="Fill"/>
                                             <Grid VerticalAlignment="Bottom" Height="30" Background="Black" Opacity=".7"/>
-                                        <TextBlock VerticalAlignment="Bottom" Margin="5,0,0,0" Height="30" Width="275" Text="{x:Bind Name}" FontSize="20" Foreground="White" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock VerticalAlignment="Bottom" Margin="5,0,0,0" Height="30" Width="250" Text="{x:Bind Name}" FontSize="20" Foreground="White" TextTrimming="CharacterEllipsis"/>
                                         </Grid>
                                     </SplitView.Content>
                                 </SplitView>
@@ -141,7 +141,7 @@
                 <Grid Grid.Row="0" Width="Auto" BorderBrush="White" BorderThickness="1" HorizontalAlignment="Left" Padding="5,0,5,5">
                     <TextBlock Text="Tracks" Height="25" FontSize="20" Grid.Row="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </Grid>
-                <ListView Name="TrackLV" Grid.Row="1" Margin="0,5,0,5" ItemsSource="{x:Bind searchviewmodel.TLViewModel, Mode=OneWay}" ItemClick="{x:Bind searchviewmodel.TrackItemClick}" IsItemClickEnabled="True" IsTabStop="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+                    <ListView Name="TrackLV" Grid.Row="1" Margin="0,5,0,5" ItemsSource="{x:Bind searchviewmodel.TLViewModel, Mode=OneWay}" ItemClick="{x:Bind searchviewmodel.TrackItemClick}" IsItemClickEnabled="True" IsTabStop="False" ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsStackPanel Orientation="Horizontal"/>
@@ -174,9 +174,9 @@
                                 </SplitView.Pane>
                                 <SplitView.Content>
                                     <Grid BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="1">
-                                        <Image Height="275" Width="275" VerticalAlignment="Center" Source="{x:Bind PreviewImage}" Stretch="Fill"/>
+                                        <Image Height="250" Width="250" VerticalAlignment="Center" Source="{x:Bind PreviewImage}" Stretch="Fill"/>
                                         <Grid VerticalAlignment="Bottom" Height="30" Background="Black" Opacity=".7"/>
-                                        <TextBlock VerticalAlignment="Bottom" Margin="5,0,0,0" Height="30" Width="275" Text="{x:Bind Title}" FontSize="20" Foreground="White" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock VerticalAlignment="Bottom" Margin="5,0,0,0" Height="30" Width="250" Text="{x:Bind Title}" FontSize="20" Foreground="White" TextTrimming="CharacterEllipsis"/>
                                     </Grid>
                                 </SplitView.Content>
                             </SplitView>

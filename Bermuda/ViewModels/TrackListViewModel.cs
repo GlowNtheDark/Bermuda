@@ -131,13 +131,11 @@ namespace Bermuda.ViewModels
 
                 initializing = false;
 
-                // Start where the playback list is currently at
-                //CurrentItemIndex = (int)PlayerService.Instance.currentSongIndex;
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.Write(ex);
-                MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Unexpected error -- " + ex));
+                MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Unexpected error getting playlist tracks."));
                 MessageViewModel.ShowAlert();
             }
         }

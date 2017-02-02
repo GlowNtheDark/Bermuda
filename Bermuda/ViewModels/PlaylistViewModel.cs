@@ -90,7 +90,7 @@ namespace Bermuda.ViewModels
             {
                 System.Diagnostics.Debug.Write(ex);
 
-                MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Unexpected error -- " + ex));
+                MessageViewModel.MLViewModel.Add(new MessageItemViewModel("Unexpected error getting playlist tracks."));
                 MessageViewModel.ShowAlert();
             }
         }
