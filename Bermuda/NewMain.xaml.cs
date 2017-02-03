@@ -89,7 +89,9 @@ namespace Bermuda
 
             if(MessageViewModel.AlertVisibility == Visibility.Visible)
                 MessageViewModel.DismissAlert();
-            
+
+            GridViewItem gvi = MenuGridView.FindName(pageTitle.Text.ToString() + "GV") as GridViewItem;
+            gvi.Focus(FocusState.Programmatic);
         }
 
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)
@@ -394,8 +396,16 @@ namespace Bermuda
 
         private void Page_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
-            if(e.Key == Windows.System.VirtualKey.GamepadMenu)
+            if (e.Key == Windows.System.VirtualKey.GamepadMenu)
+            {
                 MySplitView.IsPaneOpen = !MySplitView.IsPaneOpen;
+
+                if (MessageViewModel.AlertVisibility == Visibility.Visible)
+                    MessageViewModel.DismissAlert();
+
+                GridViewItem gvi = MenuGridView.FindName(pageTitle.Text.ToString() + "GV") as GridViewItem;
+                gvi.Focus(FocusState.Programmatic);
+            }
         }
 
         private void DisableFrameAccess()

@@ -26,39 +26,39 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <GridView Grid.Row="0" IsItemClickEnabled="True" Width="210" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False" ItemClick="GridView_ItemClick">
-                        <GridViewItem Width="205" IsEnabled="{x:Bind MainViewModel.IsEnabledQP, Mode=OneWay}">
+                    <GridView Name="MenuGridView" Grid.Row="0" IsItemClickEnabled="True" Height="Auto" Width="210" ScrollViewer.IsHorizontalRailEnabled="False" ScrollViewer.IsVerticalRailEnabled="False" ScrollViewer.VerticalScrollMode="Disabled" ItemClick="GridView_ItemClick">
+                        <GridViewItem Name="QuickPlayGV" Width="205" IsEnabled="{x:Bind MainViewModel.IsEnabledQP, Mode=OneWay}">
                             <StackPanel Name="QuickPlay" Orientation="Horizontal" Width="200" HorizontalAlignment="Left">
                                 <Image Width="30" Height="30" Source="Assets/triangle.png"/>
                                 <TextBlock Name="qpText" Margin="15,0,0,0" Text="QuickPlay" FontSize="18" VerticalAlignment="Center"/>
                             </StackPanel>
                         </GridViewItem>
-                        <GridViewItem Width="205" IsEnabled="{x:Bind MainViewModel.IsEnabledSR, Mode=OneWay}">
+                        <GridViewItem Name="SearchGV" Width="205" IsEnabled="{x:Bind MainViewModel.IsEnabledSR, Mode=OneWay}">
                             <StackPanel Name="Search" Orientation="Horizontal" Width="200">
                                 <Image Source="Assets/glass.png" Width="30" Height="30"/>
                                 <TextBlock Name="schText" Margin="15,0,0,0" Text="Search" FontSize="18" VerticalAlignment="Center"/>
                             </StackPanel>
                         </GridViewItem>
-                        <GridViewItem Width="205" IsEnabled="{x:Bind MainViewModel.IsEnabledPL, Mode=OneWay}">
+                        <GridViewItem Name="PlaylistsGV" Width="205" IsEnabled="{x:Bind MainViewModel.IsEnabledPL, Mode=OneWay}">
                             <StackPanel Name="Playlists" Orientation="Horizontal" Width="200">
                                 <Image Source="Assets/list.png" Width="30" Height="30"/>
                                 <TextBlock Name="plText" Margin="15,0,0,0" Text="Playlists" FontSize="18" VerticalAlignment="Center"/>
                             </StackPanel>
                         </GridViewItem>
-                        <GridViewItem Width="205" IsEnabled="{x:Bind MainViewModel.IsEnabledNP, Mode=OneWay}">
+                        <GridViewItem Name="NowPlayingGV" Width="205" IsEnabled="{x:Bind MainViewModel.IsEnabledNP, Mode=OneWay}">
                             <StackPanel Name="NowPlaying" Orientation="Horizontal" Width="200">
                                 <Image Source="Assets/note.png" Width="30" Height="30"/>
                                 <TextBlock Name="npText" Margin="15,0,0,0" Text="Now Playing" FontSize="18" VerticalAlignment="Center"/>
                             </StackPanel>
                         </GridViewItem>
-                        <GridViewItem Width="205">
+                        <GridViewItem Name="SettingsGV" Width="205">
                             <StackPanel Name="Settings" Orientation="Horizontal" Width="200">
                                 <Image Source="Assets/cogs.png" Width="30" Height="30"/>
                                 <TextBlock Name="stText" Margin="15,0,0,0" Text="Settings" FontSize="18" VerticalAlignment="Center"/>
                             </StackPanel>
                         </GridViewItem>
                     </GridView>
-                    <ListView Width="210" IsItemClickEnabled="False" Margin="0,0,0,5" SelectionMode="None" VerticalAlignment="Bottom" Grid.Row="1" ItemsSource="{x:Bind MessageViewModel.MLViewModel, Mode=OneWay}">
+                    <ListView Width="210" Height="Auto" IsItemClickEnabled="False" Margin="0,0,0,5" SelectionMode="None" VerticalAlignment="Bottom" Grid.Row="1" ItemsSource="{x:Bind MessageViewModel.MLViewModel, Mode=OneWay}">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="vm:MessageItemViewModel">
                                 <Grid BorderBrush="Red" BorderThickness="1">
