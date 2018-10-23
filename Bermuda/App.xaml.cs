@@ -16,9 +16,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.System.Profile;
 using Windows.System;
-using Windows.UI.Notifications;
-using Windows.Security.Credentials;
-using GoogleMusicApi.UWP.Common;
 using Windows.Foundation.Metadata;
 using Windows.UI.ViewManagement;
 using Windows.UI;
@@ -52,65 +49,6 @@ namespace Bermuda
         bool _isInBackgroundMode = false;
 
         private string resourceName = "Bermuda";
-
-        private async void Login(string username, string password, Frame rootframe)
-        {
-            MobileClient mc = new MobileClient();
-
-            if (await mc.LoginAsync(username, password))
-            {
-                PassSession.session = mc;
-                rootframe.Navigate(typeof(NewMain));
-            }
-        }
-
-        private bool checkStoredCredentials()
-        {
-            var loginCredential = GetCredentialFromLocker();
-
-            if (loginCredential != null)
-                return true;
-            else
-                return false;
-
-        }
-
-        private PasswordCredential GetCredentialFromLocker()
-        {
-            PasswordCredential credential = null;
-
-            var vault = new PasswordVault();
-
-            try
-            {
-                //var credentialList = vault.FindAllByResource(resourceName);
-                var credentialList = vault.RetrieveAll();
-
-                if (credentialList.Count > 0)
-                {
-                    if (credentialList.Count == 1)
-                    {
-                        credential = credentialList[0];
-                        credential.RetrievePassword();
-                    }
-
-                    else
-                    {
-                        // When there are multiple usernames,
-                        // retrieve the default username. If one doesn't
-                        // exist, then display UI to have the user select
-                        // a default username.
-                    }
-                }
-            }
-
-            catch(Exception e)
-            {
-                return credential;
-            }
-
-            return credential;
-        }
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
@@ -164,22 +102,9 @@ namespace Bermuda
                             titleBar.ForegroundColor = Colors.White;
                         }
                     }
-
-
-                    bool areCredentialsStored = checkStoredCredentials();
-
-                    if (areCredentialsStored)
-                    {
-                        PasswordCredential credential = GetCredentialFromLocker();
-                        Login(credential.UserName, credential.Password, rootFrame);
-                    }
-                    else
-                    {
-                        // When the navigation stack isn't restored navigate to the first page,
-                        // configuring the new page by passing required information as a navigation
-                        // parameter
-                        rootFrame.Navigate(typeof(LoginPage), e.Arguments);
-                    }
+                   
+                   rootFrame.Navigate(typeof(WebViewMain), e.Arguments);
+                    
                 }
                 // Ensure the current window is active
                 Window.Current.Activate();
@@ -218,7 +143,6 @@ namespace Bermuda
                     task.Value.Unregister(true);
                 }
             }*/
-            AppSettings.localSettings.Values["lastPage"] = "QuickPlay";
             deferral.Complete();
         }
 
@@ -309,7 +233,7 @@ namespace Bermuda
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(typeof(NewMain), arguments);
+                rootFrame.Navigate(typeof(WebViewMain), arguments);
             }
         }
     }

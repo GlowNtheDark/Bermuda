@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" IgnorableNamespaces="uap mp uap3">
-  <Identity Name="10631GlowintheDarkSoftwar.Bermuda" Publisher="CN=508163EF-55DA-4D88-8036-2FB48532274A" Version="2.0.0.0" />
+  <Identity Name="10631GlowintheDarkSoftwar.Bermuda" Publisher="CN=508163EF-55DA-4D88-8036-2FB48532274A" Version="3.0.0.0" />
   <mp:PhoneIdentity PhoneProductId="fe42fcef-2e0f-4b11-b8df-45db76e553d8" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Bermuda</DisplayName>
@@ -15,7 +15,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="Bermuda.App">
-      <uap:VisualElements DisplayName="Bermuda" Square150x150Logo="assets\Medium\Medium150x150Logo.png" Square44x44Logo="assets\AppList\AppList.png" Description="Bermuda is an Unofficial client for Google Play Music." BackgroundColor="transparent">
+      <uap:VisualElements DisplayName="Bermuda" Square150x150Logo="assets\Medium\Medium150x150Logo.png" Square44x44Logo="assets\AppList\AppList.png" Description="Bermuda is an unofficial client for accessing Google Play Music." BackgroundColor="transparent">
         <uap:LockScreen Notification="badge" BadgeLogo="Assets\BadgeLogo.png" />
         <uap:DefaultTile Wide310x150Logo="assets\Wide\Wide310x150Logo.png" ShortName="Bermuda" Square310x310Logo="assets\Large\Large310x310Logo.png" Square71x71Logo="assets\Small\Small71x71Logo.png">
         </uap:DefaultTile>
